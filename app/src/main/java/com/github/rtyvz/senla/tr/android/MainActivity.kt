@@ -37,5 +37,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        var sum = 0
+        for (i in 0 until 1000) {
+            when {
+                i % 3 == 0 || i % 5 == 0 -> {
+                    sum += i
+                }
+            }
+        }
+
+        Log.d(this.javaClass.canonicalName, sum.toString())
     }
 }
