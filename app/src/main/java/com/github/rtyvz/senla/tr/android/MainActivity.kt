@@ -11,14 +11,26 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 1..100) {
             when {
+                i % 3 == 0 && i % 5 == 0 && i % 7 == 0 -> {
+                    Log.d(this.javaClass.canonicalName, "Fizz Buzz Woof")
+                }
                 i % 3 == 0 && i % 5 == 0 -> {
                     Log.d(this.javaClass.canonicalName, "Fizz Buzz")
+                }
+                i % 3 == 0 && i % 7 == 0 -> {
+                    Log.d(this.javaClass.canonicalName, "Fizz Woof")
+                }
+                i % 5 == 0 && i % 7 == 0 -> {
+                    Log.d(this.javaClass.canonicalName, "Buzz Woof")
                 }
                 i % 3 == 0 -> {
                     Log.d(this.javaClass.canonicalName, "Fizz")
                 }
                 i % 5 == 0 -> {
                     Log.d(this.javaClass.canonicalName, "Fizz")
+                }
+                i % 7 == 0 -> {
+                    Log.d(this.javaClass.canonicalName, "Woof")
                 }
                 else -> {
                     Log.d(this.javaClass.canonicalName, i.toString())
