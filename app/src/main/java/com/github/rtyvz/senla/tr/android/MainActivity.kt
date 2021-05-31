@@ -8,7 +8,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        merge(setOf(1, 2, 3), setOf(45, 77, 88))
         for (i in 1..100) {
             when {
                 i % 3 == 0 && i % 5 == 0 && i % 7 == 0 -> {
@@ -47,5 +47,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         Log.d(this.javaClass.canonicalName, sum.toString())
+    }
+
+    private fun merge(firstSortedSet: Set<Int>, secondSortedSet: Set<Int>): Set<Int> {
+        return firstSortedSet + secondSortedSet
     }
 }
