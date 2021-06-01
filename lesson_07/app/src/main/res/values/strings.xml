@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">lesson_07</string>
+    <string name="training_label">Training</string>
+    <string name="sing_in_label">Вход</string>
+    <string name="sing_up_label">Регистрация</string>
+    <string name="about_program_label">О программе</string>
+    <string name="login_label">Логин</string>
+    <string name="login_label_information">Логин: </string>
+    <string name="password_label">Пароль</string>
+    <string name="come_in_label">Войти</string>
+    <string name="back_label">Назад</string>
+    <string name="password_again_label">Повторите пароль</string>
+    <string name="name_label">Имя</string>
+    <string name="second_name_label">Фамилия</string>
+    <string name="man_label">Мужчина</string>
+    <string name="woman_label">Женщина</string>
+    <string name="something_new_label">Не определилось</string>
+    <string name="additional_information_label">Дополнительная информация</string>
+    <string name="i_agree_label">Я принимаю условия</string>
+    <string name="sing_up_action_label">Зарегистрироваться</string>
+    <string name="information_label">Информация</string>
+    <string name="password_information_label">Пароль: </string>
+    <string name="name_information_label">Имя: </string>
+    <string name="second_name_information_label">Фамилия: </string>
+    <string name="sex_information_label">Пол: </string>
+    <string name="add_information_label">Дополнительная информация: </string>
 </resources>

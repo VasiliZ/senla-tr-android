@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/informationLabel"
+        style="@style/App.Main.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/information_label"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/loginLabel"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/passwordLabel"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/login_label_information"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/informationLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/loginValue"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/loginLabel"
+        app:layout_constraintStart_toEndOf="@id/loginLabel"
+        app:layout_constraintTop_toTopOf="@id/loginLabel"
+        tools:text="dqwedq" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/passwordLabel"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/password_information_label"
+        app:layout_constraintBottom_toTopOf="@id/nameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loginLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/passwordValue"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/passwordLabel"
+        app:layout_constraintStart_toEndOf="@id/passwordLabel"
+        app:layout_constraintTop_toTopOf="@id/passwordLabel"
+        tools:text="dqwedq" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/nameLabel"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16dp"
+        app:layout_constraintBottom_toTopOf="@id/secondNameLabel"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/name_information_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/passwordLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/nameValue"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/nameLabel"
+        app:layout_constraintStart_toEndOf="@id/nameLabel"
+        app:layout_constraintTop_toTopOf="@id/nameLabel"
+        tools:text="я" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/secondNameLabel"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/second_name_information_label"
+        app:layout_constraintBottom_toTopOf="@id/sexLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nameLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/secondNameValue"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/secondNameLabel"
+        app:layout_constraintStart_toEndOf="@id/secondNameLabel"
+        app:layout_constraintTop_toTopOf="@id/secondNameLabel"
+        tools:text="попугай" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sexLabel"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/additionalInformationLabel"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/sex_information_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondNameLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sexValue"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/sexLabel"
+        app:layout_constraintStart_toEndOf="@id/sexLabel"
+        app:layout_constraintTop_toTopOf="@id/sexLabel"
+        tools:text="Мы" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/additionalInformationLabel"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/add_information_label"
+        app:layout_constraintBottom_toTopOf="@id/additionalInformationValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sexLabel" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/additionalInformationValue"
+        style="@style/App.Another.Label.Style"
+        android:layout_width="@dimen/width_0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/backButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/additionalInformationLabel"
+        tools:text="2250 транзисторов, размещённых в кристалле размером не больше шляпки гвоздя" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/backButton"
+        style="@style/App.Button.Style"
+        android:layout_width="@dimen/width_0dp"
+        android:text="@string/back_label"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="@dimen/margin_16dp"
+        app:layout_constraintTop_toBottomOf="@id/additionalInformationValue" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,4 +13,33 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="App.Button.Style" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">@dimen/text_size_20sp</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:layout_marginTop">@dimen/margin_16dp</item>
+        <item name="strokeWidth">@dimen/stroke_1dp</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_16dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="App.Main.Label.Style" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_32sp</item>
+        <item name="android:layout_marginTop">@dimen/margin_64dp</item>
+    </style>
+
+    <style name="App.Another.Label.Style" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="App.InputLayout.Style" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_marginHorizontal">@dimen/margin_16dp</item>
+        <item name="android:layout_marginTop">@dimen/margin_8dp</item>
+        <item name="strokeWidth">@dimen/stroke_1dp</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="errorEnabled">true</item>
+    </style>
 </resources>
