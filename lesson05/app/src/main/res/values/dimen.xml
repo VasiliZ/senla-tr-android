@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_64dp">64dp</dimen>
+    <dimen name="margin_32dp">32dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
+    <dimen name="width_0">0dp</dimen>
+
+    <!--size-->
+    <dimen name="button_height">75dp</dimen>
+    <dimen name="button_width">150dp</dimen>
+
+    <!--radius corners-->
+    <dimen name="corner_radius_8dp">8dp</dimen>
+</resources>
