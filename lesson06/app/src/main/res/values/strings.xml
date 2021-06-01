@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">lesson_06</string>
+    <string name="login_label">Login</string>
+    <string name="password_label">Password</string>
+    <string name="register_label">Register</string>
+    <string name="wrong_login">Wrong login</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="login_succes">Sign in!</string>
+    <string name="login_required">Login required</string>
+    <string name="password_required">Password required</string>
+    <string name="redirect">We will be redirected</string>
+</resources>
