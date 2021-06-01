@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
                 if (firstValue.isBlank() || secondValue.isBlank()) {
                     result.text = getString(R.string.input_error)
                 } else {
-                    result.text = (firstValue.toInt() + secondValue.toInt()).toString()
+                    result.text = (firstValue.toDouble() + secondValue.toDouble()).toString()
                 }
             }
         }
