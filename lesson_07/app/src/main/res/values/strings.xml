@@ -1,29 +1,40 @@
 <resources>
     <string name="app_name">lesson_07</string>
-    <string name="training_label">Training</string>
-    <string name="sing_in_label">Вход</string>
-    <string name="sing_up_label">Регистрация</string>
-    <string name="about_program_label">О программе</string>
-    <string name="login_label">Логин</string>
-    <string name="login_label_information">Логин: </string>
-    <string name="password_label">Пароль</string>
-    <string name="come_in_label">Войти</string>
-    <string name="back_label">Назад</string>
-    <string name="password_again_label">Повторите пароль</string>
-    <string name="name_label">Имя</string>
-    <string name="second_name_label">Фамилия</string>
-    <string name="man_label">Мужчина</string>
-    <string name="woman_label">Женщина</string>
-    <string name="something_new_label">Не определилось</string>
-    <string name="additional_information_label">Дополнительная информация</string>
-    <string name="i_agree_label">Я принимаю условия</string>
-    <string name="sing_up_action_label">Зарегистрироваться</string>
-    <string name="information_label">Информация</string>
-    <string name="password_information_label">Пароль:\t</string>
-    <string name="name_information_label">Имя:\t</string>
-    <string name="second_name_information_label">Фамилия:\t</string>
-    <string name="sex_information_label">Пол:\t</string>
-    <string name="add_information_label">Дополнительная информация:</string>
+    <!--main activity-->
+    <string name="main_activity_training_label">Training</string>
+    <string name="main_activity_sing_in_label">Вход</string>
+    <string name="main_activity_sing_up_label">Регистрация</string>
+    <string name="main_activity_about_program_label">О программе</string>
+    <!--sign in activity-->
+    <string name="sing_in_activity_login_label">Логин</string>
+    <string name="sing_in_activity_password_label">Пароль</string>
+    <string name="sing_in_activity_come_in_label">Войти</string>
+    <string name="sing_in_activity_back_label">Назад</string>
+    <string name="sign_in_activity_sing_in_label">Вход</string>
+    <string name="sign_in_activity_login_label">Логин</string>
+    <!--sign up activity-->
+    <string name="sign_up_activity_main_activity_sing_up_label">Регистрация</string>
+    <string name="sign_up_activity_password_again_label">Повторите пароль</string>
+    <string name="sign_up_activity_name_label">Имя</string>
+    <string name="sign_up_activity_second_name_label">Фамилия</string>
+    <string name="sign_up_activity_man_label">Мужчина</string>
+    <string name="sign_up_activity_login_label">Логин</string>
+    <string name="sign_up_activity_woman_label">Женщина</string>
+    <string name="sign_up_activity_something_new_label">Не определилось</string>
+    <string name="sign_up_activity_additional_information_label">Дополнительная информация</string>
+    <string name="sign_up_activity_i_agree_label">Я принимаю условия</string>
+    <string name="sign_up_activity_sing_up_action_label">Зарегистрироваться</string>
+    <string name="sign_up_activity_back_label">Назад</string>
+    <!--information activity-->
+    <string name="information_activity_information_label">Информация</string>
+    <string name="information_activity_password_information_label">Пароль:\t</string>
+    <string name="information_activity_name_information_label">Имя:\t</string>
+    <string name="information_activity_second_name_information_label">Фамилия:\t</string>
+    <string name="information_activity_sex_information_label">Пол:\t</string>
+    <string name="information_activity_add_information_label">Дополнительная информация:</string>
+    <string name="information_activity_back_label">Назад</string>
+    <string name="information_activity_login_label_information">Логин: </string>
+    <!--typical errors-->
     <string name="login_cant_be_empty">Введите логин</string>
     <string name="password_required">Введите пароль</string>
     <string name="login_must_be_longer">Логин должен быть не менее 4 символов</string>

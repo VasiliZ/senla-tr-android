@@ -7,8 +7,8 @@ import kotlinx.android.parcel.Parcelize
 data class UserInformation(
     val login: String,
     val password: String,
-    val name: String? = "",
-    val secondName: String? = "",
-    val sex: String? = "",
-    val additionalInformation: String? = ""
+    val name: String? = null,
+    val secondName: String? = null,
+    val sex: String? = null,
+    val additionalInformation: String? = null
 ) : Parcelable

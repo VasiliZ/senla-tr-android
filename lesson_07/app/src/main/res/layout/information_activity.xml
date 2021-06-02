@@ -10,7 +10,7 @@
         style="@style/App.Main.Label.Style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/information_label"
+        android:text="@string/information_activity_information_label"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,10 +21,10 @@
         style="@style/App.Another.Label.Style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/passwordLabel"
         android:layout_marginStart="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/login_label_information"
+        android:text="@string/information_activity_login_label_information"
+        app:layout_constraintBottom_toTopOf="@id/passwordLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/informationLabel" />
 
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/password_information_label"
+        android:text="@string/information_activity_password_information_label"
         app:layout_constraintBottom_toTopOf="@id/nameLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginLabel" />
@@ -66,9 +66,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_16dp"
-        app:layout_constraintBottom_toTopOf="@id/secondNameLabel"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/name_information_label"
+        android:text="@string/information_activity_name_information_label"
+        app:layout_constraintBottom_toTopOf="@id/secondNameLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passwordLabel" />
 
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/second_name_information_label"
+        android:text="@string/information_activity_second_name_information_label"
         app:layout_constraintBottom_toTopOf="@id/sexLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nameLabel" />
@@ -109,10 +109,10 @@
         style="@style/App.Another.Label.Style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/additionalInformationLabel"
         android:layout_marginStart="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/sex_information_label"
+        android:text="@string/information_activity_sex_information_label"
+        app:layout_constraintBottom_toTopOf="@+id/additionalInformationLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/secondNameLabel" />
 
@@ -133,7 +133,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/add_information_label"
+        android:text="@string/information_activity_add_information_label"
         app:layout_constraintBottom_toTopOf="@id/additionalInformationValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sexLabel" />
@@ -145,8 +145,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/backButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/additionalInformationLabel"
         tools:text="2250 транзисторов, размещённых в кристалле размером не больше шляпки гвоздя" />
@@ -155,12 +155,12 @@
         android:id="@+id/backButton"
         style="@style/App.Button.Style"
         android:layout_width="0dp"
-        android:text="@string/back_label"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_16dp"
+        android:text="@string/information_activity_back_label"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="@dimen/margin_16dp"
         app:layout_constraintTop_toBottomOf="@id/additionalInformationValue" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,10 +5,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
-import com.github.rtyvz.senla.tr.lesson_07.Const
 import com.github.rtyvz.senla.tr.lesson_07.R
 import com.github.rtyvz.senla.tr.lesson_07.databinding.SignUpActivityBinding
 import com.github.rtyvz.senla.tr.lesson_07.entity.UserInformation
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: SignUpActivityBinding
@@ -17,88 +18,101 @@ class SignUpActivity : AppCompatActivity() {
     private var isValidRepeatedPassword: Boolean = false
     private var password = ""
 
+    companion object {
+        private const val MIN_LOGIN_LENGTH = 4
+        private const val MIN_PASSWORD_LENGTH = 8
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = SignUpActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        validateLogin()
-        validatePassword()
-        validateRepeatedPassword()
+        inputLoginTextListener()
+        inputPasswordTextListener()
+        inputRepeatPasswordListener()
         validateSingUpButton()
         validateAgreeCheckBox()
 
-        binding.backButton.setOnClickListener {
-            this.finish()
-        }
+        binding.apply {
+            backButton.setOnClickListener {
+                finish()
+            }
 
-        binding.signUpButton.setOnClickListener {
-            val isNameEmpty = isNameEmpty()
-            val isSecondNameEmpty = isSecondNameEmpty()
-            val isLoginEmpty = isLoginEmpty()
-            val isPasswordEmpty = isPasswordEmpty()
-            val isRepeatPasswordEmpty = isRepeatPasswordEmpty()
+            signUpButton.setOnClickListener {
 
-            if (isNameEmpty && isSecondNameEmpty && isLoginEmpty
-                && isPasswordEmpty && isRepeatPasswordEmpty
-            ) {
+                val isNameEmpty = isValueViewEmpty(
+                    nameEditText,
+                    getString(R.string.name_required),
+                    nameInputLayout
+                )
+                val isSecondNameEmpty = isValueViewEmpty(
+                    secondNameEditText,
+                    getString(R.string.name_required),
+                    secondNameInputLayout
+                )
+                val isLoginEmpty = isValueViewEmpty(
+                    loginEditText,
+                    getString(R.string.login_required),
+                    registrationLoginInputLayout
+                )
+                val isPasswordEmpty = isValueViewEmpty(
+                    passwordEditText,
+                    getString(R.string.password_required),
+                    registrationPasswordInputLayout
+                )
+                val isRepeatPasswordEmpty = isValueViewEmpty(
+                    passwordAgainEditText,
+                    getString(R.string.password_required),
+                    registrationPasswordAgainInputLayout
+                )
 
-                if (isValidLogin && isValidPassword && isValidRepeatedPassword) {
-                    startActivity(Intent(this, InformationActivity::class.java).also {
-                        it.putExtras(Bundle().also {
-                            it.putParcelable(
-                                Const.USER_DATA_BUNDLE,
-                                UserInformation(
-                                    login = binding.loginEditText.text.toString(),
-                                    password = binding.passwordEditText.text.toString(),
-                                    name = binding.nameEditText.text.toString(),
-                                    secondName = binding.secondNameEditText.text.toString(),
-                                    sex = resources
-                                        .getResourceEntryName(
-                                            binding
-                                                .sexRadioGroup
-                                                .checkedRadioButtonId
-                                        ),
-                                    additionalInformation = binding
-                                        .additionalInformationEditText
-                                        .text
-                                        .toString()
-                                )
-                            )
-                        })
-                    })
+                if (isNameEmpty && isSecondNameEmpty && isLoginEmpty
+                    && isPasswordEmpty && isRepeatPasswordEmpty
+                ) {
+
+                    if (isValidLogin && isValidPassword && isValidRepeatedPassword) {
+                        startActivity(
+                            Intent(
+                                this@SignUpActivity,
+                                InformationActivity::class.java
+                            ).also {
+                                it.putExtras(Bundle().apply {
+                                    putParcelable(
+                                        InformationActivity.EXTRA_USER_INFORMATION,
+                                        UserInformation(
+                                            login = loginEditText.text.toString(),
+                                            password = passwordEditText.text.toString(),
+                                            name = nameEditText.text.toString(),
+                                            secondName = secondNameEditText.text.toString(),
+                                            sex = resources
+                                                .getResourceEntryName(
+                                                    sexRadioGroup
+                                                        .checkedRadioButtonId
+                                                ),
+                                            additionalInformation = additionalInformationEditText
+                                                .text
+                                                .toString()
+                                        )
+                                    )
+                                })
+                            })
+                    }
                 }
             }
         }
     }
 
-    private fun isLoginEmpty(): Boolean {
-        return if (binding.loginEditText.text.isNullOrBlank()) {
-            binding.registrationLoginInputLayout.error = getString(R.string.login_required)
+    private fun isValueViewEmpty(
+        view: TextInputEditText,
+        error: String,
+        layout: TextInputLayout
+    ): Boolean {
+        return if (view.text.isNullOrBlank()) {
+            layout.error = error
             false
         } else {
-            binding.registrationLoginInputLayout.error = null
-            true
-        }
-    }
-
-    private fun isPasswordEmpty(): Boolean {
-        return if (binding.passwordEditText.text.isNullOrBlank()) {
-            binding.registrationPasswordInputLayout.error = getString(R.string.password_required)
-            false
-        } else {
-            binding.registrationPasswordInputLayout.error = null
-            true
-        }
-    }
-
-    private fun isRepeatPasswordEmpty(): Boolean {
-        return if (binding.passwordAgainEditText.text.isNullOrBlank()) {
-            binding.registrationPasswordAgainInputLayout.error =
-                getString(R.string.password_required)
-            false
-        } else {
-            binding.registrationPasswordAgainInputLayout.error = null
+            layout.error = null
             true
         }
     }
@@ -107,11 +121,11 @@ class SignUpActivity : AppCompatActivity() {
         binding.signUpButton.isEnabled = binding.iAgreeCheckBox.isChecked
     }
 
-    private fun validateLogin() {
+    private fun inputLoginTextListener() {
         binding.loginEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    if (it.length < 4) {
+                    if (it.length < MIN_LOGIN_LENGTH) {
                         binding.registrationLoginInputLayout.error =
                             getString(R.string.login_must_be_longer)
                         isValidLogin = false
@@ -128,11 +142,11 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-    private fun validatePassword() {
+    private fun inputPasswordTextListener() {
         binding.passwordEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    if (it.length < 8) {
+                    if (it.length < MIN_PASSWORD_LENGTH) {
                         binding.registrationPasswordInputLayout.error =
                             getString(R.string.password_must_be_longer)
                         isValidPassword = false
@@ -152,11 +166,11 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-    private fun validateRepeatedPassword() {
+    private fun inputRepeatPasswordListener() {
         binding.passwordAgainEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    if (it.length < 8) {
+                    if (it.length < MIN_PASSWORD_LENGTH) {
                         binding.registrationPasswordAgainInputLayout.error =
                             getString(R.string.password_must_be_longer)
                         isValidRepeatedPassword = false
@@ -178,26 +192,6 @@ class SignUpActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
-    }
-
-    private fun isNameEmpty(): Boolean {
-        return if (binding.nameEditText.text.isNullOrBlank()) {
-            binding.nameInputLayout.error = getString(R.string.name_required)
-            false
-        } else {
-            binding.nameInputLayout.error = null
-            true
-        }
-    }
-
-    private fun isSecondNameEmpty(): Boolean {
-        return if (binding.secondNameEditText.text.isNullOrBlank()) {
-            binding.secondNameInputLayout.error = getString(R.string.name_required)
-            false
-        } else {
-            binding.secondNameInputLayout.error = null
-            true
-        }
     }
 
     private fun validateAgreeCheckBox() {

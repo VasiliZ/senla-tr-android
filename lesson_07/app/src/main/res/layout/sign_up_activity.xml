@@ -13,7 +13,7 @@
             style="@style/App.Main.Label.Style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sing_up_label"
+            android:text="@string/sign_up_activity_main_activity_sing_up_label"
             android:textColor="@color/red"
             app:layout_constraintBottom_toTopOf="@id/registrationLoginInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +25,7 @@
             style="@style/App.InputLayout.Style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/login_label"
+            android:hint="@string/sign_up_activity_login_label"
             app:layout_constraintBottom_toTopOf="@id/registrationPasswordInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
             style="@style/App.InputLayout.Style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/password_label"
+            android:hint="@string/sing_in_activity_password_label"
             app:layout_constraintBottom_toTopOf="@id/registrationPasswordAgainInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +60,7 @@
             style="@style/App.InputLayout.Style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/password_again_label"
+            android:hint="@string/sign_up_activity_password_again_label"
             app:layout_constraintBottom_toTopOf="@id/nameInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +78,7 @@
             style="@style/App.InputLayout.Style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/name_label"
+            android:hint="@string/sign_up_activity_name_label"
             app:layout_constraintBottom_toTopOf="@id/secondNameInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +95,7 @@
             style="@style/App.InputLayout.Style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/second_name_label"
+            android:hint="@string/sign_up_activity_second_name_label"
             app:layout_constraintBottom_toTopOf="@id/sexRadioGroup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -121,20 +121,20 @@
                 android:id="@+id/man"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/man_label" />
+                android:text="@string/sign_up_activity_man_label" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/woman"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/woman_label" />
+                android:text="@string/sign_up_activity_woman_label" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/alien"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="@string/something_new_label" />
+                android:text="@string/sign_up_activity_something_new_label" />
         </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -143,7 +143,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_8dp"
-            android:hint="@string/additional_information_label"
+            android:hint="@string/sign_up_activity_additional_information_label"
             app:layout_constraintBottom_toTopOf="@id/iAgreeCheckBox"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,7 +164,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_16dp"
             android:layout_marginTop="@dimen/margin_8dp"
-            android:text="@string/i_agree_label"
+            android:text="@string/sign_up_activity_i_agree_label"
             app:layout_constraintBottom_toTopOf="@id/signUpButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -175,7 +175,7 @@
             style="@style/App.Button.Style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/sing_up_action_label"
+            android:text="@string/sign_up_activity_sing_up_action_label"
             app:layout_constraintBottom_toTopOf="@id/backButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -187,10 +187,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_16dp"
-            android:text="@string/back_label"
+            android:text="@string/sign_up_activity_back_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/signUpButton" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
