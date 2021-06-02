@@ -9,6 +9,10 @@ import com.github.rtyvz.senla.tr.lesson_07.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
+    companion object {
+        private const val URL = "http://developer.android.com/intl/ru/index.html"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -28,9 +32,5 @@ class MainActivity : AppCompatActivity() {
                 this.data = Uri.parse(URL)
             })
         }
-    }
-
-    companion object {
-        private const val URL = "http://developer.android.com/intl/ru/index.html"
     }
 }
