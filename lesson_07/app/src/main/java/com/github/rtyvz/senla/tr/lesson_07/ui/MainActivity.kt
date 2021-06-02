@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.aboutProgramLabel.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
-                this.data = Uri.parse(URL)
+                data = Uri.parse(URL)
             })
         }
     }

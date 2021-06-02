@@ -9,7 +9,7 @@ class InformationActivity : AppCompatActivity() {
     private lateinit var binding: InformationActivityBinding
 
     companion object {
-        const val EXTRA_USER_INFORMATION = "user.information"
+        const val EXTRA_USER_INFORMATION = "USER_INFORMATION"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,18 +20,18 @@ class InformationActivity : AppCompatActivity() {
 
         val user = intent?.getParcelableExtra<UserInformation>(EXTRA_USER_INFORMATION)
         user?.let {
-            binding.also {
-                it.loginValue.text = user.login
-                it.passwordValue.text = user.password
-                it.nameValue.text = user.name
-                it.secondNameValue.text = user.secondName
-                it.sexValue.text = user.sex
-                it.additionalInformationValue.text = user.additionalInformation
+            binding.apply {
+                loginValue.text = user.login
+                passwordValue.text = user.password
+                nameValue.text = user.name
+                secondNameValue.text = user.secondName
+                sexValue.text = user.sex
+                additionalInformationValue.text = user.additionalInformation
             }
         }
 
         binding.backButton.setOnClickListener {
-            this.finish()
+            finish()
         }
     }
 }

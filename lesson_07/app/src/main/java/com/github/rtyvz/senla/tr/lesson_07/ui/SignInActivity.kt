@@ -34,7 +34,6 @@ class SignInActivity : AppCompatActivity() {
                     )
 
                 if (isLoginValid && isPasswordValid) {
-
                     startActivity(Intent(this, InformationActivity::class.java).also {
                         it.putExtras(
                             Bundle().apply {
@@ -52,7 +51,7 @@ class SignInActivity : AppCompatActivity() {
             }
 
             binding.backButton.setOnClickListener {
-                this.finish()
+                finish()
             }
         }
     }

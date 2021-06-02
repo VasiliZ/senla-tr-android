@@ -28,9 +28,9 @@ class SignUpActivity : AppCompatActivity() {
         binding = SignUpActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        inputLoginTextListener()
-        inputPasswordTextListener()
-        inputRepeatPasswordListener()
+        configureLoginTextListener()
+        configurePasswordTextListener()
+        configureRepeatPasswordListener()
         validateSingUpButton()
         validateAgreeCheckBox()
 
@@ -41,27 +41,27 @@ class SignUpActivity : AppCompatActivity() {
 
             signUpButton.setOnClickListener {
 
-                val isNameEmpty = isValueViewEmpty(
+                val isNameEmpty = isValueViewNotEmpty(
                     nameEditText,
                     getString(R.string.name_required),
                     nameInputLayout
                 )
-                val isSecondNameEmpty = isValueViewEmpty(
+                val isSecondNameEmpty = isValueViewNotEmpty(
                     secondNameEditText,
                     getString(R.string.name_required),
                     secondNameInputLayout
                 )
-                val isLoginEmpty = isValueViewEmpty(
+                val isLoginEmpty = isValueViewNotEmpty(
                     loginEditText,
                     getString(R.string.login_required),
                     registrationLoginInputLayout
                 )
-                val isPasswordEmpty = isValueViewEmpty(
+                val isPasswordEmpty = isValueViewNotEmpty(
                     passwordEditText,
                     getString(R.string.password_required),
                     registrationPasswordInputLayout
                 )
-                val isRepeatPasswordEmpty = isValueViewEmpty(
+                val isRepeatPasswordEmpty = isValueViewNotEmpty(
                     passwordAgainEditText,
                     getString(R.string.password_required),
                     registrationPasswordAgainInputLayout
@@ -103,7 +103,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun isValueViewEmpty(
+    private fun isValueViewNotEmpty(
         view: TextInputEditText,
         error: String,
         layout: TextInputLayout
@@ -121,7 +121,7 @@ class SignUpActivity : AppCompatActivity() {
         binding.signUpButton.isEnabled = binding.iAgreeCheckBox.isChecked
     }
 
-    private fun inputLoginTextListener() {
+    private fun configureLoginTextListener() {
         binding.loginEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
@@ -142,7 +142,7 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-    private fun inputPasswordTextListener() {
+    private fun configurePasswordTextListener() {
         binding.passwordEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
@@ -166,19 +166,21 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-    private fun inputRepeatPasswordListener() {
+    private fun configureRepeatPasswordListener() {
         binding.passwordAgainEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    if (it.length < MIN_PASSWORD_LENGTH) {
-                        binding.registrationPasswordAgainInputLayout.error =
-                            getString(R.string.password_must_be_longer)
-                        isValidRepeatedPassword = false
-                    } else {
-                        if (password != s.toString()) {
+                    when {
+                        it.length < MIN_PASSWORD_LENGTH -> {
+                            binding.registrationPasswordAgainInputLayout.error =
+                                getString(R.string.password_must_be_longer)
+                            isValidRepeatedPassword = false
+                        }
+                        password != s.toString() -> {
                             binding.registrationPasswordAgainInputLayout.error =
                                 getString(R.string.passwords_do_not_much)
-                        } else {
+                        }
+                        else -> {
                             binding.registrationPasswordAgainInputLayout.error = null
                             isValidRepeatedPassword = true
                         }
