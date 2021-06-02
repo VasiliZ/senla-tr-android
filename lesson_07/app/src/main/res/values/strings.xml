@@ -24,4 +24,11 @@
     <string name="second_name_information_label">Фамилия: </string>
     <string name="sex_information_label">Пол: </string>
     <string name="add_information_label">Дополнительная информация: </string>
+    <string name="login_cant_be_empty">Введите логин</string>
+    <string name="password_required">Введите пароль</string>
+    <string name="login_must_be_longer">Логин должен быть не менее 4 символов</string>
+    <string name="passwords_do_not_much">Пароли не совпадают</string>
+    <string name="password_must_be_longer">Пароль должен быть длинее 8 символов</string>
+    <string name="name_required">Имя не должно быть пустым</string>
+    <string name="login_required">Логин не должен быть пустым</string>
 </resources>

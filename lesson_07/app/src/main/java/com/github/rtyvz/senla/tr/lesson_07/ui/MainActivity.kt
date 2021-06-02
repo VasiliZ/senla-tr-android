@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.lesson_07
+package com.github.rtyvz.senla.tr.lesson_07.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -30,6 +30,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val URL = "http://developer.android.com/intl/ru/index.html"
+        private const val URL = "http://developer.android.com/intl/ru/index.html"
     }
 }
