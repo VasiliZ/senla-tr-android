@@ -12,9 +12,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         binding.apply {
             calculateAction.setOnClickListener {
-
                 val firstValue = firstNumber.text.toString()
                 val secondValue = secondNumber.text.toString()
 
