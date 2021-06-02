@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.login_required)
                 loginInput.text.toString() != userLogin -> loginInputLayout.error =
                     getString(R.string.wrong_login)
-
                 else -> {
                     isLoginError = false
                     loginInputLayout.error = null
@@ -66,7 +65,6 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.password_required)
                 passwordInput.text.toString() != password -> passwordInputLayout.error =
                     getString(R.string.wrong_password)
-
                 else -> {
                     isPasswordError = false
                     passwordInputLayout.error = null
