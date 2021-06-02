@@ -23,7 +23,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registrationLoginInputLayout"
             style="@style/App.InputLayout.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/login_label"
             app:layout_constraintBottom_toTopOf="@id/registrationPasswordInputLayout"
@@ -40,7 +40,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registrationPasswordInputLayout"
             style="@style/App.InputLayout.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/password_label"
             app:layout_constraintBottom_toTopOf="@id/registrationPasswordAgainInputLayout"
@@ -58,7 +58,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registrationPasswordAgainInputLayout"
             style="@style/App.InputLayout.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/password_again_label"
             app:layout_constraintBottom_toTopOf="@id/nameInputLayout"
@@ -76,7 +76,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameInputLayout"
             style="@style/App.InputLayout.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/name_label"
             app:layout_constraintBottom_toTopOf="@id/secondNameInputLayout"
@@ -93,7 +93,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/secondNameInputLayout"
             style="@style/App.InputLayout.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/second_name_label"
             app:layout_constraintBottom_toTopOf="@id/sexRadioGroup"
@@ -109,7 +109,7 @@
 
         <RadioGroup
             android:id="@+id/sexRadioGroup"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_16dp"
             app:layout_constraintBottom_toTopOf="@id/additionalInformation"
@@ -140,7 +140,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/additionalInformation"
             style="@style/App.InputLayout.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_8dp"
             android:hint="@string/additional_information_label"
@@ -160,7 +160,7 @@
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/iAgreeCheckBox"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_16dp"
             android:layout_marginTop="@dimen/margin_8dp"
@@ -173,7 +173,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signUpButton"
             style="@style/App.Button.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/sing_up_action_label"
             app:layout_constraintBottom_toTopOf="@id/backButton"
@@ -184,7 +184,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/backButton"
             style="@style/App.Button.Style"
-            android:layout_width="@dimen/width_0dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_16dp"
             android:text="@string/back_label"

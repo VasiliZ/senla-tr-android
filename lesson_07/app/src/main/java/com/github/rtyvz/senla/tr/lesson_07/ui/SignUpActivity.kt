@@ -11,7 +11,6 @@ import com.github.rtyvz.senla.tr.lesson_07.databinding.SignUpActivityBinding
 import com.github.rtyvz.senla.tr.lesson_07.entity.UserInformation
 
 class SignUpActivity : AppCompatActivity() {
-
     private lateinit var binding: SignUpActivityBinding
     private var isValidLogin: Boolean = false
     private var isValidPassword: Boolean = false
@@ -22,11 +21,13 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = SignUpActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         validateLogin()
         validatePassword()
         validateRepeatedPassword()
         validateSingUpButton()
         validateAgreeCheckBox()
+
         binding.backButton.setOnClickListener {
             this.finish()
         }
@@ -37,9 +38,11 @@ class SignUpActivity : AppCompatActivity() {
             val isLoginEmpty = isLoginEmpty()
             val isPasswordEmpty = isPasswordEmpty()
             val isRepeatPasswordEmpty = isRepeatPasswordEmpty()
+
             if (isNameEmpty && isSecondNameEmpty && isLoginEmpty
                 && isPasswordEmpty && isRepeatPasswordEmpty
             ) {
+
                 if (isValidLogin && isValidPassword && isValidRepeatedPassword) {
                     startActivity(Intent(this, InformationActivity::class.java).also {
                         it.putExtras(Bundle().also {
@@ -122,7 +125,6 @@ class SignUpActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
         })
     }
 

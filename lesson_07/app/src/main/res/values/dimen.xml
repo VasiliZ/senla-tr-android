@@ -4,12 +4,9 @@
     <dimen name="margin_32dp">32dp</dimen>
     <dimen name="margin_16dp">16dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
-    <!--view size-->
-    <dimen name="width_0dp">0dp</dimen>
     <!--text size-->
     <dimen name="text_size_32sp">32sp</dimen>
     <dimen name="text_size_20sp">20sp</dimen>
-
     <!--stroke width-->
     <dimen name="stroke_1dp">1dp</dimen>
 </resources>

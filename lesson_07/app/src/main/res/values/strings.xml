@@ -19,11 +19,11 @@
     <string name="i_agree_label">Я принимаю условия</string>
     <string name="sing_up_action_label">Зарегистрироваться</string>
     <string name="information_label">Информация</string>
-    <string name="password_information_label">Пароль: </string>
-    <string name="name_information_label">Имя: </string>
-    <string name="second_name_information_label">Фамилия: </string>
-    <string name="sex_information_label">Пол: </string>
-    <string name="add_information_label">Дополнительная информация: </string>
+    <string name="password_information_label">Пароль:\t</string>
+    <string name="name_information_label">Имя:\t</string>
+    <string name="second_name_information_label">Фамилия:\t</string>
+    <string name="sex_information_label">Пол:\t</string>
+    <string name="add_information_label">Дополнительная информация:</string>
     <string name="login_cant_be_empty">Введите логин</string>
     <string name="password_required">Введите пароль</string>
     <string name="login_must_be_longer">Логин должен быть не менее 4 символов</string>

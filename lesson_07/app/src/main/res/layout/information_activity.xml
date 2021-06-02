@@ -141,7 +141,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/additionalInformationValue"
         style="@style/App.Another.Label.Style"
-        android:layout_width="@dimen/width_0dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_16dp"
         android:layout_marginTop="@dimen/margin_16dp"
@@ -154,7 +154,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/backButton"
         style="@style/App.Button.Style"
-        android:layout_width="@dimen/width_0dp"
+        android:layout_width="0dp"
         android:text="@string/back_label"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

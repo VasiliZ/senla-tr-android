@@ -21,7 +21,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/singInButton"
         style="@style/App.Button.Style"
-        android:layout_width="@dimen/width_0dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/sing_in_label"
         app:layout_constraintBottom_toTopOf="@id/registrationButton"
@@ -32,7 +32,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/registrationButton"
         style="@style/App.Button.Style"
-        android:layout_width="@dimen/width_0dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/sing_up_label"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/aboutProgramLabel"
         style="@style/App.Button.Style"
-        android:layout_width="@dimen/width_0dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_16dp"
         android:text="@string/about_program_label"

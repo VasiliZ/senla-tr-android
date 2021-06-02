@@ -7,7 +7,6 @@ import com.github.rtyvz.senla.tr.lesson_07.databinding.InformationActivityBindin
 import com.github.rtyvz.senla.tr.lesson_07.entity.UserInformation
 
 class InformationActivity : AppCompatActivity() {
-
     private lateinit var binding: InformationActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
