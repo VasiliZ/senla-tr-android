@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.redirect),
                         Toast.LENGTH_LONG
                     ).show()
-                    isPasswordError = false
-                    isLoginError = false
                 }
             }
         }
