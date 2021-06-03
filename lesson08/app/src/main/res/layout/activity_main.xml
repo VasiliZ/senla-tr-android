@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/resultOfOperations"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/middle_margin"
+        android:layout_marginTop="@dimen/middle_margin"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:gravity="center|end"
+        android:textSize="@dimen/middle_text_size"
+        app:layout_constraintBottom_toTopOf="@id/previousOperations"
+        app:layout_constraintEnd_toStartOf="@id/clearButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/previousOperations"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/middle_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginBottom="@dimen/middle_margin"
+        android:gravity="center|end"
+        android:textSize="@dimen/middle_text_size"
+        app:layout_constraintBottom_toTopOf="@id/topGuideLine"
+        app:layout_constraintEnd_toStartOf="@id/clearButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/resultOfOperations" />
+
+    <Button
+        android:id="@+id/clearButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/clear"
+        app:layout_constraintBottom_toTopOf="@id/topGuideLine"
+        app:layout_constraintEnd_toEndOf="@id/inputDivButton"
+        app:layout_constraintStart_toStartOf="@id/inputDivButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuideLine"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/inputSevenButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="@dimen/small_margin"
+        android:layout_marginStart="@dimen/middle_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:text="@string/seven"
+        app:layout_constraintBottom_toTopOf="@id/firstMiddleGuideline"
+        app:layout_constraintEnd_toStartOf="@id/inputEightButton"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topGuideLine" />
+
+    <Button
+        android:id="@+id/inputEightButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/eight"
+        app:layout_constraintBottom_toBottomOf="@id/inputSevenButton"
+        app:layout_constraintEnd_toStartOf="@id/inputNineButton"
+        app:layout_constraintStart_toEndOf="@id/inputSevenButton"
+        app:layout_constraintTop_toTopOf="@id/inputSevenButton" />
+
+    <Button
+        android:id="@+id/inputNineButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/nine"
+        app:layout_constraintBottom_toBottomOf="@id/inputSevenButton"
+        app:layout_constraintEnd_toStartOf="@id/inputDivButton"
+        app:layout_constraintStart_toEndOf="@id/inputEightButton"
+        app:layout_constraintTop_toTopOf="@id/inputSevenButton" />
+
+    <Button
+        android:id="@+id/inputDivButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/middle_margin"
+        android:text="@string/div"
+        app:layout_constraintBottom_toBottomOf="@id/inputNineButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/inputNineButton"
+        app:layout_constraintTop_toTopOf="@id/inputSevenButton"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/firstMiddleGuideline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/inputFourButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="@dimen/small_margin"
+        android:layout_marginStart="@dimen/middle_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:text="@string/four"
+        app:layout_constraintBottom_toTopOf="@id/secondMiddleGuideline"
+        app:layout_constraintEnd_toStartOf="@id/inputFiveButton"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/firstMiddleGuideline" />
+
+    <Button
+        android:id="@+id/inputFiveButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/five"
+        app:layout_constraintBottom_toBottomOf="@id/inputFourButton"
+        app:layout_constraintEnd_toStartOf="@id/inputSixButton"
+        app:layout_constraintStart_toEndOf="@id/inputFourButton"
+        app:layout_constraintTop_toTopOf="@id/inputFourButton"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/inputSixButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/six"
+        app:layout_constraintBottom_toBottomOf="@id/inputFourButton"
+        app:layout_constraintEnd_toStartOf="@id/inputMultiplyButton"
+        app:layout_constraintStart_toEndOf="@id/inputFiveButton"
+        app:layout_constraintTop_toTopOf="@id/inputFourButton" />
+
+    <Button
+        android:id="@+id/inputMultiplyButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/middle_margin"
+        android:text="@string/multiply"
+        app:layout_constraintBottom_toBottomOf="@id/inputFourButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/inputSixButton"
+        app:layout_constraintTop_toTopOf="@id/inputFourButton" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/secondMiddleGuideline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.6"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/inputMinusButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/middle_margin"
+        android:text="@string/minus"
+        app:layout_constraintBottom_toBottomOf="@id/inputOneButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/inputThreeButton"
+        app:layout_constraintTop_toTopOf="@id/inputOneButton" />
+
+    <Button
+        android:id="@+id/inputOneButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="@dimen/small_margin"
+        android:layout_marginStart="@dimen/middle_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:text="@string/one"
+        app:layout_constraintBottom_toTopOf="@id/thirdMiddleGuideline"
+        app:layout_constraintEnd_toStartOf="@id/inputTwoButton"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondMiddleGuideline" />
+
+    <Button
+        android:id="@+id/inputTwoButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/two"
+        app:layout_constraintBottom_toBottomOf="@id/inputOneButton"
+        app:layout_constraintEnd_toStartOf="@id/inputThreeButton"
+        app:layout_constraintStart_toEndOf="@id/inputOneButton"
+        app:layout_constraintTop_toTopOf="@id/inputOneButton" />
+
+    <Button
+        android:id="@+id/inputThreeButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/three"
+        app:layout_constraintBottom_toBottomOf="@id/inputOneButton"
+        app:layout_constraintEnd_toStartOf="@id/inputMinusButton"
+        app:layout_constraintStart_toEndOf="@id/inputTwoButton"
+        app:layout_constraintTop_toTopOf="@id/inputOneButton" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/thirdMiddleGuideline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.8"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/inputZeroButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/middle_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginBottom="@dimen/middle_margin"
+        android:text="@string/zero"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputOneButton" />
+
+    <Button
+        android:id="@+id/inputEquallyButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/small_margin"
+        android:text="@string/equally"
+        app:layout_constraintBottom_toBottomOf="@id/inputZeroButton"
+        app:layout_constraintEnd_toStartOf="@id/inputPlusButton"
+        app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+        app:layout_constraintTop_toTopOf="@id/inputZeroButton" />
+
+    <Button
+        android:id="@+id/inputPlusButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/middle_margin"
+        android:text="@string/plus"
+        app:layout_constraintBottom_toBottomOf="@id/inputZeroButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/inputEquallyButton"
+        app:layout_constraintTop_toTopOf="@id/inputZeroButton" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/verticalGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
