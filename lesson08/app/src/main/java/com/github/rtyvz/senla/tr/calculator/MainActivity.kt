@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.apply {
-            this@MainActivity.previousOperations.append(value)
+            previousOperations.append(value)
             currentNumber.append(value)
             previousOperationsTextView.text = currentNumber.toString()
         }
