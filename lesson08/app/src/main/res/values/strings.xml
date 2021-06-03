@@ -16,5 +16,5 @@
     <string name="clear">c</string>
     <string name="equally">=</string>
     <string name="plus">+</string>
-    <string name="error">На ноль в этой вселенной делить нельзя</string>
+    <string name="error">ERROR</string>
 </resources>
