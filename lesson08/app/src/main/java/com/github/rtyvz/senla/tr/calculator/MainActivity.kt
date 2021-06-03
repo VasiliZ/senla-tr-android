@@ -131,8 +131,7 @@ class MainActivity : AppCompatActivity() {
                 val secondOperator = stackForCalculation.pop().toInt()
 
                 when (value) {
-                    MINUS_STRING ->
-                        stackForCalculation.push((firstOperator - secondOperator).toString())
+                    MINUS_STRING -> stackForCalculation.push((firstOperator - secondOperator).toString())
                     PLUS_STRING ->
                         stackForCalculation.push((firstOperator + secondOperator).toString())
                     DIV_STRING -> {
@@ -173,7 +172,7 @@ class MainActivity : AppCompatActivity() {
     //проверям после нажатия кнопки что бы не пушить операции подряд одна за одной
     private fun inputOperation(operation: String) {
 
-        if (isCalculated && previousOperations.isEmpty()) {
+        if (isCalculated || previousOperations.isEmpty()) {
             return
         }
 
