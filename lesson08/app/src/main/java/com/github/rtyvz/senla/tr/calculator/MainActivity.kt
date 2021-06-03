@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun inputValue(value: String) {
-
+        //если нажимали равно и вычислили значение то очищаем предыдущую операцию
         if (isCalculated) {
             binding.previousOperations.text = EMPTY_STRING
             previousOperations.clear()
@@ -86,12 +86,14 @@ class MainActivity : AppCompatActivity() {
             binding.resultOfOperations.text = currentNumber.toString()
         }
 
+        //если была операция то пушим ее после введенного значния
         if (currentOperation.isNotBlank()) {
             stackOperations.push(currentOperation)
             currentOperation = EMPTY_STRING
         }
     }
 
+    //нажали на "C" все почистили
     private fun clear() {
         binding.apply {
             resultOfOperations.text = EMPTY_STRING
@@ -104,22 +106,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun calculate() {
-
+        //если в стеке недостаточно значений для выполнения операции - скипаем
         if (stackOperations.size < 2) {
             return
         }
-
+        //удаляем предыдущие вычисления если друг остались
         stackForCalculation.clear()
+        //переворачиваем сте что бы было удобней брать значение по порядку
         stackOperations.reverse()
         binding.previousOperations.text = previousOperations.toString()
-
+        //проверяем есть ли значения и состояние вычисления
         if (currentNumber.isNotBlank() && !isCalculated) {
             stackOperations.push(currentNumber.toString())
         }
 
         while (stackOperations.isNotEmpty()) {
             val value = stackOperations.pop()
-
+            //проверяем значение, чифра это или нет, если цифра то пушим в отдельный стек для вычислений
+            //если нет то берем два числа из стека и производим над ними манипуляции
             if (isNumber(value)) {
                 stackForCalculation.push(value)
             } else {
@@ -134,6 +138,7 @@ class MainActivity : AppCompatActivity() {
                         stackForCalculation.push((firstOperator + secondOperator).toString())
                     }
                     DIV_STRING -> {
+                        //проверяем деление на 0
                         if (firstOperator == 0 || secondOperator == 0) {
                             previousOperations.clear()
                             stackForCalculation.clear()
@@ -152,7 +157,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
+        //если в стеке с вычислениями есть значение после всех манипуляций
+        //выводим его на экран и подчищаем за собой переменные
         if (stackForCalculation.isNotEmpty()) {
             binding.resultOfOperations.text = stackForCalculation.pop()
             stackForCalculation.clear()
@@ -166,6 +172,7 @@ class MainActivity : AppCompatActivity() {
         return value.toIntOrNull() != null
     }
 
+    //проверям после нажатия кнопки что бы не пушить операции подряд одна за одной
     private fun inputOperation(operation: String) {
 
         if (isCalculated) {
