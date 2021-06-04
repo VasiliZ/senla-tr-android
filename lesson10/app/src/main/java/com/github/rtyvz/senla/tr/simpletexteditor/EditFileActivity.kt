@@ -74,14 +74,17 @@ class EditFileActivity : AppCompatActivity() {
 
     private fun makeViewSettings(textColor: Int, textSize: Float) {
 
-        if (textColor != DEFAULT_PREFS_INT_VALUE) binding.editFileContentEditText.setTextColor(
-            textColor
-        )
+        if (textColor != DEFAULT_PREFS_INT_VALUE) {
+            binding.editFileContentEditText.setTextColor(
+                textColor
+            )
+        }
 
-        if (textSize != DEFAULT_PREFS_FLOAT_VALUE)
+        if (textSize != DEFAULT_PREFS_FLOAT_VALUE) {
             binding.editFileContentEditText.setTextSize(
                 TypedValue.COMPLEX_UNIT_SP,
                 textSize
             )
+        }
     }
 }
