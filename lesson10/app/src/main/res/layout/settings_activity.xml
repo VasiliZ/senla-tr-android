@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/middle_margin"
+        android:text="@string/settings_activity_text_size_label"
+        android:textColor="@color/black" />
+
+    <RadioGroup
+        android:id="@+id/textSizeRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/large_margin">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/smallTextSizeRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_activity_small_label" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/middleTextSizeRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_activity_middle_label" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/largeTextSizeRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_activity_large_label" />
+    </RadioGroup>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/middle_margin"
+        android:text="@string/settings_activity_text_color_label"
+        android:textColor="@color/black" />
+
+    <RadioGroup
+        android:id="@+id/textColorRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/large_margin">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/blackColorRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_activity_black_color_label" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/redColorRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_activity_red_color_label" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/greenColorRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_activity_green_color_label" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/closeSettingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_activity_close_label" />
+</LinearLayout>

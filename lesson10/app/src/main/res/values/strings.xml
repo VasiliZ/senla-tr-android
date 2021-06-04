@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">SimpleTextEditor</string>
+    <!--main activity-->
+    <string name="main_activity_create_file_label">Создать файл</string>
+    <string name="main_activity_settings_label">Настройки</string>
+    <string name="main_activity_display_file_label">Посмотреть файл</string>
+    <string name="main_activity_edit_file_label">Редактировать файл</string>
+    <string name="settings_activity_small_label">Маленький</string>
+    <string name="settings_activity_middle_label">Средний</string>
+    <string name="settings_activity_large_label">Большой</string>
+    <string name="settings_activity_text_size_label">Размер теста</string>
+    <string name="settings_activity_text_color_label">Цвет текста</string>
+    <string name="settings_activity_black_color_label">Черный</string>
+    <string name="settings_activity_red_color_label">Красный</string>
+    <string name="settings_activity_green_color_label">Зеленый</string>
+    <string name="settings_activity_close_label">Закрыть</string>
+    <string name="edit_file_activity_cant_write_to_file">Записать данные не получилось</string>
+
+    <!--settings activity-->
+</resources>
