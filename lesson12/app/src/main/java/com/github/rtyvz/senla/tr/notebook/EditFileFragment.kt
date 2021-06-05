@@ -76,8 +76,11 @@ class EditFileFragment : Fragment() {
                     oldFileName
                 )
 
-                if (firstLineFileIsEmpty) {
-                    fileContent = StringBuilder(fileContent).insert(0, fileName).toString()
+                if (newFileNameForRepeatedFileName.isNotBlank()) {
+                    fileContent =
+                        StringBuilder(fileContent).insert(0, fileName)
+                            .insert(fileName.length, LINE_BREAK)
+                            .toString()
                 }
 
                 File(
@@ -88,11 +91,11 @@ class EditFileFragment : Fragment() {
                     }
             } else {
                 val pathToNewFile = buildPathForNewFile(fileName)
-                if (firstLineFileIsEmpty) {
+                if (newFileNameForRepeatedFileName.isNotBlank()) {
                     fileContent =
                         StringBuilder(fileContent).insert(
                             0, File(pathToNewFile).nameWithoutExtension
-                        )
+                        ).insert(File(pathToNewFile).nameWithoutExtension.length, LINE_BREAK)
                             .toString()
                 }
                 File(pathToNewFile).createNewFile()
@@ -161,8 +164,8 @@ class EditFileFragment : Fragment() {
     }
 
     private fun findFileWithTheSameName(fileName: String, dir: String) {
-
         File(dir).listFiles()!!.forEachIndexed { _, file ->
+
             if (file.nameWithoutExtension == fileName) {
                 countFileRepeat++
                 createNewNameForRepeatFile(fileName, countFileRepeat, dir)
