@@ -7,7 +7,7 @@ import java.io.File
 
 class EditFileActivity : AppCompatActivity() {
     private lateinit var binding: EditFileActivityBinding
-    private var savedFilePath: String = EMPTY_STRING
+    private var savedFilePath: String? = null
 
     companion object {
         private const val CHAR_SET = "UTF-8"
@@ -29,11 +29,11 @@ class EditFileActivity : AppCompatActivity() {
         }
         val contentFileBuilder = StringBuilder()
 
-        if (savedFilePath.isNotBlank()) {
-            readFromFile(savedFilePath).forEach {
+        savedFilePath?.let {
+            readFromFile(it).forEach {
                 contentFileBuilder.append(it).append(LINE_BREAK)
             }
-            binding.editFileEditText.text = contentFileBuilder.toString().toEditable()
+            binding.editFileEditText.setText(contentFileBuilder.toString())
         }
     }
 
@@ -41,9 +41,8 @@ class EditFileActivity : AppCompatActivity() {
 
         if (value.isNotBlank()) {
             val fileName = createFileName(value)
-
-            if (savedFilePath.isNotBlank()) {
-                val fileForOperations = File(savedFilePath)
+            savedFilePath?.let {
+                val fileForOperations = File(it)
                 val dirToFile = fileForOperations.parent
                 val oldFileName = fileForOperations.name
                 val newFileNameBuilder =
@@ -56,7 +55,7 @@ class EditFileActivity : AppCompatActivity() {
                 File(newPathBuilder.toString()).bufferedWriter(charset = charset(CHAR_SET)).use {
                     it.write(value)
                 }
-            } else {
+            } ?: run {
                 val filePathBuilder = buildPathForNewFile(fileName)
                 File(filePathBuilder).createNewFile()
                 File(filePathBuilder).bufferedWriter(charset = charset(CHAR_SET)).use {
@@ -67,18 +66,17 @@ class EditFileActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        writeToFile(binding.editFileEditText.text.toString())
+
         super.onPause()
 
-        writeToFile(binding.editFileEditText.text.toString())
     }
 
-    private fun readFromFile(filePath: String): List<String> {
-        return File(filePath).bufferedReader().readLines()
-    }
+    private fun readFromFile(filePath: String) = File(filePath).bufferedReader().readLines()
 
     private fun buildPathForNewFile(fileName: String): String {
         return StringBuilder()
-            .append(NotebookApp.getNotebookPath())
+            .append(NotebookApp.INSTANCE?.getNotebookDirPath())
             .append(File.separator)
             .append(fileName)
             .append(FILE_EXT).toString()
@@ -87,24 +85,16 @@ class EditFileActivity : AppCompatActivity() {
     private fun createFileName(value: String): String {
         return when {
             value.contains(LINE_BREAK) ->
-                if (value.length <= MAX_FILE_NAME_SIZE || value.indexOf(LINE_BREAK) < MAX_FILE_NAME_SIZE) {
-                    value.substring(
-                        START_STRING_INDEX, value.indexOf(
-                            LINE_BREAK
-                        )
-                    ).trim()
+                if (value.length <= MAX_FILE_NAME_SIZE
+                    || value.indexOf(LINE_BREAK) < MAX_FILE_NAME_SIZE
+                ) {
+                    value.substring(START_STRING_INDEX, value.indexOf(LINE_BREAK)).trim()
                 } else {
-                    value.substring(
-                        START_STRING_INDEX,
-                        MAX_FILE_NAME_SIZE
-                    ).trim()
+                    value.substring(START_STRING_INDEX, MAX_FILE_NAME_SIZE).trim()
                 }
             value.length <= MAX_FILE_NAME_SIZE -> value.trim()
-            value.length >= MAX_FILE_NAME_SIZE -> value.substring(
-                START_STRING_INDEX,
-                MAX_FILE_NAME_SIZE
-            )
-                .trim()
+            value.length >= MAX_FILE_NAME_SIZE -> value
+                .substring(START_STRING_INDEX, MAX_FILE_NAME_SIZE).trim()
             else -> {
                 EMPTY_STRING
             }

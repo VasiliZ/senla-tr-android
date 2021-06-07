@@ -12,6 +12,11 @@ import java.util.*
 
 class FilesAdapter(private val click: (String) -> Unit) :
     ListAdapter<File, FilesAdapter.FilesViewHolder>(DiffCallback()) {
+    private val dateFormatter = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+
+    companion object {
+        private const val DATE_FORMAT = "dd-MM-yyyy"
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilesViewHolder {
         val binding =
@@ -20,7 +25,7 @@ class FilesAdapter(private val click: (String) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: FilesViewHolder, position: Int) {
-        holder.bind(getItem(position), click)
+        holder.bind(getItem(position), click, dateFormatter)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<File>() {
@@ -31,12 +36,8 @@ class FilesAdapter(private val click: (String) -> Unit) :
 
     class FilesViewHolder(private val view: FileDetailsItemBinding) :
         RecyclerView.ViewHolder(view.root) {
-        companion object {
-            private const val DATE_FORMAT = "dd-MM-yyyy"
-        }
 
-        fun bind(item: File, click: (String) -> Unit) {
-            val dateFormatter = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+        fun bind(item: File, click: (String) -> Unit, dateFormatter: SimpleDateFormat) {
             view.nameFileTextView.text = item.name
             view.lastEditTextView.text = dateFormatter.format(Date(item.lastModified()))
             view.root.setOnClickListener {

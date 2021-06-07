@@ -53,13 +53,13 @@ class EditFileActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        super.onPause()
-
         binding.apply {
             if (editFileContentEditText.text?.isNotBlank() ?: return) {
                 writeToFile(editFileContentEditText.text.toString())
             }
         }
+
+        super.onPause()
     }
 
     private fun writeToFile(value: String) {

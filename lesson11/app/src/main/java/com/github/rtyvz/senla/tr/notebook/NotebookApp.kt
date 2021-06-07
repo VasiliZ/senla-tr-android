@@ -4,22 +4,20 @@ import android.app.Application
 import java.io.File
 
 class NotebookApp : Application() {
+    private lateinit var noteBookDir: File
 
     companion object {
-        private var instance: NotebookApp? = null
+        var INSTANCE: NotebookApp? = null
         private const val NOTEBOOK_DIR_NAME = "documents"
-        private val pathToDirBuilder = StringBuilder()
-        private lateinit var noteBookDir: File
-
-        fun getNotebookPath(): String = noteBookDir.absolutePath
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        instance = this
+        INSTANCE = this
+        val pathToDirBuilder = StringBuilder()
         noteBookDir = File(
-            pathToDirBuilder.append(instance?.filesDir).append(File.separator)
+            pathToDirBuilder.append(INSTANCE?.filesDir).append(File.separator)
                 .append(NOTEBOOK_DIR_NAME)
                 .toString()
         )
@@ -30,5 +28,9 @@ class NotebookApp : Application() {
         if (!noteBookDir.exists()) {
             noteBookDir.mkdir()
         }
+    }
+
+    fun getNotebookDirPath(): String {
+        return noteBookDir.absolutePath
     }
 }

@@ -26,7 +26,6 @@ class NotebookActivity : AppCompatActivity() {
         binding = NotebookActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        displayViews()
         binding.apply {
             listFile.apply {
                 layoutManager =
@@ -43,16 +42,16 @@ class NotebookActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        displayViews()
+        configureViews()
     }
 
     private fun getFiles(): Array<File> {
-        return NotebookApp.getNotebookPath().let {
+        return NotebookApp.INSTANCE?.getNotebookDirPath().let {
             File(it).listFiles()
         } ?: emptyArray()
     }
 
-    private fun displayViews() {
+    private fun configureViews() {
         val arrayFiles = getFiles()
         if (arrayFiles.isEmpty()) {
             binding.apply {
