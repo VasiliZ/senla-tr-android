@@ -1,5 +1,6 @@
 package com.github.rtyvz.senla.tr.simpletexteditor
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -9,65 +10,55 @@ import com.github.rtyvz.senla.tr.simpletexteditor.databinding.SettingsActivityBi
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: SettingsActivityBinding
     private lateinit var prefs: SharedPreferences
+    private lateinit var colorValue: String
+    private lateinit var textSizeValue: String
 
     companion object {
-        const val SETTING_PREFS = "SETTING_PREFS"
-        const val SAVE_COLOR_PREFS = "SAVE_COLOR_PREFS"
-        const val SAVE_TEXT_SIZE_PREFS = "SAVE_TEXT_SIZE_PREFS"
+        const val PREFS_SETTING = "SETTING"
+        const val PREFS_COLOR = "COLOR"
+        const val PREFS_TEXT_SIZE = "TEXT_SIZE"
     }
 
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = SettingsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        prefs = getSharedPreferences(SETTING_PREFS, Context.MODE_PRIVATE)
+        prefs = getSharedPreferences(PREFS_SETTING, Context.MODE_PRIVATE)
         binding.apply {
             textColorRadioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
-                    R.id.blackColorRadioButton -> saveColorText(
-                        resources.getColor(
-                            R.color.black,
-                            null
-                        )
-                    )
-                    R.id.greenColorRadioButton -> saveColorText(
-                        resources.getColor(
-                            R.color.green,
-                            null
-                        )
-                    )
-                    R.id.redColorRadioButton -> saveColorText(
-                        resources.getColor(
-                            R.color.red,
-                            null
-                        )
-                    )
+                    R.id.blackColorRadioButton -> colorValue = Color.BLACK.name
+                    R.id.greenColorRadioButton -> colorValue = Color.GREEN.name
+                    R.id.redColorRadioButton -> colorValue = Color.RED.name
                 }
             }
 
             textSizeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
-                    R.id.smallTextSizeRadioButton ->
-                        saveTextSize(resources.getDimension(R.dimen.small_text_size))
+                    R.id.smallTextSizeRadioButton -> textSizeValue = TextSize.SMALL.name
                     R.id.middleTextSizeRadioButton ->
-                        saveTextSize(resources.getDimension(R.dimen.middle_text_size))
+                        textSizeValue = TextSize.MIDDLE.name
                     R.id.largeTextSizeRadioButton ->
-                        saveTextSize(resources.getDimension(R.dimen.large_text_size))
+                        textSizeValue = TextSize.LARGE.name
                 }
-            }
-
-            closeSettingsButton.setOnClickListener {
-                finish()
             }
         }
     }
 
-    private fun saveTextSize(dimension: Float) {
-        prefs.edit().putFloat(SAVE_TEXT_SIZE_PREFS, dimension).apply()
+    override fun onPause() {
+        super.onPause()
+
+        saveColorText(colorValue)
+        saveTextSize(textSizeValue)
     }
 
-    private fun saveColorText(color: Int) {
-        prefs.edit().putInt(SAVE_COLOR_PREFS, color).apply()
+    private fun saveTextSize(dimension: String) {
+        prefs.edit().putString(PREFS_TEXT_SIZE, dimension).apply()
+    }
+
+    private fun saveColorText(colorValue: String) {
+        prefs.edit().putString(PREFS_COLOR, colorValue).apply()
     }
 }

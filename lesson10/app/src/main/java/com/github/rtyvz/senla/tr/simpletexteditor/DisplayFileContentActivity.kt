@@ -17,8 +17,6 @@ class DisplayFileContentActivity : AppCompatActivity() {
         private const val CHAR_SET = "UTF-8"
         private const val LINE_BREAK = "\n"
         private const val EMPTY_STRING = ""
-        private const val DEFAULT_PREFS_INT_VALUE = 0
-        private const val DEFAULT_PREFS_FLOAT_VALUE = 0F
         private const val ADDITION = 1
         private const val DOT = "."
         private const val SPACE = "\t"
@@ -29,15 +27,15 @@ class DisplayFileContentActivity : AppCompatActivity() {
         binding = DisplayFileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        prefs = getSharedPreferences(SettingsActivity.SETTING_PREFS, Context.MODE_PRIVATE)
+        prefs = getSharedPreferences(SettingsActivity.PREFS_SETTING, Context.MODE_PRIVATE)
         filePath = StringBuilder().append(filesDir.absolutePath).append(File.separator)
             .append(MainActivity.FILE_NAME).toString()
-        val textColor = prefs.getInt(SettingsActivity.SAVE_COLOR_PREFS, DEFAULT_PREFS_INT_VALUE)
+        val textColor = prefs.getString(SettingsActivity.PREFS_COLOR, EMPTY_STRING)
         val textSize =
-            prefs.getFloat(SettingsActivity.SAVE_TEXT_SIZE_PREFS, DEFAULT_PREFS_FLOAT_VALUE)
+            prefs.getString(SettingsActivity.PREFS_TEXT_SIZE, EMPTY_STRING)
         val contentFile = StringBuilder()
 
-        writeDataFromFile().forEachIndexed { index, s ->
+        readDataFromFile().forEachIndexed { index, s ->
             contentFile
                 .append(index + ADDITION)
                 .append(DOT)
@@ -51,18 +49,55 @@ class DisplayFileContentActivity : AppCompatActivity() {
         binding.displayFileContentTextView.text = contentFile
     }
 
-    private fun writeDataFromFile() = File(filePath).bufferedReader(charset(CHAR_SET)).readLines()
+    private fun readDataFromFile() = File(filePath).bufferedReader(charset(CHAR_SET)).readLines()
 
-    private fun makeViewSettings(textColor: Int, textSize: Float) {
+    private fun makeViewSettings(textColor: String?, textSize: String?) {
+        binding.apply {
+            textColor?.let {
+                when (it) {
+                    Color.BLACK.name -> displayFileContentTextView.setTextColor(
+                        resources.getColor(
+                            R.color.black,
+                            null
+                        )
+                    )
+                    Color.RED.name -> displayFileContentTextView.setTextColor(
+                        resources.getColor(
+                            R.color.red,
+                            null
+                        )
+                    )
+                    else -> displayFileContentTextView.setTextColor(
+                        resources.getColor(
+                            R.color.green,
+                            null
+                        )
+                    )
+                }
+            }
 
-        if (textColor != DEFAULT_PREFS_INT_VALUE) binding.displayFileContentTextView.setTextColor(
-            textColor
-        )
-
-        if (textSize != DEFAULT_PREFS_FLOAT_VALUE)
-            binding.displayFileContentTextView.setTextSize(
-                TypedValue.COMPLEX_UNIT_SP,
-                textSize
-            )
+            textSize?.let {
+                when (it) {
+                    TextSize.SMALL.name -> {
+                        displayFileContentTextView.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            resources.getDimension(R.dimen.small_text_size)
+                        )
+                    }
+                    TextSize.MIDDLE.name -> {
+                        displayFileContentTextView.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            resources.getDimension(R.dimen.middle_text_size)
+                        )
+                    }
+                    else -> {
+                        displayFileContentTextView.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            resources.getDimension(R.dimen.large_text_size)
+                        )
+                    }
+                }
+            }
+        }
     }
 }

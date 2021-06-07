@@ -17,8 +17,7 @@ class EditFileActivity : AppCompatActivity() {
         private const val CHAR_SET = "UTF-8"
         private const val LINE_BREAK = "\n"
         private const val EMPTY_STRING = ""
-        private const val DEFAULT_PREFS_INT_VALUE = 0
-        private const val DEFAULT_PREFS_FLOAT_VALUE = 0F
+        private const val DOT = "."
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,15 +27,15 @@ class EditFileActivity : AppCompatActivity() {
 
         filePath = StringBuilder().append(filesDir.absolutePath).append(File.separator)
             .append(MainActivity.FILE_NAME).toString()
-        prefs = getSharedPreferences(SettingsActivity.SETTING_PREFS, Context.MODE_PRIVATE)
-        val textColor = prefs.getInt(
-            SettingsActivity.SAVE_COLOR_PREFS,
-            DEFAULT_PREFS_INT_VALUE
+        prefs = getSharedPreferences(SettingsActivity.PREFS_SETTING, Context.MODE_PRIVATE)
+        val textColor = prefs.getString(
+            SettingsActivity.PREFS_COLOR,
+            EMPTY_STRING
         )
         val textSize =
-            prefs.getFloat(
-                SettingsActivity.SAVE_TEXT_SIZE_PREFS,
-                DEFAULT_PREFS_FLOAT_VALUE
+            prefs.getString(
+                SettingsActivity.PREFS_TEXT_SIZE,
+                EMPTY_STRING
             )
         makeViewSettings(textColor, textSize)
 
@@ -47,8 +46,9 @@ class EditFileActivity : AppCompatActivity() {
             readFromFile().forEach {
                 tempValueForWriteBackToFile.append(it).append(LINE_BREAK)
             }
-            binding.editFileContentEditText.text =
-                tempValueForWriteBackToFile.toString().toEditable()
+            binding.editFileContentEditText.setText(
+                tempValueForWriteBackToFile.toString()
+            )
         }
     }
 
@@ -72,19 +72,53 @@ class EditFileActivity : AppCompatActivity() {
         return File(filePath).bufferedReader().readLines()
     }
 
-    private fun makeViewSettings(textColor: Int, textSize: Float) {
+    private fun makeViewSettings(textColor: String?, textSize: String?) {
+        binding.apply {
+            textColor?.let {
+                when (it) {
+                    Color.BLACK.name -> editFileContentEditText.setTextColor(
+                        resources.getColor(
+                            R.color.black,
+                            null
+                        )
+                    )
+                    Color.RED.name -> editFileContentEditText.setTextColor(
+                        resources.getColor(
+                            R.color.red,
+                            null
+                        )
+                    )
+                    else -> editFileContentEditText.setTextColor(
+                        resources.getColor(
+                            R.color.green,
+                            null
+                        )
+                    )
+                }
+            }
 
-        if (textColor != DEFAULT_PREFS_INT_VALUE) {
-            binding.editFileContentEditText.setTextColor(
-                textColor
-            )
-        }
-
-        if (textSize != DEFAULT_PREFS_FLOAT_VALUE) {
-            binding.editFileContentEditText.setTextSize(
-                TypedValue.COMPLEX_UNIT_SP,
-                textSize
-            )
+            textSize?.let {
+                when (it) {
+                    TextSize.SMALL.name -> {
+                        editFileContentEditText.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            resources.getDimension(R.dimen.small_text_size)
+                        )
+                    }
+                    TextSize.MIDDLE.name -> {
+                        editFileContentEditText.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            resources.getDimension(R.dimen.middle_text_size)
+                        )
+                    }
+                    else -> {
+                        editFileContentEditText.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            resources.getDimension(R.dimen.large_text_size)
+                        )
+                    }
+                }
+            }
         }
     }
 }

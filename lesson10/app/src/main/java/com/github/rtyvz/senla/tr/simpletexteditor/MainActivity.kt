@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        displayViews()
         binding.apply {
             createFileButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, EditFileActivity::class.java))
@@ -28,8 +27,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, EditFileActivity::class.java))
             }
             displayFileButton.setOnClickListener {
-                startActivity(Intent(this@MainActivity,
-                    DisplayFileContentActivity::class.java))
+                startActivity(
+                    Intent(
+                        this@MainActivity,
+                        DisplayFileContentActivity::class.java
+                    )
+                )
             }
             settingsButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
@@ -37,20 +40,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayViews() {
+    private fun configureViews() {
         val filePath = filesDir.absolutePath + File.separator + FILE_NAME
 
-        if (!File(filePath).exists()) {
-            binding.apply {
-                createFileButton.isVisible = true
-                editFileButton.isVisible = false
-                displayFileButton.isVisible = false
-            }
-        } else {
+        if (File(filePath).exists()) {
             binding.apply {
                 createFileButton.isVisible = false
                 editFileButton.isVisible = true
                 displayFileButton.isVisible = true
+            }
+        } else {
+            binding.apply {
+                createFileButton.isVisible = true
+                editFileButton.isVisible = false
+                displayFileButton.isVisible = false
             }
         }
     }
@@ -58,6 +61,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        displayViews()
+        configureViews()
     }
 }
