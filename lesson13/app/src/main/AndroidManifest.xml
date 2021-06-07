@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.drawer">
-
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    package="com.github.rtyvz.senla.tr.multiapp">
 
     <application
         android:allowBackup="true"
+        android:name=".MultiFuncApp"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Drawer">
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Drawer.NoActionBar">
+        android:theme="@style/Theme.MultiApp.NoActionBar">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
