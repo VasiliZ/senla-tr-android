@@ -6,14 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvz.senla.tr.calculator.databinding.PreviousValueItemBinding
 
 class ValueAdapter : RecyclerView.Adapter<ValueAdapter.ValueViewHolder>() {
-
     private val valueList: MutableList<String> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ValueViewHolder {
-        val view =
-            PreviousValueItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ValueViewHolder(view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ValueViewHolder(
+        PreviousValueItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+    )
 
     override fun onBindViewHolder(holder: ValueViewHolder, position: Int) {
         holder.bind(valueList[position])
@@ -28,14 +29,14 @@ class ValueAdapter : RecyclerView.Adapter<ValueAdapter.ValueViewHolder>() {
 
     override fun getItemCount() = valueList.size
 
-    fun removeItem() {
-        notifyItemRemoved(0)
-        valueList.removeAt(0)
+    fun removeItem(position: Int) {
+        valueList.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     fun insertItem(value: String) {
-        notifyDataSetChanged()
         valueList.add(value)
+        notifyDataSetChanged()
     }
 
     fun insertItems(data: List<String>) {

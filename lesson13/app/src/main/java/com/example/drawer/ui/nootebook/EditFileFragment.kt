@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.notebook
+package com.example.drawer.ui.nootebook
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.github.rtyvz.senla.tr.notebook.databinding.EditFileFragmentBinding
+import com.example.drawer.MultiFuncApp
+import com.example.drawer.databinding.EditFileFragmentBinding
+import com.github.rtyvz.senla.tr.notebook.toEditable
 import java.io.File
 
 class EditFileFragment : Fragment() {
@@ -111,7 +113,7 @@ class EditFileFragment : Fragment() {
     }
 
     private fun buildPathForNewFile(fileName: String): String {
-        val pathToNoteBookDir = NotebookApp.getNotebookPath()
+        val pathToNoteBookDir = MultiFuncApp.getNotebookPath()
         findFileWithTheSameName(fileName, pathToNoteBookDir)
 
         val newFileName: String = if (newFileNameForRepeatedFileName.isNotBlank()) {

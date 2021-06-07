@@ -1,24 +1,25 @@
-package com.github.rtyvz.senla.tr.calculator
+package com.example.drawer.ui.calc
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.github.rtyvz.senla.tr.calculator.databinding.CalcActivityBinding
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.drawer.R
+import com.example.drawer.databinding.CalcFragmentBinding
 import java.util.*
-import kotlin.collections.ArrayList
 
-class CalcActivity : AppCompatActivity() {
-    private lateinit var binding: CalcActivityBinding
+class CalcFragment : Fragment() {
+    private var binding: CalcFragmentBinding? = null
     private var previousOperations: StringBuilder = StringBuilder()
     private var currentNumber: StringBuilder = StringBuilder()
     private var currentOperation: String = EMPTY_STRING
-    private var currentOperationForCalculate: String = EMPTY_STRING
     private var isCalculated = false
-    private var result: String = EMPTY_STRING
     private val stackOperations = Stack<String>()
     private val stackForCalculation = Stack<String>()
 
     companion object {
+        const val TAG = "CalcFragmentTag"
         private const val EMPTY_STRING = ""
         private const val MULTIPLY_STRING = "*"
         private const val MINUS_STRING = "-"
@@ -34,10 +35,17 @@ class CalcActivity : AppCompatActivity() {
         private const val SAVE_STACK_FOR_CALC = "STACK_FOR_CALC"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = CalcActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = CalcFragmentBinding.inflate(inflater)
+        return binding?.root ?: error("can't bind calc fragment")
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         savedInstanceState?.let {
             currentNumber = StringBuilder(it.getString(SAVE_CURRENT_INPUTED_VALUE)!!)
@@ -49,18 +57,13 @@ class CalcActivity : AppCompatActivity() {
             it.getStringArrayList(SAVE_STACK_FOR_CALC)?.let { list ->
                 stackForCalculation.addAll(list)
             }
-            binding.apply {
+            binding?.apply {
                 resultOfOperationsTextView.text = currentNumber
+                previousOperationsTextView.text = previousOperations
             }
         }
 
-        binding.apply {
-            sendResultButton.setOnClickListener {
-                setResult(RESULT_OK, Intent().apply {
-                    putExtra(MainActivity.EXTRA_RESULT_VALUE, result)
-                })
-                finish()
-            }
+        binding?.apply {
             inputZeroButton.setOnClickListener { inputValue(getString(R.string.zero)) }
             inputEquallyButton.setOnClickListener { calculate() }
             inputPlusButton.setOnClickListener { inputOperation(getString(R.string.plus)) }
@@ -83,35 +86,30 @@ class CalcActivity : AppCompatActivity() {
     private fun inputValue(value: String) {
         //если нажимали равно и вычислили значение то очищаем предыдущую операцию
         if (isCalculated) {
-            binding.resultOfOperationsTextView.text = EMPTY_STRING
+            binding?.previousOperationsTextView?.text = EMPTY_STRING
             previousOperations.clear()
             isCalculated = false
         }
 
-        binding.apply {
+        binding?.apply {
             previousOperations.append(value)
             currentNumber.append(value)
-            resultOfOperationsTextView.text = currentNumber
+            previousOperationsTextView.text = currentNumber.toString()
         }
 
         //если была операция то пушим ее после введенного значния
-        when {
-            currentOperation.isNotBlank() -> {
-                currentOperationForCalculate = currentOperation
-                stackOperations.push(currentOperation)
-                currentOperation = EMPTY_STRING
-            }
+        if (currentOperation.isNotBlank()) {
+            stackOperations.push(currentOperation)
+            currentOperation = EMPTY_STRING
         }
     }
 
     //нажали на "C" все почистили
     private fun clear() {
-        binding.apply {
+        binding?.apply {
             resultOfOperationsTextView.text = EMPTY_STRING
+            previousOperationsTextView.text = EMPTY_STRING
             stackForCalculation.clear()
-            stackOperations.clear()
-            currentOperation = EMPTY_STRING
-            currentOperationForCalculate = EMPTY_STRING
             currentNumber.clear()
             stackOperations.clear()
             previousOperations.clear()
@@ -119,27 +117,15 @@ class CalcActivity : AppCompatActivity() {
     }
 
     private fun calculate() {
-
-        if (!isNumber(previousOperations.last().toString())) {
-            val lastNumber = stackOperations.peek()
-            stackOperations.push(lastNumber)
-            stackOperations.push(currentOperationForCalculate)
-            previousOperations.append(lastNumber).append(currentOperationForCalculate)
+        //если в стеке недостаточно значений для выполнения операции - скипаем
+        if (stackOperations.size < 2) {
+            return
         }
-
-        if (stackOperations.isEmpty() && isCalculated) {
-            stackOperations.push(stackForCalculation.peek())
-            val lastValue = previousOperations.substring(
-                previousOperations.lastIndexOf(currentOperationForCalculate) + 1,
-                previousOperations.length
-            )
-            stackOperations.push(lastValue)
-            stackOperations.push(currentOperationForCalculate)
-            previousOperations.append(currentOperation).append(lastValue)
-        }
-        //переворачиваем то что бы было удобней брать значение по порядку
+        //удаляем предыдущие вычисления если друг остались
+        stackForCalculation.clear()
+        //переворачиваем сте что бы было удобней брать значение по порядку
         stackOperations.reverse()
-        binding.resultOfOperationsTextView.text = previousOperations.toString()
+        binding?.resultOfOperationsTextView?.text = previousOperations.toString()
         //проверяем есть ли значения и состояние вычисления
         if (currentNumber.isNotBlank() && !isCalculated) {
             stackOperations.push(currentNumber.toString())
@@ -165,8 +151,9 @@ class CalcActivity : AppCompatActivity() {
                             previousOperations.clear()
                             stackForCalculation.clear()
                             stackOperations.clear()
-                            binding.apply {
+                            binding?.apply {
                                 resultOfOperationsTextView.text = getString(R.string.error)
+                                previousOperationsTextView.text = EMPTY_STRING
                             }
                         } else {
                             stackForCalculation.push((firstOperator / secondOperator).toString())
@@ -181,17 +168,17 @@ class CalcActivity : AppCompatActivity() {
         //если в стеке с вычислениями есть значение после всех манипуляций
         //выводим его на экран и подчищаем за собой переменные
         if (stackForCalculation.isNotEmpty()) {
-            result = stackForCalculation.peek()
-            binding.resultOfOperationsTextView.text = result
+            binding?.resultOfOperationsTextView?.text = stackForCalculation.pop()
+            stackForCalculation.clear()
+            previousOperations.clear()
+            currentNumber.clear()
             isCalculated = true
-
-            if (!isNumber(previousOperations.last().toString())) {
-                previousOperations.deleteCharAt(previousOperations.length - 1)
-            }
         }
     }
 
-    private fun isNumber(value: String) = value.toIntOrNull() != null
+    private fun isNumber(value: String): Boolean {
+        return value.toIntOrNull() != null
+    }
 
     //проверям после нажатия кнопки что бы не пушить операции подряд одна за одной
     private fun inputOperation(operation: String) {
@@ -208,6 +195,7 @@ class CalcActivity : AppCompatActivity() {
         currentNumber.clear()
         previousOperations.append(operation)
         currentOperation = operation
+        binding?.resultOfOperationsTextView?.text = previousOperations.toString()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -217,5 +205,11 @@ class CalcActivity : AppCompatActivity() {
         outState.putString(SAVE_ALL_PREVIOUS_OPERATIONS, previousOperations.toString())
         outState.putStringArrayList(SAVE_STACK_OPERATIONS, ArrayList(stackOperations))
         outState.putStringArrayList(SAVE_STACK_FOR_CALC, ArrayList(stackForCalculation))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        binding = null
     }
 }

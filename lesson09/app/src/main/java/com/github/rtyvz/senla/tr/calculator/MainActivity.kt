@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvz.senla.tr.calculator.databinding.MainActivityBinding
 
 class MainActivity : AppCompatActivity() {
@@ -17,11 +16,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
 
     companion object {
-        const val RESULT_OK = 1
-        const val RESULT_VALUE_EXTRA = "RESULT_VALUE_EXTRA"
+        const val EXTRA_RESULT_VALUE = "RESULT_VALUE"
+        private const val REQUEST_CODE = 0
+        private const val FIRST_LIST_ITEM = 0
         private const val ITEM_CAP = 5
         private const val EMPTY_STRING = ""
-        private const val SAVED_VALUE_PREFS = "SAVED_VALUE_PREFS"
+        private const val PREFS_CALC = "SAVED_VALUE_PREFS"
         private const val SAVED_VALUE = "SAVED_VALUE"
         private const val DELIMITER = ","
     }
@@ -31,36 +31,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        prefs = getSharedPreferences(SAVED_VALUE_PREFS, Context.MODE_PRIVATE)
+        prefs = getSharedPreferences(PREFS_CALC, Context.MODE_PRIVATE)
 
         if (readFromPrefs().isNotBlank()) {
-            valueAdapter.insertItems(readFromPrefs().split(DELIMITER).takeLast(5))
+            valueAdapter.insertItems(readFromPrefs().split(DELIMITER).takeLast(ITEM_CAP))
         }
 
         binding.apply {
             saveButton.setOnClickListener {
-                currentValue =
-                    if (valueAdapter.itemCount >= ITEM_CAP && currentValue.isNotBlank()) {
-                        valueAdapter.removeItem()
-                        valueAdapter.insertItem(currentValue)
-                        writeToPrefs(currentValue)
-                        EMPTY_STRING
-                    } else {
-                        valueAdapter.insertItem(currentValue)
-                        writeToPrefs(currentValue)
-                        EMPTY_STRING
-                    }
+                if (valueAdapter.itemCount >= ITEM_CAP && currentValue.isNotBlank()) {
+                    valueAdapter.removeItem(FIRST_LIST_ITEM)
+                    valueAdapter.insertItem(currentValueTextView.text.toString())
+                    writeToPrefs(currentValueTextView.text.toString())
+                } else {
+                    valueAdapter.insertItem(currentValueTextView.text.toString())
+                    writeToPrefs(currentValueTextView.text.toString())
+                }
+                currentValue = EMPTY_STRING
             }
 
             openCalcButton.setOnClickListener {
                 startActivityForResult(
                     Intent(this@MainActivity, CalcActivity::class.java),
-                    RESULT_OK
+                    REQUEST_CODE
                 )
             }
 
             listSavedValues.apply {
-                layoutManager = LinearLayoutManager(this@MainActivity)
                 adapter = valueAdapter
             }
         }
@@ -69,9 +66,11 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        data?.let {
-            currentValue = it.getStringExtra(RESULT_VALUE_EXTRA) ?: EMPTY_STRING
-            binding.currentValueTextView.text = currentValue
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            data?.let {
+                binding.currentValueTextView.text =
+                    it.getStringExtra(EXTRA_RESULT_VALUE) ?: EMPTY_STRING
+            }
         }
     }
 

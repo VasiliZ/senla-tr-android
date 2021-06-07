@@ -1,11 +1,11 @@
-package com.github.rtyvz.senla.tr.notebook.adapter
+package com.example.drawer.ui.nootebook.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.github.rtyvz.senla.tr.notebook.databinding.FileDetailsItemBinding
+import com.example.drawer.databinding.FileDetailsItemBinding
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
