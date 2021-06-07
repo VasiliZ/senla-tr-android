@@ -17,7 +17,6 @@ class EditFileActivity : AppCompatActivity() {
         private const val CHAR_SET = "UTF-8"
         private const val LINE_BREAK = "\n"
         private const val EMPTY_STRING = ""
-        private const val DOT = "."
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
