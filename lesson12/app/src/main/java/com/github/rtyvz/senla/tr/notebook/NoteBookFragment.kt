@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.rtyvz.senla.tr.notebook.adapter.FilesAdapter
+import com.example.drawer.ui.nootebook.adapter.FilesAdapter
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookFragmentBinding
 import java.io.File
 
@@ -18,23 +18,21 @@ class NoteBookFragment : Fragment() {
         FilesAdapter { path ->
 
             if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                val fragment = EditFileFragment()
-                fragment.arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, path)
+                val fragment = EditFileFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(EditFileFragment.PATH_FILE_EXTRA, path)
+                    }
                 }
                 createFragment(R.id.contentContainer, fragment)
             } else {
-                val fragment = EditFileFragment()
-                fragment.arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, path)
+                val fragment = EditFileFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(EditFileFragment.PATH_FILE_EXTRA, path)
+                    }
                 }
-                createFragment(R.id.fragmentContainer, fragment)
+                createFragment(R.id.listFileContainer, fragment)
             }
         }
-    }
-
-    companion object {
-        const val TAG = "NoteBookFragment"
     }
 
     override fun onCreateView(
@@ -62,14 +60,14 @@ class NoteBookFragment : Fragment() {
                 if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     createFragment(R.id.contentContainer, EditFileFragment())
                 } else {
-                    createFragment(R.id.fragmentContainer, EditFileFragment())
+                    createFragment(R.id.listFileContainer, EditFileFragment())
                 }
             }
         }
     }
 
     private fun getFiles(): Array<File> {
-        return NotebookApp.getNotebookPath().let {
+        return NotebookApp.instance?.getNotebookDir().let {
             File(it).listFiles()
         } ?: emptyArray()
     }
@@ -98,9 +96,9 @@ class NoteBookFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-
         binding = null
+
+        super.onDestroy()
     }
 
     private fun createFragment(contentContainer: Int, fragment: Fragment) {

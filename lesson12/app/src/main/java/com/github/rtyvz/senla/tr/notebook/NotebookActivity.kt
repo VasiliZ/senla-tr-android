@@ -1,5 +1,6 @@
 package com.github.rtyvz.senla.tr.notebook
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookActivityBinding
@@ -15,8 +16,16 @@ class NotebookActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
 
-        transaction.replace(R.id.fragmentContainer, NoteBookFragment(), NoteBookFragment.TAG)
-        transaction.addToBackStack(null)
-        transaction.commit()
+        if (resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            transaction.replace(R.id.contentContainer, EditFileFragment())
+            transaction.addToBackStack(null)
+            transaction.replace(R.id.listFileContainer, NoteBookFragment())
+            transaction.addToBackStack(null)
+            transaction.commit()
+        } else {
+            transaction.replace(R.id.listFileContainer, NoteBookFragment())
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
     }
 }
