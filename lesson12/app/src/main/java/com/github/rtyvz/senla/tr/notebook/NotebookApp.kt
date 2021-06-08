@@ -7,18 +7,18 @@ class NotebookApp : Application() {
     private lateinit var noteBookDir: File
 
     companion object {
-        var instance: NotebookApp? = null
+        var INSTANCE: NotebookApp? = null
         private const val NOTEBOOK_DIR_NAME = "documents"
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        instance = this
+        INSTANCE = this
 
         noteBookDir = File(
             StringBuilder()
-                .append(instance?.filesDir)
+                .append(filesDir)
                 .append(File.separator)
                 .append(NOTEBOOK_DIR_NAME)
                 .toString()

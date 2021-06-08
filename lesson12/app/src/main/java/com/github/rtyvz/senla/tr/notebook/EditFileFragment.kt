@@ -110,7 +110,7 @@ class EditFileFragment : Fragment() {
     private fun readFromFile(filePath: String) = File(filePath).bufferedReader().readLines()
 
     private fun buildPathForNewFile(fileName: String): String {
-        val pathToNoteBookDir = NotebookApp.instance!!.getNotebookDir()
+        val pathToNoteBookDir = NotebookApp.INSTANCE!!.getNotebookDir()
         findFileWithTheSameName(fileName, pathToNoteBookDir)
         val newFileName: String = if (newFileNameForRepeatedFileName.isNotBlank()) {
             newFileNameForRepeatedFileName
