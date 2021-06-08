@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.multiapp
+package com.github.rtyvz.senla.tr.multiapp.ui
 
 interface ChangeTitleToolBarContract {
     fun changeToolBar(title: String?)

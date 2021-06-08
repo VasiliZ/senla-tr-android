@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.github.rtyvz.senla.tr.multiapp.MainActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.MainFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ext.createDialog

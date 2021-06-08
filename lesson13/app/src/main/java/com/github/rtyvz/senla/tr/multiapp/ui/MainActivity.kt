@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.multiapp
+package com.github.rtyvz.senla.tr.multiapp.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -7,13 +7,15 @@ import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.calc.CalcFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.main.MainFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
 
-class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
+class MainActivity : AppCompatActivity(),
+    ChangeTitleToolBarContract {
     private lateinit var binding: ActivityMainBinding
     private var currentTag: String? = null
 
@@ -51,7 +53,10 @@ class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
             this,
             data,
             R.layout.drawer_item,
-            listOf(ADAPTER_DATA_FIELD, ADAPTER_TAG_FIELD).toTypedArray(),
+            listOf(
+                ADAPTER_DATA_FIELD,
+                ADAPTER_TAG_FIELD
+            ).toTypedArray(),
             intArrayOf(R.id.drawerItemTextView)
         )
 
