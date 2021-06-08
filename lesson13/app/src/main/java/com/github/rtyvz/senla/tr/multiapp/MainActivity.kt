@@ -13,7 +13,7 @@ import com.github.rtyvz.senla.tr.multiapp.ui.main.MainFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
 
-class MainActivity : AppCompatActivity(), ChangeToolBarContract {
+class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
     private lateinit var binding: ActivityMainBinding
 
     companion object {
