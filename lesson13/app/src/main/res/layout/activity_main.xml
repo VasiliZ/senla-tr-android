@@ -22,9 +22,9 @@
 
         <ListView
             android:id="@+id/navigationItemList"
-            android:layout_marginTop="32dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/middle_margin"
             tools:listitem="@layout/drawer_item" />
 
     </com.google.android.material.navigation.NavigationView>

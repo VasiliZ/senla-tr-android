@@ -1,6 +1,7 @@
 <resources>
     <!--dimen-->
     <dimen name="large_margin">64dp</dimen>
+    <dimen name="middle_margin">32dp</dimen>
     <dimen name="small_margin">8dp</dimen>
     <dimen name="extra_small_margin">4dp</dimen>
 
