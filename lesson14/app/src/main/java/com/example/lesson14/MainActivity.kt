@@ -11,7 +11,6 @@ import java.io.*
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var listElements = mutableListOf<Element>()
-    private var isRotate = false
     private val elementAdapter by lazy {
         ElementAdapter(layoutInflater, listElements)
     }

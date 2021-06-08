@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">RegexApp</string>
+
+    <!--drawer menu items-->
+    <string-array name="drawer_item_list">
+        <item>Главная</item>
+        <item>Настройки</item>
+    </string-array>
 </resources>

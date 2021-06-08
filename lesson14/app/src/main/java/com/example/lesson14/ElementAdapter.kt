@@ -8,10 +8,9 @@ import com.example.lesson14.databinding.ElementItemBinding
 import com.example.lesson14.model.Element
 
 class ElementAdapter(
-    private val inflater: LayoutInflater,
-    private val data: MutableList<Element>
-) :
-    BaseAdapter() {
+        private val inflater: LayoutInflater,
+        private val data: MutableList<Element>
+) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val binding = ElementItemBinding.inflate(inflater)

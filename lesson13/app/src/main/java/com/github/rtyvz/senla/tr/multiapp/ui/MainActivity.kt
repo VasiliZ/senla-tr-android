@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(),
 
     companion object {
         const val ADAPTER_DATA_FIELD = "data"
-        const val ADAPTER_TAG_FIELD = "tag"
+        const val TAG_IDENTIFIER = "tag"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         savedInstanceState?.let {
-            currentTag = it.getString(ADAPTER_TAG_FIELD)
+            currentTag = it.getString(TAG_IDENTIFIER)
         }
         setSupportActionBar(binding.appBarMain.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(),
         for (i in listTags.indices) {
             val map = mutableMapOf<String, String>()
             map[ADAPTER_DATA_FIELD] = listFromResource[i]
-            map[ADAPTER_TAG_FIELD] = listTags[i]
+            map[TAG_IDENTIFIER] = listTags[i]
             data.add(map)
         }
 
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(),
             R.layout.drawer_item,
             listOf(
                 ADAPTER_DATA_FIELD,
-                ADAPTER_TAG_FIELD
+                TAG_IDENTIFIER
             ).toTypedArray(),
             intArrayOf(R.id.drawerItemTextView)
         )
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(),
         binding.navigationItemList.setOnItemClickListener { parent, _, position, _ ->
             parent.adapter.getItem(position)
             val dataAdapter = simpleAdapter.getItem(position) as LinkedHashMap<*, *>
-            replaceFragmentByTag(dataAdapter[ADAPTER_TAG_FIELD].toString())
+            replaceFragmentByTag(dataAdapter[TAG_IDENTIFIER].toString())
         }
         currentTag?.let {
             replaceFragmentByTag(it)
@@ -105,6 +105,6 @@ class MainActivity : AppCompatActivity(),
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putString(ADAPTER_TAG_FIELD, currentTag)
+        outState.putString(TAG_IDENTIFIER, currentTag)
     }
 }
