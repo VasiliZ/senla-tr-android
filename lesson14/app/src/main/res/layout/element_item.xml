@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/itemTitleEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/middle_margin"
+        app:layout_constraintEnd_toStartOf="@id/removeItemButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/removeItemButton"
+        style="@style/Lesson14.Button.Style"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:layout_marginStart="@dimen/middle_margin"
+        android:layout_marginTop="@dimen/middle_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        app:icon="@drawable/drawable_remove_black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/itemTitleEditText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/inc_button"
+        style="@style/Lesson14.Button.Style"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        app:icon="@drawable/drawable_plus_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/small_margin"
+        app:layout_constraintEnd_toStartOf="@id/countTextView"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemTitleEditText" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/countTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/large_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/inc_button"
+        app:layout_constraintEnd_toStartOf="@id/dec_button"
+        app:layout_constraintStart_toEndOf="@id/inc_button"
+        app:layout_constraintTop_toTopOf="@id/inc_button"
+        tools:text="1" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dec_button"
+        style="@style/Lesson14.Button.Style"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        app:icon="@drawable/drawable_minus_black"
+        android:layout_marginEnd="@dimen/small_margin"
+        app:layout_constraintBottom_toBottomOf="@id/inc_button"
+        app:layout_constraintEnd_toStartOf="@id/removeItemButton"
+        app:layout_constraintStart_toEndOf="@id/countTextView"
+        app:layout_constraintTop_toTopOf="@id/inc_button"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

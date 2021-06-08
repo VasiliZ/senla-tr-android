@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menuSave"
+        android:icon="@drawable/drawable_save_white"
+        android:title="@string/appbar_menu_save_label"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menuAdd"
+        android:icon="@drawable/drawable_add_white"
+        android:title="@string/appbar_menu_add_label"
+        app:showAsAction="ifRoom" />
+</menu>

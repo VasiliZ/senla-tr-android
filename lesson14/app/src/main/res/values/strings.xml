@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">lesson14</string>
+
+    <!--app bar menu-->
+    <string name="appbar_menu_save_label">save</string>
+    <string name="appbar_menu_add_label">add</string>
 </resources>
