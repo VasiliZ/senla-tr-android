@@ -22,7 +22,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = MainFragmentBinding.inflate(layoutInflater)
+        binding = MainFragmentBinding.inflate(inflater)
         return binding?.root ?: error("can't bind main fragment")
     }
 

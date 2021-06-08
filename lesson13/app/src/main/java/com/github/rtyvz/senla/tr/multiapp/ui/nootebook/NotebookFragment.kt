@@ -22,11 +22,11 @@ class NotebookFragment : Fragment() {
         FilesAdapter { path ->
 
             if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                val fragment = ParentFragmentNotebook()
+                val fragment = EditFileFragment()
                 fragment.arguments = Bundle().apply {
                     putString(EditFileFragment.PATH_FILE_EXTRA, path)
                 }
-                createFragment(R.id.fragmentContainer, fragment)
+                createFragment(R.id.contentContainer, fragment)
             } else {
                 val fragment = EditFileFragment()
                 fragment.arguments = Bundle().apply {
@@ -46,7 +46,7 @@ class NotebookFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = NotebookFragmentBinding.inflate(layoutInflater)
+        binding = NotebookFragmentBinding.inflate(inflater)
         return binding?.root ?: error("can't bind note book fragment")
     }
 
@@ -56,15 +56,13 @@ class NotebookFragment : Fragment() {
         (activity as MainActivity).changeToolBar(activity?.getString(R.string.notebook_fragment_label))
         binding?.apply {
             listFile.apply {
-                layoutManager =
-                    LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
                 adapter = filesAdapter
             }
 
             createNewFileButton.setOnClickListener {
 
                 if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    createFragment(R.id.fragmentContainer, ParentFragmentNotebook())
+                    createFragment(R.id.contentContainer, EditFileFragment())
                 } else {
                     createFragment(R.id.fragmentContainer, EditFileFragment())
                 }
@@ -108,10 +106,10 @@ class NotebookFragment : Fragment() {
     }
 
     private fun createFragment(contentContainer: Int, fragment: Fragment) {
-        val fragmentManager = childFragmentManager
+        val fragmentManager = parentFragmentManager
+        fragmentManager.fragments.clear()
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(contentContainer, fragment)
-        transaction.addToBackStack(null)
         transaction.commit()
     }
 }

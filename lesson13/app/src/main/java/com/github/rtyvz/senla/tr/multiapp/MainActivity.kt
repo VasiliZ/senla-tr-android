@@ -15,6 +15,7 @@ import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
 
 class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
     private lateinit var binding: ActivityMainBinding
+    private var currentTag: String? = null
 
     companion object {
         const val ADAPTER_DATA_FIELD = "data"
@@ -26,6 +27,9 @@ class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        savedInstanceState?.let {
+            currentTag = it.getString(ADAPTER_TAG_FIELD)
+        }
         setSupportActionBar(binding.appBarMain.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val listTags = listOf(MainFragment.TAG, NotebookFragment.TAG, CalcFragment.TAG)
@@ -57,19 +61,23 @@ class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
             val dataAdapter = simpleAdapter.getItem(position) as LinkedHashMap<*, *>
             replaceFragmentByTag(dataAdapter[ADAPTER_TAG_FIELD].toString())
         }
-        replaceFragment(MainFragment())
+        currentTag?.let {
+            replaceFragmentByTag(it)
+        } ?: kotlin.run {
+            replaceFragment(MainFragment())
+        }
     }
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
+        transaction.commitNow()
     }
 
     private fun replaceFragmentByTag(tag: String?) {
         tag?.let {
+            currentTag = tag
             when (tag) {
                 MainFragment.TAG -> replaceFragment(MainFragment())
                 CalcFragment.TAG -> replaceFragment(CalcFragment())
@@ -87,5 +95,11 @@ class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
 
     override fun changeToolBar(title: String?) {
         binding.appBarMain.toolbar.title = title
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString(ADAPTER_TAG_FIELD, currentTag)
     }
 }

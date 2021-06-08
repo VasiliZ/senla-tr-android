@@ -27,7 +27,6 @@ class ParentFragmentNotebook : Fragment() {
             val manager = childFragmentManager
             val transaction = manager.beginTransaction()
             transaction.replace(R.id.containerForChild, LandNoteBookFragment())
-            transaction.addToBackStack(null)
             transaction.commit()
         }
     }

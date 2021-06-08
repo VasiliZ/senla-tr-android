@@ -102,6 +102,7 @@ class EditFileFragment : Fragment() {
                         ).insert(File(pathToNewFile).nameWithoutExtension.length, LINE_BREAK)
                             .toString()
                 }
+
                 File(pathToNewFile).createNewFile()
                 File(pathToNewFile).bufferedWriter(charset = charset(CHAR_SET)).use {
                     it.write(fileContent)
@@ -203,11 +204,6 @@ class EditFileFragment : Fragment() {
 
 
     override fun onPause() {
-        activity?.let {
-            if (resources.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-              //  it.supportFragmentManager.beginTransaction().remove(this).commit()
-            }
-        }
         writeToFile(binding?.editFileEditText?.text.toString())
 
         super.onPause()
