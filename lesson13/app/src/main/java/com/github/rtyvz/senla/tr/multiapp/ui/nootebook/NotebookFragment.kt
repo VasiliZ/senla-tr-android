@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.drawer.ui.nootebook.EditFileFragment
 import com.example.drawer.ui.nootebook.adapter.FilesAdapter
 import com.github.rtyvz.senla.tr.multiapp.MainActivity
@@ -110,6 +109,7 @@ class NotebookFragment : Fragment() {
         fragmentManager.fragments.clear()
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(contentContainer, fragment)
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 }
