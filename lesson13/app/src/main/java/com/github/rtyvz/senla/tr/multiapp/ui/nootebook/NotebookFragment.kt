@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.drawer.ui.nootebook.EditFileFragment
-import com.example.drawer.ui.nootebook.adapter.FilesAdapter
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter.FilesAdapter
 import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
 import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
 import com.github.rtyvz.senla.tr.multiapp.R

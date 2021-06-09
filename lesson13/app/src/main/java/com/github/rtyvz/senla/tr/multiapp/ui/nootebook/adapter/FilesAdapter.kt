@@ -1,4 +1,4 @@
-package com.example.drawer.ui.nootebook.adapter
+package com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

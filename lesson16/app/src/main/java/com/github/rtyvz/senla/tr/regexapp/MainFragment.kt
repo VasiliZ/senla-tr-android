@@ -3,7 +3,6 @@ package com.github.rtyvz.senla.tr.regexapp
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,15 +51,19 @@ class MainFragment : Fragment() {
                                     resultBuilding.append(tempStringValue)
                                 }
                                 "find_word_in_tag" -> {
-                                    val tempStringValue = findAndReplaceTags(resultBuilding)
+                                    val tempStringValue =
+                                        findAndReplaceTags(resultBuilding.toString())
                                     resultBuilding.clear()
                                     resultBuilding.append(tempStringValue)
                                 }
 
-                                it.resources?.getString(R.string.preference_find_links)
-                                -> findAndReplaceLinks()
+                                "find_links" -> {
+                                    val tempStringValue =
+                                        findAndReplaceLinks(resultBuilding.toString())
+                                    resultBuilding.clear()
+                                    resultBuilding.append(tempStringValue)
+                                }
                             }
-                            Log.d("key", t)
                         }
                     }
                 }
@@ -91,18 +94,16 @@ class MainFragment : Fragment() {
         return value.replace("\\ +".toRegex(), "-")
     }
 
-    private fun findAndReplaceTags(value: StringBuilder): String {
-        return value.replace("<one>(.*?)<\\/one>".toRegex()) {
-            if (it.value.contains("<one>(.*?)<\\/one>".toRegex())) {
-                findAndReplaceTags(StringBuilder(it.value))
-            } else {
-                it.value
-            }
+    private fun findAndReplaceTags(value: String): String {
+        return ("[^<one?.*>(.*)<\\/one>]".toRegex().findAll(value)).joinToString {
+            it.value
         }
     }
 
-    private fun findAndReplaceLinks(): String {
-        return ""
+    private fun findAndReplaceLinks(value: String): String {
+        return value.replace("(\\swww\\.\\S*\\.\\w*)".toRegex()) {
+            "\\thttp://${it.value.replace(" ", "")}"
+        }
     }
 
     override fun onDestroy() {
