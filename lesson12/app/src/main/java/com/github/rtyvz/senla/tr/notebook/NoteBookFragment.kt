@@ -18,12 +18,7 @@ class NoteBookFragment : Fragment() {
         FilesAdapter { path ->
 
             if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                val fragment = EditFileFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(EditFileFragment.PATH_FILE_EXTRA, path)
-                    }
-                }
-                createFragment(R.id.contentContainer, fragment)
+                (activity as NotebookActivity).passData(path)
             } else {
                 val fragment = EditFileFragment().apply {
                     arguments = Bundle().apply {
@@ -89,6 +84,14 @@ class NoteBookFragment : Fragment() {
         }
     }
 
+    private fun createFragment(contentContainer: Int, fragment: Fragment) {
+        val fragmentManager = activity?.supportFragmentManager
+        val transaction = fragmentManager?.beginTransaction()
+        transaction?.replace(contentContainer, fragment)
+        transaction?.addToBackStack(null)
+        transaction?.commit()
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -99,13 +102,5 @@ class NoteBookFragment : Fragment() {
         binding = null
 
         super.onDestroy()
-    }
-
-    private fun createFragment(contentContainer: Int, fragment: Fragment) {
-        val fragmentManager = activity?.supportFragmentManager
-        val transaction = fragmentManager?.beginTransaction()
-        transaction?.replace(contentContainer, fragment)
-        transaction?.addToBackStack(null)
-        transaction?.commit()
     }
 }

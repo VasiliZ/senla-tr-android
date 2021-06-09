@@ -3,9 +3,10 @@ package com.github.rtyvz.senla.tr.notebook
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookActivityBinding
 
-class NotebookActivity : AppCompatActivity() {
+class NotebookActivity : AppCompatActivity(), PassDataContract {
     private lateinit var binding: NotebookActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,19 +14,28 @@ class NotebookActivity : AppCompatActivity() {
         binding = NotebookActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val fragmentManager = supportFragmentManager
-        val transaction = fragmentManager.beginTransaction()
+
 
         if (resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            transaction.replace(R.id.contentContainer, EditFileFragment())
-            transaction.addToBackStack(null)
-            transaction.replace(R.id.listFileContainer, NoteBookFragment())
-            transaction.addToBackStack(null)
-            transaction.commit()
+            createFragment(R.id.listFileContainer, NoteBookFragment())
+            createFragment(R.id.contentContainer, EditFileFragment())
         } else {
-            transaction.replace(R.id.listFileContainer, NoteBookFragment())
-            transaction.addToBackStack(null)
-            transaction.commit()
+            createFragment(R.id.listFileContainer, NoteBookFragment())
+        }
+    }
+
+    private fun createFragment(fragmentId: Int, fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(fragmentId, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    override fun passData(data: String) {
+        val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
+        if (fragment != null) {
+            (fragment as EditFileFragment).setPath(data)
         }
     }
 }

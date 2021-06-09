@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.notebook.databinding.EditFileFragmentBinding
 import java.io.File
 
-class EditFileFragment : Fragment() {
+class EditFileFragment : Fragment(), GetPathContract {
     private var binding: EditFileFragmentBinding? = null
     private var savedFilePath: String? = null
     private var newFileNameForRepeatedFileName: String = EMPTY_STRING
@@ -197,6 +197,13 @@ class EditFileFragment : Fragment() {
             .append(newFileNameBuilder).toString()
     }
 
+    private fun setContentFromFileToFragment(path: String) {
+        val contentFileBuilder = StringBuilder()
+        readFromFile(path).forEach {
+            contentFileBuilder.append(it).append(LINE_BREAK)
+        }
+        binding?.editFileEditText?.setText(contentFileBuilder.toString())
+    }
 
     override fun onPause() {
         activity?.let {
@@ -213,6 +220,10 @@ class EditFileFragment : Fragment() {
         binding = null
 
         super.onDestroy()
+    }
 
+    override fun setPath(path: String) {
+        savedFilePath = path
+        setContentFromFileToFragment(path)
     }
 }
