@@ -4,39 +4,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import androidx.core.content.res.ResourcesCompat
 import com.github.rtyvz.senla.tr.regexapp.databinding.DrawerItemBinding
+import com.github.rtyvz.senla.tr.regexapp.entity.MenuItem
 
 class MenuAdapter(
     private val inflater: LayoutInflater,
-    private val data: List<String>
+    private val data: List<MenuItem>
 ) : BaseAdapter() {
     private var selectedItem = -1
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val binding = DrawerItemBinding.inflate(inflater)
         val item = getItem(position)
+        binding.drawerItemTextView.text = item.title
+        binding.drawerMenuIcon.setImageDrawable(item.icon)
 
-        when (position) {
-            0 -> binding.drawerMenuIcon.setImageDrawable(
-                ResourcesCompat.getDrawable(
-                    inflater.context.resources,
-                    R.drawable.drawable_home_black,
-                    null
-                )
-            )
-            1 -> {
-                binding.drawerMenuIcon.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        inflater.context.resources,
-                        R.drawable.drawable_settings_black,
-                        null
-                    )
-                )
-            }
-        }
-
-        binding.drawerItemTextView.text = item
         if (selectedItem == position) {
             binding.root.setBackgroundColor(
                 inflater.context.resources.getColor(

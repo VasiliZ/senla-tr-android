@@ -6,4 +6,14 @@
         <item>Главная</item>
         <item>Настройки</item>
     </string-array>
+
+    <!--main fragment-->
+    <string name="main_fragment_apply_label">Применить</string>
+
+    <!--preference-->
+    <string name="preference_replace_minus">Заменить минус</string>
+    <string name="preference_find_phone_numbers">Найти телефонные номера</string>
+    <string name="preference_find_four_letter_word">Найти слова из 4х букв</string>
+    <string name="preference_find_word_in_tag">Найти слова в тегах</string>
+    <string name="preference_find_links">Найти ссылки</string>
 </resources>

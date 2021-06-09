@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBoxPreference
+        android:key="replace_minus"
+        android:title="@string/preference_replace_minus" />
+    <CheckBoxPreference
+        android:key="find_phone_numbers"
+        android:title="@string/preference_find_phone_numbers" />
+    <CheckBoxPreference
+        android:title="Найти слова из 4х букв"
+        app:key="find_four_letter_word" />
+    <CheckBoxPreference
+        android:title="Найти слова в тегах"
+        app:key="find_word_in_tag" />
+    <CheckBoxPreference
+        android:title="@string/preference_find_links"
+        app:key="find_links" />
+</PreferenceScreen>
