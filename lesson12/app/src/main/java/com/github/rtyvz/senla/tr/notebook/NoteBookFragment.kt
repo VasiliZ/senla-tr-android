@@ -16,17 +16,7 @@ class NoteBookFragment : Fragment() {
     private var binding: NotebookFragmentBinding? = null
     private val filesAdapter by lazy {
         FilesAdapter { path ->
-
-            if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                (activity as NotebookActivity).passData(path)
-            } else {
-                val fragment = EditFileFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(EditFileFragment.PATH_FILE_EXTRA, path)
-                    }
-                }
-                createFragment(R.id.listFileContainer, fragment)
-            }
+            (activity as NotebookActivity).passData(path)
         }
     }
 

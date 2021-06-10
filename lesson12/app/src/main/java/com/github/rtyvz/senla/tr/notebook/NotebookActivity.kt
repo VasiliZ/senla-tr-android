@@ -14,8 +14,6 @@ class NotebookActivity : AppCompatActivity(), PassDataContract {
         binding = NotebookActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
         if (resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             createFragment(R.id.listFileContainer, NoteBookFragment())
             createFragment(R.id.contentContainer, EditFileFragment())
@@ -36,6 +34,12 @@ class NotebookActivity : AppCompatActivity(), PassDataContract {
         val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
         if (fragment != null) {
             (fragment as EditFileFragment).setPath(data)
+        } else {
+            createFragment(R.id.listFileContainer, EditFileFragment().apply {
+                arguments = Bundle().apply {
+                    putString(EditFileFragment.PATH_FILE_EXTRA, data)
+                }
+            })
         }
     }
 }
