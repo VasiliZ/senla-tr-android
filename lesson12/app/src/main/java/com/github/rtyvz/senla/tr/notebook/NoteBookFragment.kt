@@ -1,6 +1,5 @@
 package com.github.rtyvz.senla.tr.notebook
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ class NoteBookFragment : Fragment() {
     private var binding: NotebookFragmentBinding? = null
     private val filesAdapter by lazy {
         FilesAdapter { path ->
-            (activity as NotebookActivity).passData(path)
+            (activity as OpenFragmentContract).passData(path)
         }
     }
 
@@ -39,14 +38,8 @@ class NoteBookFragment : Fragment() {
                     LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
                 adapter = filesAdapter
             }
-
             createNewFileButton.setOnClickListener {
-
-                if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    createFragment(R.id.contentContainer, EditFileFragment())
-                } else {
-                    createFragment(R.id.listFileContainer, EditFileFragment())
-                }
+                (activity as OpenFragmentContract).createFragmentForNewFile()
             }
         }
     }
@@ -72,14 +65,6 @@ class NoteBookFragment : Fragment() {
                 listFile.isVisible = true
             }
         }
-    }
-
-    private fun createFragment(contentContainer: Int, fragment: Fragment) {
-        val fragmentManager = activity?.supportFragmentManager
-        val transaction = fragmentManager?.beginTransaction()
-        transaction?.replace(contentContainer, fragment)
-        transaction?.addToBackStack(null)
-        transaction?.commit()
     }
 
     override fun onResume() {

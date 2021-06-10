@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.notebook.databinding.EditFileFragmentBinding
 import java.io.File
 
-class EditFileFragment : Fragment(), GetPathContract {
+class EditFileFragment : Fragment(), PassDataContract {
     private var binding: EditFileFragmentBinding? = null
     private var savedFilePath: String? = null
     private var newFileNameForRepeatedFileName: String = EMPTY_STRING
@@ -222,8 +222,15 @@ class EditFileFragment : Fragment(), GetPathContract {
         super.onDestroy()
     }
 
-    override fun setPath(path: String) {
-        savedFilePath = path
-        setContentFromFileToFragment(path)
+    override fun setData(data: String?) {
+        savedFilePath = data
+        data?.let {
+            setContentFromFileToFragment(it)
+        }
     }
 }
+
+interface PassDataContract {
+    fun setData(data: String?)
+}
+
