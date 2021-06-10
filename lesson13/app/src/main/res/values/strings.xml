@@ -39,7 +39,6 @@
     <string name="equally">=</string>
     <string name="plus">+</string>
     <string name="error">ERROR</string>
-    <string name="ok_label">OK</string>
     <string name="calc_fragment_title">Калькулятор</string>
 
     <!--notebook fragment-->

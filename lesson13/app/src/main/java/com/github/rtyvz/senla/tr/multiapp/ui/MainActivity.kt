@@ -1,21 +1,23 @@
 package com.github.rtyvz.senla.tr.multiapp.ui
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.example.drawer.ui.nootebook.EditFileFragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
+import com.github.rtyvz.senla.tr.multiapp.ext.bool
 import com.github.rtyvz.senla.tr.multiapp.ui.calc.CalcFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.main.MainFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ResetDataFragmentContract
 
 class MainActivity : AppCompatActivity(),
-    ChangeTitleToolBarContract {
+    ChangeTitleToolBarContract, ResetDataFragmentContract {
     private lateinit var binding: ActivityMainBinding
     private var currentTag: String? = null
 
@@ -77,7 +79,8 @@ class MainActivity : AppCompatActivity(),
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
-        transaction.commitNow()
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     private fun replaceFragmentByTag(tag: String?) {
@@ -87,7 +90,7 @@ class MainActivity : AppCompatActivity(),
                 MainFragment.TAG -> replaceFragment(MainFragment())
                 CalcFragment.TAG -> replaceFragment(CalcFragment())
                 NotebookFragment.TAG -> {
-                    if (resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    if (R.bool.isLand.bool(this)) {
                         replaceFragment(ParentFragmentNotebook())
                     } else {
                         replaceFragment(NotebookFragment())
@@ -106,5 +109,29 @@ class MainActivity : AppCompatActivity(),
         super.onSaveInstanceState(outState)
 
         outState.putString(TAG_IDENTIFIER, currentTag)
+    }
+
+    override fun setContent(content: String) {
+        val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
+        if (fragment is EditFileFragment) {
+            fragment.setContent(content)
+        } else {
+            replaceFragment(EditFileFragment().apply {
+                arguments = Bundle().apply {
+                    putString(EditFileFragment.PATH_FILE_EXTRA, content)
+                }
+            })
+        }
+    }
+
+    override fun openNewFile() {
+        if (R.bool.isLand.bool(this)) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
+            if (fragment is EditFileFragment) {
+                fragment.setContent(null)
+            }
+        } else {
+            replaceFragment(EditFileFragment())
+        }
     }
 }

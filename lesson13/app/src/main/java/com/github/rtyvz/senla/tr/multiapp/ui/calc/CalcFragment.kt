@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.CalcFragmentBinding
+import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
 import java.util.*
 
 class CalcFragment : Fragment() {

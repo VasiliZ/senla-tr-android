@@ -11,4 +11,7 @@
     <!--text size-->
     <dimen name="middle_text_size">24sp</dimen>
     <dimen name="large_text_size">32sp</dimen>
+
+    <!--bool-->
+    <bool name="isLand">false</bool>
 </resources>

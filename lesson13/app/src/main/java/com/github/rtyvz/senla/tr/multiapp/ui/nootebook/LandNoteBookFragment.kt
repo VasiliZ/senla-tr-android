@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.drawer.ui.nootebook.EditFileFragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookLandFragmentBinding
+import com.github.rtyvz.senla.tr.multiapp.ext.bool
 
-class LandNoteBookFragment : Fragment() {
+class LandNoteBookFragment : Fragment(), ResetDataFragmentContract {
     private var binding: NotebookLandFragmentBinding? = null
 
     override fun onCreateView(
@@ -23,9 +25,13 @@ class LandNoteBookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val manager = childFragmentManager
-        val transaction = manager.beginTransaction()
-        transaction.replace(R.id.listFileContainer, NotebookFragment())
+        setFragment(R.id.listFileContainer, NotebookFragment())
+        setFragment(R.id.contentContainer, EditFileFragment())
+    }
+
+    private fun setFragment(fragmentId: Int, fragment: Fragment) {
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.replace(fragmentId, fragment)
         transaction.commit()
     }
 
@@ -34,4 +40,33 @@ class LandNoteBookFragment : Fragment() {
 
         super.onDestroy()
     }
+
+    override fun setContent(content: String) {
+        val fragment = childFragmentManager.findFragmentById(R.id.contentContainer)
+        if (fragment is EditFileFragment) {
+            fragment.setContent(content)
+        } else {
+            setFragment(R.id.contentContainer, EditFileFragment().apply {
+                arguments = Bundle().apply {
+                    putString(EditFileFragment.PATH_FILE_EXTRA, content)
+                }
+            })
+        }
+    }
+
+    override fun openNewFile() {
+        if (R.bool.isLand.bool(requireActivity())) {
+            val fragment = childFragmentManager.findFragmentById(R.id.contentContainer)
+            if (fragment is EditFileFragment) {
+                fragment.setContent(null)
+            }
+        } else {
+            setFragment(R.id.contentContainer, EditFileFragment())
+        }
+    }
+}
+
+interface ResetDataFragmentContract {
+    fun setContent(content: String)
+    fun openNewFile()
 }

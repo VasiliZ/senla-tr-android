@@ -1,37 +1,27 @@
 package com.github.rtyvz.senla.tr.multiapp.ui.nootebook
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.example.drawer.ui.nootebook.EditFileFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter.FilesAdapter
-import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
 import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
+import com.github.rtyvz.senla.tr.multiapp.ext.bool
+import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter.FilesAdapter
 import java.io.File
 
 class NotebookFragment : Fragment() {
     private var binding: NotebookFragmentBinding? = null
     private val filesAdapter by lazy {
         FilesAdapter { path ->
-
-            if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                val fragment = EditFileFragment()
-                fragment.arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, path)
-                }
-                createFragment(R.id.contentContainer, fragment)
+            if (R.bool.isLand.bool(requireContext())) {
+                (parentFragment as ResetDataFragmentContract).setContent(path)
             } else {
-                val fragment = EditFileFragment()
-                fragment.arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, path)
-                }
-                createFragment(R.id.fragmentContainer, fragment)
+                (activity as ResetDataFragmentContract).setContent(path)
             }
         }
     }
@@ -52,18 +42,19 @@ class NotebookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).changeToolBar(activity?.getString(R.string.notebook_fragment_label))
+        if (!R.bool.isLand.bool(requireContext())) {
+            (activity as MainActivity).changeToolBar(activity?.getString(R.string.notebook_fragment_label))
+        }
         binding?.apply {
             listFile.apply {
                 adapter = filesAdapter
             }
 
             createNewFileButton.setOnClickListener {
-
-                if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    createFragment(R.id.contentContainer, EditFileFragment())
+                if (R.bool.isLand.bool(requireContext())) {
+                    (parentFragment as ResetDataFragmentContract).openNewFile()
                 } else {
-                    createFragment(R.id.fragmentContainer, EditFileFragment())
+                    (activity as ResetDataFragmentContract).openNewFile()
                 }
             }
         }
@@ -102,14 +93,5 @@ class NotebookFragment : Fragment() {
         binding = null
 
         super.onDestroy()
-    }
-
-    private fun createFragment(contentContainer: Int, fragment: Fragment) {
-        val fragmentManager = parentFragmentManager
-        fragmentManager.fragments.clear()
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(contentContainer, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
     }
 }

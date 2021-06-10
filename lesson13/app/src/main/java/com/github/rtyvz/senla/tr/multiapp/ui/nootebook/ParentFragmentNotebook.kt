@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ParentFragmentNotebookBinding
+import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
 
 class ParentFragmentNotebook : Fragment() {
     private var binding: ParentFragmentNotebookBinding? = null
@@ -23,6 +24,7 @@ class ParentFragmentNotebook : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as MainActivity).changeToolBar(activity?.getString(R.string.notebook_fragment_label))
         binding?.let {
             val manager = childFragmentManager
             val transaction = manager.beginTransaction()
