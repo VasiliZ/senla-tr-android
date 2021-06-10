@@ -3,7 +3,6 @@ package com.github.rtyvz.senla.tr.notebook
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookActivityBinding
 
 class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
@@ -42,7 +41,14 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
     }
 
     override fun createFragmentForNewFile() {
-        createFragment(R.id.contentContainer, EditFileFragment())
+        if (isListContainerAvailable()) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
+            if (fragment is EditFileFragment) {
+                fragment.setData(null)
+            }
+        } else {
+            createFragment(R.id.contentContainer, EditFileFragment())
+        }
     }
 
     private fun createFragment(fragmentId: Int, fragment: Fragment) {

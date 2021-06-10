@@ -199,8 +199,10 @@ class EditFileFragment : Fragment(), SetDataContract {
 
     private fun setContentFromFileToFragment(path: String) {
         val contentFileBuilder = StringBuilder()
-        readFromFile(path).forEach {
-            contentFileBuilder.append(it).append(LINE_BREAK)
+        if (path.isNotBlank()) {
+            readFromFile(path).forEach {
+                contentFileBuilder.append(it).append(LINE_BREAK)
+            }
         }
         binding?.editFileEditText?.setText(contentFileBuilder.toString())
     }
@@ -223,9 +225,13 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     override fun setData(data: String?) {
-        savedFilePath = data
-        data?.let {
-            setContentFromFileToFragment(it)
+
+        if (data == null) {
+            savedFilePath = null
+            setContentFromFileToFragment(EMPTY_STRING)
+        } else {
+            savedFilePath = data
+            setContentFromFileToFragment(data)
         }
     }
 }
