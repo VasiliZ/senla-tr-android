@@ -19,7 +19,7 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
 
     private fun createFragmentFromOrientation() {
         if (isPortOrientation()) {
-            createFragment(R.id.contentContainerLand, NoteBookFragment())
+            createFragment(R.id.contentContainer, NoteBookFragment())
         } else {
             createFragment(R.id.listFileContainer, NoteBookFragment())
             createFragment(R.id.contentContainer, EditFileFragment())
@@ -30,10 +30,10 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
         findViewById<FragmentContainerView>(R.id.listFileContainer) == null
 
     override fun passData(data: String?) {
-        val fragment = supportFragmentManager.findFragmentById(R.id.contentContainerLand)
+        val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
         fragment?.let {
             if (isPortOrientation()) {
-                createFragment(R.id.contentContainerLand, EditFileFragment().apply {
+                createFragment(R.id.contentContainer, EditFileFragment().apply {
                     arguments = Bundle().apply {
                         putString(EditFileFragment.PATH_FILE_EXTRA, data)
                     }
@@ -50,7 +50,7 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
 
     override fun createFragmentForNewFile() {
         if (isPortOrientation()) {
-            createFragment(R.id.contentContainerLand, EditFileFragment())
+            createFragment(R.id.contentContainer, EditFileFragment())
         } else {
             createFragment(R.id.contentContainer, EditFileFragment())
         }
