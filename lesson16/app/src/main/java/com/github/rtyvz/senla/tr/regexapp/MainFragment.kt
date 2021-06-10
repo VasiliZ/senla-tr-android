@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.github.rtyvz.senla.tr.regexapp.databinding.MainFragmentBinding
+import java.util.*
 
 class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
@@ -113,7 +114,7 @@ class MainFragment : Fragment() {
 
     private fun setUppercaseToFourLetterWords(value: StringBuilder): String {
         return value.replace(REGEX_FIND_FOUR_LETTER_WORD.toRegex()) {
-            it.value.toUpperCase()
+            it.value.toUpperCase(Locale.ROOT)
         }
     }
 
