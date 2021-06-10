@@ -18,42 +18,31 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
     }
 
     private fun createFragmentFromOrientation() {
-        if (isPortOrientation()) {
-            createFragment(R.id.contentContainer, NoteBookFragment())
-        } else {
+        if (isListContainerAvailable()) {
             createFragment(R.id.listFileContainer, NoteBookFragment())
             createFragment(R.id.contentContainer, EditFileFragment())
+        } else {
+            createFragment(R.id.contentContainer, NoteBookFragment())
         }
     }
 
-    private fun isPortOrientation() =
-        findViewById<FragmentContainerView>(R.id.listFileContainer) == null
+    private fun isListContainerAvailable() = binding.listFileContainer != null
 
     override fun passData(data: String?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
-        fragment?.let {
-            if (isPortOrientation()) {
-                createFragment(R.id.contentContainer, EditFileFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(EditFileFragment.PATH_FILE_EXTRA, data)
-                    }
-                })
-            } else {
-                createFragment(R.id.contentContainer, EditFileFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(EditFileFragment.PATH_FILE_EXTRA, data)
-                    }
-                })
-            }
+        if (fragment is EditFileFragment) {
+            fragment.setData(data)
+        } else {
+            createFragment(R.id.contentContainer, EditFileFragment().apply {
+                arguments = Bundle().apply {
+                    putString(EditFileFragment.PATH_FILE_EXTRA, data)
+                }
+            })
         }
     }
 
     override fun createFragmentForNewFile() {
-        if (isPortOrientation()) {
-            createFragment(R.id.contentContainer, EditFileFragment())
-        } else {
-            createFragment(R.id.contentContainer, EditFileFragment())
-        }
+        createFragment(R.id.contentContainer, EditFileFragment())
     }
 
     private fun createFragment(fragmentId: Int, fragment: Fragment) {

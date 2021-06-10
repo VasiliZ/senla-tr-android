@@ -182,7 +182,7 @@ class EditFileFragment : Fragment(), SetDataContract {
             StringBuilder(originallyName)
                 .append(EMPTY_SPACE)
                 .append(OPEN_BRACKET)
-                .append(index + COUNT_UP)
+                .append(index)
                 .append(CLOSE_BRACKET)
                 .toString()
         findFileWithTheSameName(newFileNameForRepeatedFileName, dir)
