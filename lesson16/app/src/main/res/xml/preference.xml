@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <CheckBoxPreference
         android:key="replace_minus"
-        android:title="@string/preference_replace_minus" />
+        android:title="@string/preference_replace_spaces" />
     <CheckBoxPreference
         android:key="find_phone_numbers"
         android:title="@string/preference_find_phone_numbers" />

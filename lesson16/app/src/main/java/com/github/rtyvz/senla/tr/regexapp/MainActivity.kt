@@ -15,6 +15,10 @@ class MainActivity : AppCompatActivity() {
         MenuAdapter(layoutInflater, populateMenuList())
     }
 
+    companion object {
+        private const val START_INDEX = 0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -26,18 +30,14 @@ class MainActivity : AppCompatActivity() {
             toolbar.setNavigationOnClickListener {
                 drawerLayout.openDrawer(Gravity.LEFT)
             }
-            drawerMenuAdapter.setIndexForSelectedItem(0)
+            drawerMenuAdapter.setIndexForSelectedItem(START_INDEX)
             navigationItemList.adapter = drawerMenuAdapter
             navigationItemList.setOnItemClickListener { _, _, position, _ ->
                 drawerMenuAdapter.setIndexForSelectedItem(position)
                 replaceFragment(position)
                 binding.drawerLayout.closeDrawer(Gravity.LEFT)
             }
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, MainFragment())
-                .addToBackStack(null)
-                .commit()
+            replaceFragment(START_INDEX)
         }
     }
 

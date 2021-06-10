@@ -27,6 +27,7 @@ class MenuAdapter(
                 )
             )
         }
+
         return binding.root
     }
 
