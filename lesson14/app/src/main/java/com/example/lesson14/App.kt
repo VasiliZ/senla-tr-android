@@ -4,7 +4,7 @@ import android.app.Application
 import java.io.File
 
 class App : Application() {
-    private lateinit var pathTofile: String
+    private lateinit var pathToFile: String
 
     companion object {
         lateinit var INSTANCE: App
@@ -19,11 +19,11 @@ class App : Application() {
     }
 
     private fun createPathToFileFile() {
-        pathTofile = StringBuilder(filesDir.absolutePath)
+        pathToFile = StringBuilder(filesDir.absolutePath)
             .append(File.separator)
             .append(FILE_NAME)
             .toString()
     }
 
-    fun getPathFile(): String = pathTofile
+    fun getPathFile(): String = pathToFile
 }
