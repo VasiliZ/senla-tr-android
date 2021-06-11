@@ -29,7 +29,6 @@ class EditFileFragment : Fragment(), SetDataContract {
         private const val OPEN_BRACKET = "("
         private const val CLOSE_BRACKET = ")"
         private const val EMPTY_SPACE = " "
-        private const val COUNT_UP = 1
         const val PATH_FILE_EXTRA = "PATH_FILE_EXTRA"
     }
 
@@ -46,7 +45,7 @@ class EditFileFragment : Fragment(), SetDataContract {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            savedFilePath = it.getString(PATH_FILE_EXTRA) ?: EMPTY_STRING
+            savedFilePath = it.getString(PATH_FILE_EXTRA)
         }
         val contentFileBuilder = StringBuilder()
         savedFilePath?.let {

@@ -1,5 +1,6 @@
 package com.github.rtyvz.senla.tr.notebook
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -32,11 +33,7 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
         if (fragment is EditFileFragment) {
             fragment.setData(data)
         } else {
-            createFragment(R.id.contentContainer, EditFileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, data)
-                }
-            })
+            startEditActivity(data)
         }
     }
 
@@ -47,8 +44,14 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
                 fragment.setData(null)
             }
         } else {
-            createFragment(R.id.contentContainer, EditFileFragment())
+            startEditActivity(null)
         }
+    }
+
+    private fun startEditActivity(path: String?) {
+        startActivity(Intent(this, EditFileActivity::class.java).apply {
+            putExtra(EditFileActivity.EXTRA_PATH_FOR_SEND, path)
+        })
     }
 
     private fun createFragment(fragmentId: Int, fragment: Fragment) {
