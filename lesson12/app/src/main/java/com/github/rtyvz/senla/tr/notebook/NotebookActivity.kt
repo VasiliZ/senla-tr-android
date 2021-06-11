@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookActivityBinding
 
-class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
+class NotebookActivity : AppCompatActivity(), PassDataToDisplayContract {
     private lateinit var binding: NotebookActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,28 +28,19 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
     private fun isContentContainerAvailable() = binding.contentContainer != null
 
     override fun passData(data: String?) {
-        val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
-        if (fragment is EditFileFragment) {
-            fragment.setData(data)
+        if (isContentContainerAvailable()) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
+            if (fragment is EditFileFragment) {
+                fragment.setData(data)
+            }
         } else {
             startEditActivity(data)
         }
     }
 
-    override fun createFragmentForNewFile() {
-        if (isContentContainerAvailable()) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
-            if (fragment is EditFileFragment) {
-                fragment.setData(null)
-            }
-        } else {
-            startEditActivity(null)
-        }
-    }
-
     private fun startEditActivity(path: String?) {
         startActivity(Intent(this, EditFileActivity::class.java).apply {
-            putExtra(EditFileActivity.EXTRA_PATH_FOR_SEND, path)
+            putExtra(EditFileActivity.EXTRA_PASS_DATA_TO_ACTIVITY, path)
         })
     }
 

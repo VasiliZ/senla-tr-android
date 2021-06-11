@@ -1,6 +1,5 @@
 package com.github.rtyvz.senla.tr.notebook
 
-interface OpenFragmentContract {
+interface PassDataToDisplayContract {
     fun passData(data: String?)
-    fun createFragmentForNewFile()
 }

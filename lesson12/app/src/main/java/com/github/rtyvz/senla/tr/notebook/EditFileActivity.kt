@@ -9,7 +9,7 @@ class EditFileActivity : AppCompatActivity() {
     private var path: String? = null
 
     companion object {
-        const val EXTRA_PATH_FOR_SEND = "PATH_FOR_SEND"
+        const val EXTRA_PASS_DATA_TO_ACTIVITY = "PASS_DATA_TO_ACTIVITY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,14 +18,14 @@ class EditFileActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         intent?.let {
-            path = it.getStringExtra(EXTRA_PATH_FOR_SEND)
+            path = it.getStringExtra(EXTRA_PASS_DATA_TO_ACTIVITY)
         }
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.activityFragmentContainerView, EditFileFragment()
                 .apply {
                     arguments = Bundle().apply {
-                        putString(EditFileFragment.PATH_FILE_EXTRA, path)
+                        putString(EditFileFragment.EXTRA_PASS_DATA_TO_FRAGMENT, path)
                     }
                 }).commit()
     }

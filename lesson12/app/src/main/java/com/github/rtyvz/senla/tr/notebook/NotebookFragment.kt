@@ -15,7 +15,7 @@ class NotebookFragment : Fragment() {
     private var binding: NotebookFragmentBinding? = null
     private val filesAdapter by lazy {
         FilesAdapter { path ->
-            (activity as OpenFragmentContract).passData(path)
+            (activity as PassDataToDisplayContract).passData(path)
         }
     }
 
@@ -39,7 +39,7 @@ class NotebookFragment : Fragment() {
                 adapter = filesAdapter
             }
             createNewFileButton.setOnClickListener {
-                (activity as OpenFragmentContract).createFragmentForNewFile()
+                (activity as PassDataToDisplayContract).passData(null)
             }
         }
     }

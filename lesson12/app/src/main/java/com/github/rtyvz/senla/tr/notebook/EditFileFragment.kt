@@ -1,6 +1,5 @@
 package com.github.rtyvz.senla.tr.notebook
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +28,7 @@ class EditFileFragment : Fragment(), SetDataContract {
         private const val OPEN_BRACKET = "("
         private const val CLOSE_BRACKET = ")"
         private const val EMPTY_SPACE = " "
-        const val PATH_FILE_EXTRA = "PATH_FILE_EXTRA"
+        const val EXTRA_PASS_DATA_TO_FRAGMENT = "PASS_DATA_TO_FRAGMENT"
     }
 
     override fun onCreateView(
@@ -45,7 +44,7 @@ class EditFileFragment : Fragment(), SetDataContract {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            savedFilePath = it.getString(PATH_FILE_EXTRA)
+            savedFilePath = it.getString(EXTRA_PASS_DATA_TO_FRAGMENT)
         }
         val contentFileBuilder = StringBuilder()
         savedFilePath?.let {
@@ -207,11 +206,6 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     override fun onPause() {
-        activity?.let {
-            if (resources.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                it.supportFragmentManager.beginTransaction().remove(this).commit()
-            }
-        }
         writeToFile(binding?.editFileEditText?.text.toString())
 
         super.onPause()
