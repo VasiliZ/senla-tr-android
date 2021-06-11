@@ -18,15 +18,16 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
     }
 
     private fun createFragmentFromOrientation() {
+        val noteBookFragment = NoteBookFragment()
         if (isListContainerAvailable()) {
-            createFragment(R.id.listFileContainer, NoteBookFragment())
+            createFragment(R.id.listFileContainer, noteBookFragment)
             createFragment(R.id.contentContainer, EditFileFragment())
         } else {
-            createFragment(R.id.contentContainer, NoteBookFragment())
+            createFragment(R.id.listFileContainer, noteBookFragment)
         }
     }
 
-    private fun isListContainerAvailable() = binding.listFileContainer != null
+    private fun isListContainerAvailable() = binding.contentContainer != null
 
     override fun passData(data: String?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
