@@ -1,12 +1,10 @@
 package com.example.lesson14
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import com.example.lesson14.databinding.ElementItemBinding
 import com.example.lesson14.model.Element
 
@@ -32,6 +30,7 @@ class ElementAdapter(
         val element = getItem(position)
         viewHolder.apply {
             countTextView.text = element.countValue.toString()
+            textEdit.setText(element.title)
             removeItemButton.setOnClickListener {
                 data.remove(element)
                 notifyDataSetChanged()
@@ -43,6 +42,9 @@ class ElementAdapter(
             decButton.setOnClickListener {
                 element.countValue = element.countValue.dec()
                 countTextView.text = element.countValue.toString()
+            }
+            textEdit.doAfterTextChanged {
+                element.title = it.toString()
             }
         }
 
@@ -67,5 +69,6 @@ class ElementAdapter(
         val decButton = binding.decButton
         val incButton = binding.incButton
         val removeItemButton = binding.removeItemButton
+        val textEdit = binding.itemTitleEditText
     }
 }
