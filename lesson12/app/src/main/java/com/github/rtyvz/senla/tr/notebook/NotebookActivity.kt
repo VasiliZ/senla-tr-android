@@ -18,14 +18,14 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
     }
 
     private fun createFragmentFromOrientation() {
-        createFragment(R.id.listFileContainer, NoteBookFragment())
+        createFragment(R.id.listFileContainer, NotebookFragment())
 
-        if (isListContainerAvailable()) {
+        if (isContentContainerAvailable()) {
             createFragment(R.id.contentContainer, EditFileFragment())
         }
     }
 
-    private fun isListContainerAvailable() = binding.contentContainer != null
+    private fun isContentContainerAvailable() = binding.contentContainer != null
 
     override fun passData(data: String?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
@@ -37,7 +37,7 @@ class NotebookActivity : AppCompatActivity(), OpenFragmentContract {
     }
 
     override fun createFragmentForNewFile() {
-        if (isListContainerAvailable()) {
+        if (isContentContainerAvailable()) {
             val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
             if (fragment is EditFileFragment) {
                 fragment.setData(null)

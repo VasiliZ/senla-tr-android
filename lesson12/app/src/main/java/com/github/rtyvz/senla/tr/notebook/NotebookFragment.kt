@@ -11,7 +11,7 @@ import com.example.drawer.ui.nootebook.adapter.FilesAdapter
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookFragmentBinding
 import java.io.File
 
-class NoteBookFragment : Fragment() {
+class NotebookFragment : Fragment() {
     private var binding: NotebookFragmentBinding? = null
     private val filesAdapter by lazy {
         FilesAdapter { path ->
@@ -25,7 +25,7 @@ class NoteBookFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = NotebookFragmentBinding.inflate(inflater)
-        return binding?.root ?: error("can't bind ${NoteBookFragment::class.java.canonicalName}")
+        return binding?.root ?: error("can't bind ${NotebookFragment::class.java.canonicalName}")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
