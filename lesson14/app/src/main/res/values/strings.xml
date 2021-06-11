@@ -4,4 +4,6 @@
     <!--app bar menu-->
     <string name="appbar_menu_save_label">save</string>
     <string name="appbar_menu_add_label">add</string>
+    <string name="write_data_error">Ошибка чтения файла</string>
+    <string name="read_data_error">Не удалось сохранить файл</string>
 </resources>

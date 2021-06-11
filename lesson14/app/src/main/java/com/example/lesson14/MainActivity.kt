@@ -1,9 +1,10 @@
 package com.example.lesson14
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.lesson14.databinding.ActivityMainBinding
 import com.example.lesson14.model.Element
 import java.io.*
@@ -37,7 +38,15 @@ class MainActivity : AppCompatActivity() {
             if (file.exists()) {
                 val fileInputStream = FileInputStream(file)
                 val objReader = ObjectInputStream(fileInputStream)
-                listElements.addAll(objReader.readObject() as Collection<Element>)
+
+                try {
+                    val wroteData = objReader.readObject() as? Collection<Element>
+                    listElements.addAll(wroteData ?: emptyList())
+                } catch (e: Exception) {
+                    Toast.makeText(this, R.string.write_data_error, Toast.LENGTH_LONG).show()
+                } finally {
+                    objReader.close()
+                }
             }
         }
         binding.elementList.adapter = elementAdapter
@@ -57,8 +66,14 @@ class MainActivity : AppCompatActivity() {
             val file = File(App.INSTANCE.getPathFile())
             val fileOutputStream = FileOutputStream(file)
             val objOutputStream = ObjectOutputStream(fileOutputStream)
-            objOutputStream.writeObject(elementAdapter.getListWithData())
-            objOutputStream.close()
+
+            try {
+                objOutputStream.writeObject(elementAdapter.getListWithData())
+            } catch (e: Exception) {
+                Toast.makeText(this, R.string.read_data_error, Toast.LENGTH_LONG).show()
+            } finally {
+                objOutputStream.close()
+            }
             true
         }
         else -> super.onOptionsItemSelected(item)
