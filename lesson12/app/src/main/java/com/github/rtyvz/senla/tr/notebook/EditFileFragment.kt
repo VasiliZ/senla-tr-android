@@ -12,22 +12,20 @@ class EditFileFragment : Fragment(), SetDataContract {
     private var binding: EditFileFragmentBinding? = null
     private var savedFilePath: String? = null
     private var newFileNameForRepeatedFileName: String = EMPTY_STRING
-    private var isNewFile = false
-    private var firstLineFileIsEmpty = false
     private var countFileRepeat = 0
+    private var repeatedFileName = EMPTY_STRING
 
     companion object {
         private const val CHAR_SET = "UTF-8"
         private const val EMPTY_STRING = ""
-        private const val MAX_FILE_NAME_SIZE = 30
         private const val START_STRING_INDEX = 0
         private const val FILE_EXT = ".txt"
         private const val LINE_BREAK = "\n"
-        private const val FILE_NAME_REGEX = "[^A-Za-zа-яА-Я0-9() ]"
+        private const val FILE_NAME_REGEX = "[\\\\/<>]"
         private const val DEFAULT_FILE_NAME = "Документ"
         private const val OPEN_BRACKET = "("
         private const val CLOSE_BRACKET = ")"
-        private const val EMPTY_SPACE = " "
+        private const val SPACE = " "
         const val EXTRA_PASS_DATA_TO_FRAGMENT = "PASS_DATA_TO_FRAGMENT"
     }
 
@@ -43,73 +41,124 @@ class EditFileFragment : Fragment(), SetDataContract {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getFilePathFromArguments()
+
+        if (savedFilePath != null) {
+            setDataToEditText(readFromFile(savedFilePath.toString()))
+        }
+    }
+
+    private fun setDataToEditText(text: String) {
+        binding?.editFileEditText?.setText(text)
+    }
+
+    private fun getFilePathFromArguments() {
         arguments?.let {
             savedFilePath = it.getString(EXTRA_PASS_DATA_TO_FRAGMENT)
         }
-        val contentFileBuilder = StringBuilder()
-        savedFilePath?.let {
-            readFromFile(it).forEach {
-                contentFileBuilder.append(it).append(LINE_BREAK)
-            }
-            binding?.editFileEditText?.setText(contentFileBuilder.toString())
-        } ?: run {
-            isNewFile = true
+    }
+
+    private fun createFile(value: String?): File? {
+        var fileName = if (value == null) {
+            DEFAULT_FILE_NAME
+        } else {
+            clearFileName(getFileNameFromContent(value))
+        }
+
+        NotebookApp.INSTANCE?.let {
+            fileName =
+                findFileWithTheSameName(fileName, File(it.getNotebookDir()))
+        }
+        val file = File(buildPathForNewFile(fileName))
+
+        return if (file.createNewFile()) {
+            file
+        } else {
+            null
+        }
+    }
+
+    private fun clearFileName(fileName: String): String =
+        fileName.replace(FILE_NAME_REGEX.toRegex(), EMPTY_STRING)
+
+    private fun getFileNameFromContent(content: String): String {
+        return if (content.contains(LINE_BREAK)) {
+            clearFileName(content.substring(START_STRING_INDEX, content.indexOf(LINE_BREAK)))
+        } else {
+            clearFileName(content)
+        }
+    }
+
+    private fun insertFileNameIntoFileContent(file: File, fileName: String) {
+        val filesContent =
+            file.readText(charset = charset(CHAR_SET))
+        val newContent =
+            StringBuilder(getFileNameFromContent(fileName)).append(LINE_BREAK)
+                .append(filesContent.substringAfter(LINE_BREAK))
+        file.bufferedWriter(charset(CHAR_SET)).write(EMPTY_STRING)
+        file.bufferedWriter(charset(CHAR_SET)).use {
+            it.write(
+                newContent.toString()
+            )
         }
     }
 
     private fun writeToFile(value: String) {
-
         countFileRepeat = 0
-        var fileContent = value
 
-        if (fileContent.isNotBlank()) {
-            val fileName = clearFileNameFromBadSymbols(createFileName(value))
-            savedFilePath?.let {
-                val fileForOperations = File(it)
-                val dirToFile = fileForOperations.parent!!
-                val oldFileName = fileForOperations.name
-                val currentFileName = buildFileName(
-                    fileName,
-                    dirToFile,
-                    oldFileName
-                )
-
-                if (newFileNameForRepeatedFileName.isNotBlank()) {
-                    fileContent =
-                        StringBuilder(fileContent).insert(0, fileName)
-                            .insert(fileName.length, LINE_BREAK)
-                            .toString()
-                }
-
-                File(
-                    currentFileName
-                ).bufferedWriter(charset = charset(CHAR_SET))
-                    .use {
-                        it.write(fileContent)
+        if (savedFilePath.isNullOrBlank()) {
+            when {
+                value.startsWith(LINE_BREAK) || value.isBlank() || (value.trim() == EMPTY_STRING) -> {
+                    createFile(null)?.let {
+                        writeToFile(it, value)
+                        insertFileNameIntoFileContent(it, it.nameWithoutExtension)
                     }
-            } ?: run {
-                val pathToNewFile = buildPathForNewFile(fileName)
-
-                if (newFileNameForRepeatedFileName.isNotBlank()) {
-                    fileContent =
-                        StringBuilder(fileContent).insert(
-                            0, File(pathToNewFile).nameWithoutExtension
-                        ).insert(File(pathToNewFile).nameWithoutExtension.length, LINE_BREAK)
-                            .toString()
                 }
-                File(pathToNewFile).createNewFile()
-                File(pathToNewFile).bufferedWriter(charset = charset(CHAR_SET)).use {
-                    it.write(fileContent)
+                else -> {
+                    createFile(value)?.let {
+                        writeToFile(it, value)
+                    }
+                }
+            }
+        } else {
+            savedFilePath?.let {
+                val currentFile = File(it)
+
+                if (isFileNamesTheSame(value, currentFile)) {
+                    writeToFile(currentFile, value)
+                } else {
+                    insertFileNameIntoFileContent(renameFile(value, currentFile), value)
                 }
             }
         }
     }
 
-    private fun readFromFile(filePath: String) = File(filePath).bufferedReader().readLines()
+    private fun isFileNamesTheSame(text: String, file: File) =
+        file.nameWithoutExtension == getFileNameFromContent(text)
+
+    private fun renameFile(text: String, file: File): File {
+        val firstLineInText = getFileNameFromContent(text)
+        val to = File(file.parent, firstLineInText + FILE_EXT)
+        file.renameTo(to)
+        return to
+    }
+
+    private fun writeToFile(file: File, value: String) {
+        file.bufferedWriter(charset = charset(CHAR_SET)).use { writer ->
+            writer.write(value)
+        }
+    }
+
+    private fun readFromFile(filePath: String?): String {
+        return if (filePath != null) {
+            File(filePath).bufferedReader().readText()
+        } else {
+            EMPTY_STRING
+        }
+    }
 
     private fun buildPathForNewFile(fileName: String): String {
         val pathToNoteBookDir = NotebookApp.INSTANCE!!.getNotebookDir()
-        findFileWithTheSameName(fileName, pathToNoteBookDir)
         val newFileName: String = if (newFileNameForRepeatedFileName.isNotBlank()) {
             newFileNameForRepeatedFileName
         } else {
@@ -123,90 +172,49 @@ class EditFileFragment : Fragment(), SetDataContract {
             .append(FILE_EXT).toString()
     }
 
-    private fun createFileName(value: String): String {
-        return when {
-            value.contains(LINE_BREAK) ->
-                if (value.first().toString() == LINE_BREAK) {
-                    firstLineFileIsEmpty = true
-                    DEFAULT_FILE_NAME
-                } else
-                    if (value.length <= MAX_FILE_NAME_SIZE
-                        || value.indexOf(LINE_BREAK) < MAX_FILE_NAME_SIZE
-                    ) {
-                        value.substring(START_STRING_INDEX, value.indexOf(LINE_BREAK)).trim()
-                    } else {
-                        value.substring(START_STRING_INDEX, MAX_FILE_NAME_SIZE).trim()
-                    }
-            value.length <= MAX_FILE_NAME_SIZE -> value.trim()
-            value.length >= MAX_FILE_NAME_SIZE -> value.substring(
-                START_STRING_INDEX,
-                MAX_FILE_NAME_SIZE
-            ).trim()
-            else -> {
-                EMPTY_STRING
+    private fun findFileWithTheSameName(fileName: String, dir: File): String {
+        repeatedFileName = fileName
+
+        if (dir.listFiles().isNullOrEmpty()) {
+            return fileName
+        } else {
+            dir.listFiles()?.forEachIndexed { _, file ->
+                if (file.nameWithoutExtension == repeatedFileName) {
+                    countFileRepeat++
+                    createNewNameForRepeatFile(repeatedFileName, countFileRepeat)
+                }
             }
         }
-    }
 
-    private fun clearFileNameFromBadSymbols(fileName: String) =
-        fileName.replace(Regex(FILE_NAME_REGEX), EMPTY_STRING)
-
-
-    private fun findFileWithTheSameName(fileName: String, dir: String) {
-        File(dir).listFiles()!!.forEachIndexed { _, file ->
-
-            if (file.nameWithoutExtension == fileName) {
-                countFileRepeat++
-                createNewNameForRepeatFile(fileName, countFileRepeat, dir)
-            }
-        }
+        return repeatedFileName
     }
 
     private fun createNewNameForRepeatFile(
         fileName: String,
-        index: Int,
-        dir: String
+        index: Int
     ) {
-        val originallyName: String = if (index > 1) {
-            newFileNameForRepeatedFileName.substring(
-                START_STRING_INDEX, newFileNameForRepeatedFileName.indexOf(
-                    EMPTY_SPACE
+        var newFileName: String = fileName
+
+        if (index > 1) {
+            newFileName = repeatedFileName.substring(
+                START_STRING_INDEX, repeatedFileName.indexOf(
+                    SPACE
                 )
             )
-        } else {
-            fileName
         }
-        newFileNameForRepeatedFileName =
-            StringBuilder(originallyName)
-                .append(EMPTY_SPACE)
-                .append(OPEN_BRACKET)
-                .append(index)
-                .append(CLOSE_BRACKET)
-                .toString()
-        findFileWithTheSameName(newFileNameForRepeatedFileName, dir)
-    }
 
-    private fun buildFileName(fileName: String, dirToFile: String, oldFileName: String): String {
-        val newFileNameBuilder =
-            StringBuilder(fileName)
-                .append(FILE_EXT).toString()
-        File(dirToFile, oldFileName).renameTo(File(dirToFile, newFileNameBuilder))
-        return StringBuilder(dirToFile).append(File.separator)
-            .append(newFileNameBuilder).toString()
-    }
+        repeatedFileName = StringBuilder(newFileName)
+            .append(SPACE)
+            .append(OPEN_BRACKET)
+            .append(index)
+            .append(CLOSE_BRACKET)
+            .toString()
 
-    private fun setContentFromFileToFragment(path: String) {
-        val contentFileBuilder = StringBuilder()
-        if (path.isNotBlank()) {
-            readFromFile(path).forEach {
-                contentFileBuilder.append(it).append(LINE_BREAK)
-            }
-        }
-        binding?.editFileEditText?.setText(contentFileBuilder.toString())
     }
 
     override fun onPause() {
         writeToFile(binding?.editFileEditText?.text.toString())
+        activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
 
         super.onPause()
     }
@@ -218,18 +226,7 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     override fun setData(data: String?) {
-
-        if (data == null) {
-            savedFilePath = null
-            setContentFromFileToFragment(EMPTY_STRING)
-        } else {
-            savedFilePath = data
-            setContentFromFileToFragment(data)
-        }
+        savedFilePath = data
+        setDataToEditText(readFromFile(data))
     }
 }
-
-interface SetDataContract {
-    fun setData(data: String?)
-}
-

@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.drawer.ui.nootebook.adapter.FilesAdapter
 import com.github.rtyvz.senla.tr.notebook.databinding.NotebookFragmentBinding
 import java.io.File
 
@@ -31,21 +29,18 @@ class NotebookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        displayViews()
         binding?.apply {
             listFile.apply {
-                layoutManager =
-                    LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
                 adapter = filesAdapter
             }
             createNewFileButton.setOnClickListener {
-                (activity as PassDataToDisplayContract).passData(null)
+                (activity as PassDataToDisplayContract).createNewFile()
             }
         }
     }
 
     private fun getFiles(): Array<File> {
-        return NotebookApp.INSTANCE?.getNotebookDir().let {
+        return NotebookApp.INSTANCE?.getNotebookDir()?.let {
             File(it).listFiles()
         } ?: emptyArray()
     }
@@ -78,4 +73,9 @@ class NotebookFragment : Fragment() {
 
         super.onDestroy()
     }
+}
+
+interface PassDataToDisplayContract {
+    fun passData(data: String?)
+    fun createNewFile()
 }
