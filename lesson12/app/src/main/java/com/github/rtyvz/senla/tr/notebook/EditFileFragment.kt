@@ -100,12 +100,7 @@ class EditFileFragment : Fragment(), SetDataContract {
                         .readText(charset = charset(CHAR_SET))
                         .substringAfter(LINE_BREAK)
                 )
-        file.bufferedWriter(charset(CHAR_SET)).write(EMPTY_STRING)
-        file.bufferedWriter(charset(CHAR_SET)).use {
-            it.write(
-                newContent.toString()
-            )
-        }
+        writeToFile(file, newContent.toString())
     }
 
     private fun writeToFile(value: String) {
