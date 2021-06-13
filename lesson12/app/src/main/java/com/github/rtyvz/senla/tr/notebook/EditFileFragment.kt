@@ -90,11 +90,16 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     private fun insertFileNameIntoFileContent(file: File, fileName: String) {
-        val filesContent =
-            file.readText(charset = charset(CHAR_SET))
         val newContent =
-            StringBuilder(getFileNameFromContent(fileName)).append(LINE_BREAK)
-                .append(filesContent.substringAfter(LINE_BREAK))
+            StringBuilder(
+                getFileNameFromContent(fileName)
+            )
+                .append(LINE_BREAK)
+                .append(
+                    file
+                        .readText(charset = charset(CHAR_SET))
+                        .substringAfter(LINE_BREAK)
+                )
         file.bufferedWriter(charset(CHAR_SET)).write(EMPTY_STRING)
         file.bufferedWriter(charset(CHAR_SET)).use {
             it.write(
