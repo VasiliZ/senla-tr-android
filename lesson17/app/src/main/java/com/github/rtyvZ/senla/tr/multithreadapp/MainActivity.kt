@@ -3,6 +3,7 @@ package com.github.rtyvZ.senla.tr.multithreadapp
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.method.ScrollingMovementMethod
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvZ.senla.tr.multithreadapp.databinding.ActivityMainBinding
 
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.treadsContentTextView.movementMethod = ScrollingMovementMethod()
         binding.startButton.setOnClickListener {
             var count = 1
             it.isEnabled = false
@@ -44,14 +46,16 @@ class MainActivity : AppCompatActivity() {
                 while (shouldExit) {
                     Thread.sleep(writeToUiInterval.toLong())
                     handler.post {
-                        binding.treadsContent.append(
-                            listManager.getData()
-                                ?.joinToString(
-                                    separator = EMPTY_STRING,
-                                    prefix = EMPTY_STRING,
-                                    postfix = EMPTY_STRING
-                                )
-                        )
+                        val newData = listManager.getData()
+                        newData?.let { list ->
+                            if (list.isNotEmpty()) {
+                                list.forEach { listValue ->
+                                    binding.treadsContentTextView.append(
+                                        listValue + "\n"
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             })
