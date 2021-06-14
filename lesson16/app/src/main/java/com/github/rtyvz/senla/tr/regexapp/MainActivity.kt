@@ -1,11 +1,9 @@
 package com.github.rtyvz.senla.tr.regexapp
 
 import android.os.Bundle
-import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.replace
+import androidx.core.view.GravityCompat
 import com.github.rtyvz.senla.tr.regexapp.databinding.ActivityMainBinding
 import com.github.rtyvz.senla.tr.regexapp.entity.MenuItem
 
@@ -28,15 +26,18 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             toolbar.setNavigationIcon(R.drawable.drawable_menu_white)
             toolbar.setNavigationOnClickListener {
-                drawerLayout.openDrawer(Gravity.LEFT)
+                drawerLayout.openDrawer(GravityCompat.START)
             }
             drawerMenuAdapter.setIndexForSelectedItem(START_INDEX)
-            navigationItemList.adapter = drawerMenuAdapter
-            navigationItemList.setOnItemClickListener { _, _, position, _ ->
-                drawerMenuAdapter.setIndexForSelectedItem(position)
-                replaceFragment(position)
-                binding.drawerLayout.closeDrawer(Gravity.LEFT)
+            navigationItemList.apply {
+                adapter = drawerMenuAdapter
+                navigationItemList.setOnItemClickListener { _, _, position, _ ->
+                    drawerMenuAdapter.setIndexForSelectedItem(position)
+                    replaceFragment(position)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                }
             }
+
             replaceFragment(START_INDEX)
         }
     }
