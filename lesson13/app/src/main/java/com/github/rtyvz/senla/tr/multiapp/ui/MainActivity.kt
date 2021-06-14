@@ -1,17 +1,17 @@
 package com.github.rtyvz.senla.tr.multiapp.ui
 
 import android.os.Bundle
-import android.view.Gravity
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.example.drawer.ui.nootebook.EditFileFragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
 import com.github.rtyvz.senla.tr.multiapp.ext.bool
 import com.github.rtyvz.senla.tr.multiapp.ui.calc.CalcFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.main.MainFragment
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ResetDataFragmentContract
@@ -36,11 +36,40 @@ class MainActivity : AppCompatActivity(),
         }
         setSupportActionBar(binding.appBarMain.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout
-        val listTags = listOf(MainFragment.TAG, NotebookFragment.TAG, CalcFragment.TAG)
-        binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
-        binding.appBarMain.toolbar.setNavigationOnClickListener {
-            drawerLayout.openDrawer(Gravity.LEFT)
+        binding.appBarMain.toolbar.apply {
+            setNavigationIcon(R.drawable.ic_baseline_menu_24)
+            setNavigationOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
         }
+        val simpleAdapter = SimpleAdapter(
+            this,
+            prepareDataFromAdapter(),
+            R.layout.drawer_item,
+            listOf(
+                ADAPTER_DATA_FIELD,
+                TAG_IDENTIFIER
+            ).toTypedArray(),
+            intArrayOf(R.id.drawerItemTextView)
+        )
+        binding.navigationItemList.apply {
+            adapter = simpleAdapter
+            setOnItemClickListener { parent, _, position, _ ->
+                parent.adapter.getItem(position)
+                val dataAdapter = simpleAdapter.getItem(position) as LinkedHashMap<*, *>
+                replaceFragmentByTag(dataAdapter[TAG_IDENTIFIER].toString())
+            }
+        }
+
+        if (currentTag == null) {
+            replaceFragment(MainFragment())
+        } else {
+            replaceFragmentByTag(currentTag)
+        }
+    }
+
+    private fun prepareDataFromAdapter(): ArrayList<Map<String, String>> {
+        val listTags = listOf(MainFragment.TAG, NotebookFragment.TAG, CalcFragment.TAG)
         val listFromResource = resources.getStringArray(R.array.drawer_item_list)
         val data = ArrayList<Map<String, String>>(listFromResource.size)
 
@@ -51,28 +80,7 @@ class MainActivity : AppCompatActivity(),
             data.add(map)
         }
 
-        val simpleAdapter = SimpleAdapter(
-            this,
-            data,
-            R.layout.drawer_item,
-            listOf(
-                ADAPTER_DATA_FIELD,
-                TAG_IDENTIFIER
-            ).toTypedArray(),
-            intArrayOf(R.id.drawerItemTextView)
-        )
-
-        binding.navigationItemList.adapter = simpleAdapter
-        binding.navigationItemList.setOnItemClickListener { parent, _, position, _ ->
-            parent.adapter.getItem(position)
-            val dataAdapter = simpleAdapter.getItem(position) as LinkedHashMap<*, *>
-            replaceFragmentByTag(dataAdapter[TAG_IDENTIFIER].toString())
-        }
-        currentTag?.let {
-            replaceFragmentByTag(it)
-        } ?: kotlin.run {
-            replaceFragment(MainFragment())
-        }
+        return data
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -134,4 +142,9 @@ class MainActivity : AppCompatActivity(),
             replaceFragment(EditFileFragment())
         }
     }
+}
+
+
+interface SetContentContract {
+    fun setContent(content: String?)
 }

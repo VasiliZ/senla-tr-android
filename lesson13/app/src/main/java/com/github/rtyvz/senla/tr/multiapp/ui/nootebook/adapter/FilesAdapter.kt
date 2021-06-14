@@ -21,11 +21,16 @@ class FilesAdapter(private val click: (String) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilesViewHolder {
         val binding =
             FileDetailsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FilesViewHolder(binding)
+
+        return FilesViewHolder(binding).apply {
+            view.root.setOnClickListener {
+                click(getItem(adapterPosition).absolutePath)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: FilesViewHolder, position: Int) {
-        holder.bind(getItem(position), click, dateFormatter)
+        holder.bind(getItem(position), dateFormatter)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<File>() {
@@ -34,19 +39,15 @@ class FilesAdapter(private val click: (String) -> Unit) :
         override fun areContentsTheSame(oldItem: File, newItem: File) = oldItem == newItem
     }
 
-    class FilesViewHolder(private val view: FileDetailsItemBinding) :
+    class FilesViewHolder(val view: FileDetailsItemBinding) :
         RecyclerView.ViewHolder(view.root) {
 
         fun bind(
             item: File,
-            click: (String) -> Unit,
             dateFormatter: SimpleDateFormat
         ) {
             view.nameFileTextView.text = item.name
             view.lastEditTextView.text = dateFormatter.format(Date(item.lastModified()))
-            view.root.setOnClickListener {
-                click(item.absolutePath)
-            }
         }
     }
 }

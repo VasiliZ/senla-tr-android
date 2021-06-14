@@ -61,8 +61,10 @@ class NotebookFragment : Fragment() {
     }
 
     private fun getFiles(): Array<File> {
-        return MultiFuncApp.INSTANCE!!.getNotebookDir().let {
-            File(it).listFiles()
+        return MultiFuncApp.INSTANCE?.getNotebookDir().let { path ->
+            path?.let {
+                File(path).listFiles()
+            }
         } ?: emptyArray()
     }
 

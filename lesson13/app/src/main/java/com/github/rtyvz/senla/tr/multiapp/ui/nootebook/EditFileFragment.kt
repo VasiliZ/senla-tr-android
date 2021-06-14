@@ -1,4 +1,4 @@
-package com.example.drawer.ui.nootebook
+package com.github.rtyvz.senla.tr.multiapp.ui.nootebook
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,7 @@ import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.EditFileFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ext.bool
 import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.SetContentContract
 import java.io.File
 
 class EditFileFragment : Fragment(), SetContentContract {
@@ -204,9 +205,11 @@ class EditFileFragment : Fragment(), SetContentContract {
             .append(newFileNameBuilder).toString()
     }
 
-    private fun setContentFromFileToFragment(path: String) {
+    private fun setContentFromFileToFragment(path: String?) {
         val contentFileBuilder = StringBuilder()
-        if (path.isNotBlank()) {
+        if (path.isNullOrBlank()) {
+            return
+        } else {
             readFromFile(path).forEach {
                 contentFileBuilder.append(it).append(LINE_BREAK)
             }
@@ -227,17 +230,6 @@ class EditFileFragment : Fragment(), SetContentContract {
     }
 
     override fun setContent(content: String?) {
-
-        if (content == null) {
-            savedFilePath = null
-            setContentFromFileToFragment(EMPTY_STRING)
-        } else {
-            savedFilePath = content
-            setContentFromFileToFragment(content)
-        }
+        setContentFromFileToFragment(content)
     }
-}
-
-interface SetContentContract {
-    fun setContent(content: String?)
 }
