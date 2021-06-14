@@ -3,21 +3,26 @@ package com.github.rtyvZ.senla.tr.multithreadapp
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvZ.senla.tr.multithreadapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-
     @Volatile
     private var shouldExit = true
+    private lateinit var binding: ActivityMainBinding
     private val listManager = ListManager()
     private val interval = 5000
     private val writeToUiInterval = 100
+    private val endOfCount = 10
     private val waitObj = Object()
-    private var count = 1
     private val handler = Handler(Looper.getMainLooper())
+    private val timeToSleepCalculate = 500
+    private val startLoopIndex = 2
+
+    companion object {
+        private const val EMPTY_STRING = ""
+        private const val TEXT_YUP = "Yup!"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.startButton.setOnClickListener {
+            var count = 1
             it.isEnabled = false
             val first = Thread(Runnable {
                 try {
@@ -33,43 +39,47 @@ class MainActivity : AppCompatActivity() {
                     return@Runnable
                 }
             })
+
             val second = Thread(Runnable {
                 while (shouldExit) {
                     Thread.sleep(writeToUiInterval.toLong())
                     handler.post {
-                        Log.d("count", "send on UI")
                         binding.treadsContent.append(
                             listManager.getData()
-                                ?.joinToString(separator = "\n", prefix = " ", postfix = "")
+                                ?.joinToString(
+                                    separator = EMPTY_STRING,
+                                    prefix = EMPTY_STRING,
+                                    postfix = EMPTY_STRING
+                                )
                         )
                     }
                 }
             })
 
-            val fourth = Thread {
+            val fourth = Thread(Runnable {
                 while (shouldExit) {
                     synchronized(waitObj) {
                         waitObj.wait()
-                        listManager.setData("Yup!")
+                        listManager.setData(TEXT_YUP)
                     }
                 }
-            }
+            })
 
             val third = Thread(Runnable {
                 while (shouldExit) {
                     Thread.sleep(interval.toLong())
                     listManager.setData(count.toString())
                     count++
-                    Log.d("count", count.toString())
-                    if (count == 3) {
+                    if (count == endOfCount) {
                         shouldExit = false
+                        fourth.join()
                         first.interrupt()
                         first.join()
                         second.join()
-                        fourth.join()
                         handler.post {
                             binding.startButton.isEnabled = true
                         }
+                        break
                     }
                 }
             })
@@ -82,10 +92,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun calculateSimpleDigits() {
-        for (number in 2..1000) {
-            Thread.sleep(1000)
+        for (number in startLoopIndex..Int.MAX_VALUE) {
+            Thread.sleep(timeToSleepCalculate.toLong())
             var count = 0
-            for (i in 2..number) {
+            for (i in startLoopIndex..number) {
                 if (number % i == 0) {
                     count++
                 }
