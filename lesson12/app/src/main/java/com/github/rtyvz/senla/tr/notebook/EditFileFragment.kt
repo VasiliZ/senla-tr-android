@@ -12,7 +12,6 @@ class EditFileFragment : Fragment(), SetDataContract {
     private var binding: EditFileFragmentBinding? = null
     private var savedFilePath: String? = null
     private var newFileNameForRepeatedFileName: String = EMPTY_STRING
-    private var countFileRepeat = 0
     private var repeatedFileName = EMPTY_STRING
 
     companion object {
@@ -104,7 +103,6 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     private fun writeToFile(value: String) {
-        countFileRepeat = 0
 
         if (savedFilePath.isNullOrBlank()) {
             when {
@@ -127,7 +125,20 @@ class EditFileFragment : Fragment(), SetDataContract {
                 if (isFileNamesTheSame(value, currentFile)) {
                     writeToFile(currentFile, value)
                 } else {
-                    insertFileNameIntoFileContent(renameFile(value, currentFile), value)
+                    val file = renameFile(value, currentFile)
+                    if (file == null) {
+                        //если переименовываем файл и получаем такое же имя которое
+                        // уже есть в каталоге создаем новый файл что бы не потерять данные
+                        createFile(value)?.let { createdFile ->
+                            writeToFile(createdFile, value)
+                            insertFileNameIntoFileContent(
+                                createdFile,
+                                createdFile.nameWithoutExtension
+                            )
+                        }
+                    } else {
+                        insertFileNameIntoFileContent(file, value)
+                    }
                 }
             }
         }
@@ -136,11 +147,18 @@ class EditFileFragment : Fragment(), SetDataContract {
     private fun isFileNamesTheSame(text: String, file: File) =
         file.nameWithoutExtension == getFileNameFromContent(text)
 
-    private fun renameFile(text: String, file: File): File {
+    private fun renameFile(text: String, file: File): File? {
         val firstLineInText = getFileNameFromContent(text)
-        val to = File(file.parent, firstLineInText + FILE_EXT)
-        file.renameTo(to)
-        return to
+        file.parent?.let {
+            val tryToGenerateNewFileName = findFileWithTheSameName(firstLineInText, File(it))
+            if (tryToGenerateNewFileName.isBlank()) {
+                val to =
+                    File(file.parent, StringBuilder(firstLineInText).append(FILE_EXT).toString())
+                file.renameTo(to)
+                return to
+            }
+        }
+        return null
     }
 
     private fun writeToFile(file: File, value: String) {
@@ -158,7 +176,7 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     private fun buildPathForNewFile(fileName: String): String {
-        val pathToNoteBookDir = NotebookApp.INSTANCE!!.getNotebookDir()
+        val pathToNoteBookDir = NotebookApp.INSTANCE?.getNotebookDir()
         val newFileName: String = if (newFileNameForRepeatedFileName.isNotBlank()) {
             newFileNameForRepeatedFileName
         } else {
@@ -174,6 +192,7 @@ class EditFileFragment : Fragment(), SetDataContract {
 
     private fun findFileWithTheSameName(fileName: String, dir: File): String {
         repeatedFileName = fileName
+        var countFileRepeat = 0
 
         if (dir.listFiles().isNullOrEmpty()) {
             return fileName
