@@ -34,15 +34,18 @@ class MenuAdapter(
         viewHolder.apply {
             itemTextView.text = item.title
             itemIcon.setImageDrawable(item.icon)
-
-            if (selectedItem == position) {
-                view.setBackgroundColor(R.color.purple_200.color(inflater.context))
-            } else {
-                view.setBackgroundColor(R.color.white.color(inflater.context))
-            }
         }
+        changeColorMenuItem(position, view)
 
         return view
+    }
+
+    private fun changeColorMenuItem(position: Int, view: View) {
+        if (selectedItem == position) {
+            view.setBackgroundColor(R.color.purple_200.color(inflater.context))
+        } else {
+            view.setBackgroundColor(R.color.white.color(inflater.context))
+        }
     }
 
     override fun getItem(position: Int) = data[position]
@@ -51,8 +54,8 @@ class MenuAdapter(
 
     override fun getCount() = data.size
 
-    fun setIndexForSelectedItem(position: Int) {
-        selectedItem = position
+    fun setIndexForSelectedItem(selectedPosition: Int) {
+        selectedItem = selectedPosition
         notifyDataSetChanged()
     }
 
