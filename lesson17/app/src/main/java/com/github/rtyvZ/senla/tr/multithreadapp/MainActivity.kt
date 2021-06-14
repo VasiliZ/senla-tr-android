@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val startLoopIndex = 2
 
     companion object {
-        private const val EMPTY_STRING = ""
+        private const val BREAK_LINE = "\n"
         private const val TEXT_YUP = "Yup!"
     }
 
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                             if (list.isNotEmpty()) {
                                 list.forEach { listValue ->
                                     binding.treadsContentTextView.append(
-                                        listValue + "\n"
+                                        listValue + BREAK_LINE
                                     )
                                 }
                             }
