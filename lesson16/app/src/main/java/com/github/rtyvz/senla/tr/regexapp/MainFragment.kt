@@ -9,15 +9,19 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.github.rtyvz.senla.tr.regexapp.databinding.MainFragmentBinding
 import java.util.*
+import java.util.regex.Pattern
 
 class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
+    private val firstMatchGroup = 0
+    private val secondMatchGroup = 1
 
     companion object {
         private const val DASH = "-"
         private const val EMPTY_SPACE = " "
         private const val EMPTY_STRING = ""
         private const val START_WWW_LINK = "http://"
+        private const val LINE_BREAK = "\n"
         private const val TAB = "\\t"
         private const val PREF_FIND_FOUR_LETTER_WORD = "find_four_letter_word"
         private const val PREF_REPLACE_SPACES = "replace_spaces"
@@ -26,7 +30,7 @@ class MainFragment : Fragment() {
         private const val PREF_FIND_LINKS = "find_links"
         private const val REGEX_FIND_PHONE_NUMBER =
             "8\\ \\(0[0-9]{2}\\)\\ [0-9]{3}\\-[0-9]{2}\\-[0-9]{2}"
-        private const val REGEX_FIND_PREFIX_PHONE_NUMBER = "8\\ \\(0[0-9]{2}\\)"
+        private const val REGEX_FIND_PREFIX_PHONE_NUMBER = "8\\ \\(0[0-9]{2}\\)\\ "
         private const val REGEX_FIND_CODE_PHONE_NUMBER = "8\\ \\(0(.*?)\\)"
         private const val REGEX_NEW_PREFIX_PHONE_NUMBER = "+375"
         private const val REGEX_FIND_FOUR_LETTER_WORD = "\\b\\w[A-Za-zА-Яа-я]{3}\\b"
@@ -103,13 +107,20 @@ class MainFragment : Fragment() {
     }
 
     private fun replacePhoneNumber(value: StringBuilder): String {
-        return value.replace(REGEX_FIND_PHONE_NUMBER.toRegex()) { number ->
-            number.value.replace(REGEX_FIND_PREFIX_PHONE_NUMBER.toRegex()) { prefix ->
-                prefix.value.replace(REGEX_FIND_CODE_PHONE_NUMBER.toRegex()) { code ->
-                    REGEX_NEW_PREFIX_PHONE_NUMBER + DASH + code.groups[1]?.value
-                } + DASH
-            }
+        val pattern = Pattern.compile(REGEX_FIND_PHONE_NUMBER)
+        val matcher = pattern.matcher(value)
+        val resultBuilder = StringBuilder()
+        while (matcher.find()) {
+            val match =
+                matcher.group(firstMatchGroup)?.replace(REGEX_FIND_PREFIX_PHONE_NUMBER.toRegex()) { prefix ->
+                    prefix.value.trim().replace(REGEX_FIND_CODE_PHONE_NUMBER.toRegex()) { code ->
+                        REGEX_NEW_PREFIX_PHONE_NUMBER + DASH + code.groups[secondMatchGroup]?.value?.trim()
+                    } + DASH
+                }
+            resultBuilder.append(match).append(LINE_BREAK)
         }
+
+        return resultBuilder.toString()
     }
 
     private fun setUppercaseToFourLetterWords(value: StringBuilder): String {
