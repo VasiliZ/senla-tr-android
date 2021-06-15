@@ -8,11 +8,14 @@ import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.notebook.databinding.EditFileFragmentBinding
 import java.io.File
 
-class EditFileFragment : Fragment(), SetDataContract {
+class EditFileFragment : Fragment() {
     private var binding: EditFileFragmentBinding? = null
     private var savedFilePath: String? = null
     private var newFileNameForRepeatedFileName: String = EMPTY_STRING
     private var repeatedFileName = EMPTY_STRING
+    private val fileNameRegex = "[\\\\/<>]".toRegex()
+    private val countStartValue = 0
+    private val valueForStartCheckRepeatName = 1
 
     companion object {
         private const val CHAR_SET = "UTF-8"
@@ -20,12 +23,11 @@ class EditFileFragment : Fragment(), SetDataContract {
         private const val START_STRING_INDEX = 0
         private const val FILE_EXT = ".txt"
         private const val LINE_BREAK = "\n"
-        private const val FILE_NAME_REGEX = "[\\\\/<>]"
         private const val DEFAULT_FILE_NAME = "Документ"
         private const val OPEN_BRACKET = "("
         private const val CLOSE_BRACKET = ")"
         private const val SPACE = " "
-        const val EXTRA_PASS_DATA_TO_FRAGMENT = "PASS_DATA_TO_FRAGMENT"
+        const val EXTRA_FILE_PATH = "FILE_PATH"
     }
 
     override fun onCreateView(
@@ -53,7 +55,7 @@ class EditFileFragment : Fragment(), SetDataContract {
 
     private fun getFilePathFromArguments() {
         arguments?.let {
-            savedFilePath = it.getString(EXTRA_PASS_DATA_TO_FRAGMENT)
+            savedFilePath = it.getString(EXTRA_FILE_PATH)
         }
     }
 
@@ -78,7 +80,7 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     private fun clearFileName(fileName: String): String =
-        fileName.replace(FILE_NAME_REGEX.toRegex(), EMPTY_STRING)
+        fileName.replace(fileNameRegex, EMPTY_STRING)
 
     private fun getFileNameFromContent(content: String): String {
         return if (content.contains(LINE_BREAK)) {
@@ -103,7 +105,6 @@ class EditFileFragment : Fragment(), SetDataContract {
     }
 
     private fun writeToFile(value: String) {
-
         if (savedFilePath.isNullOrBlank()) {
             when {
                 value.startsWith(LINE_BREAK) || value.isBlank() || (value.trim() == EMPTY_STRING) -> {
@@ -147,15 +148,18 @@ class EditFileFragment : Fragment(), SetDataContract {
     private fun isFileNamesTheSame(text: String, file: File) =
         file.nameWithoutExtension == getFileNameFromContent(text)
 
-    private fun renameFile(text: String, file: File): File? {
+    private fun renameFile(text: String, currenFile: File): File? {
         val firstLineInText = getFileNameFromContent(text)
-        file.parent?.let {
-            val tryToGenerateNewFileName = findFileWithTheSameName(firstLineInText, File(it))
-            if (tryToGenerateNewFileName.isBlank()) {
-                val to =
-                    File(file.parent, StringBuilder(firstLineInText).append(FILE_EXT).toString())
-                file.renameTo(to)
-                return to
+        currenFile.parent?.let {
+            val newFileName = findFileWithTheSameName(firstLineInText, File(it))
+            if (newFileName.isBlank()) {
+                val fileNameForRename =
+                    File(
+                        currenFile.parent,
+                        StringBuilder(firstLineInText).append(FILE_EXT).toString()
+                    )
+                currenFile.renameTo(fileNameForRename)
+                return fileNameForRename
             }
         }
         return null
@@ -192,15 +196,15 @@ class EditFileFragment : Fragment(), SetDataContract {
 
     private fun findFileWithTheSameName(fileName: String, dir: File): String {
         repeatedFileName = fileName
-        var countFileRepeat = 0
+        var repeatFileCount = countStartValue
 
         if (dir.listFiles().isNullOrEmpty()) {
             return fileName
         } else {
             dir.listFiles()?.forEachIndexed { _, file ->
                 if (file.nameWithoutExtension == repeatedFileName) {
-                    countFileRepeat++
-                    createNewNameForRepeatFile(repeatedFileName, countFileRepeat)
+                    repeatFileCount++
+                    createNewNameForRepeatFile(repeatedFileName, repeatFileCount)
                 }
             }
         }
@@ -214,7 +218,7 @@ class EditFileFragment : Fragment(), SetDataContract {
     ) {
         var newFileName: String = fileName
 
-        if (index > 1) {
+        if (index > valueForStartCheckRepeatName) {
             newFileName = repeatedFileName.substring(
                 START_STRING_INDEX, repeatedFileName.indexOf(
                     SPACE
@@ -244,8 +248,8 @@ class EditFileFragment : Fragment(), SetDataContract {
         super.onDestroy()
     }
 
-    override fun setData(data: String?) {
-        savedFilePath = data
-        setDataToEditText(readFromFile(data))
+    fun setPath(path: String?) {
+        savedFilePath = path
+        setDataToEditText(readFromFile(path))
     }
 }

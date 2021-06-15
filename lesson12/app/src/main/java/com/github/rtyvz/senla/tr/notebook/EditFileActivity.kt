@@ -25,7 +25,7 @@ class EditFileActivity : AppCompatActivity() {
             .replace(R.id.fragmentContainer, EditFileFragment()
                 .apply {
                     arguments = Bundle().apply {
-                        putString(EditFileFragment.EXTRA_PASS_DATA_TO_FRAGMENT, path)
+                        putString(EditFileFragment.EXTRA_FILE_PATH, path)
                     }
                 }).commit()
     }

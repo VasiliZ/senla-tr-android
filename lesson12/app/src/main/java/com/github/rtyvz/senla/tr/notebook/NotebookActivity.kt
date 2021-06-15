@@ -31,7 +31,7 @@ class NotebookActivity : AppCompatActivity(), PassDataToDisplayContract {
         openNewDisplayFromContent(data)
     }
 
-    override fun createNewFile() {
+    override fun onCreateNewFileClicked() {
         openNewDisplayFromContent(null)
     }
 
@@ -39,7 +39,7 @@ class NotebookActivity : AppCompatActivity(), PassDataToDisplayContract {
         if (isContentContainerAvailable()) {
             val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
             if (fragment is EditFileFragment) {
-                fragment.setData(data)
+                fragment.setPath(data)
             }
         } else {
             startEditActivity(data)
@@ -59,8 +59,4 @@ class NotebookActivity : AppCompatActivity(), PassDataToDisplayContract {
         transaction.addToBackStack(null)
         transaction.commit()
     }
-}
-
-interface SetDataContract {
-    fun setData(data: String?)
 }

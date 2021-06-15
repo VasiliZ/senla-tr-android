@@ -30,11 +30,9 @@ class NotebookFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.apply {
-            listFile.apply {
-                adapter = filesAdapter
-            }
+            listFile.adapter = filesAdapter
             createNewFileButton.setOnClickListener {
-                (activity as PassDataToDisplayContract).createNewFile()
+                (activity as PassDataToDisplayContract).onCreateNewFileClicked()
             }
         }
     }
@@ -77,5 +75,5 @@ class NotebookFragment : Fragment() {
 
 interface PassDataToDisplayContract {
     fun passData(data: String?)
-    fun createNewFile()
+    fun onCreateNewFileClicked()
 }
