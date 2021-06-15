@@ -10,32 +10,32 @@ class CalculatePrimeNumbersAsyncTask(
     private val sendLastCalculateNumber: (Int) -> Unit
 ) :
     AsyncTask<Void, Void, Void>() {
-    private val timeToSleepCalculate = 500
+    private val timeToSleepCalculate = 500L
+    private val endOfPrimeNumbersCheck = 500
     private val startLoopIndex = 2
-    private val startCalculatePrimeNumberFrom = lastCalculateNumber
+    private val twoInt = 2
+    private val zeroInt = 0
 
     override fun doInBackground(vararg params: Void?): Void? {
-        calculateSimpleDigits()
-        return null
-    }
+        var numbersForCheck = lastCalculateNumber
+        while (true) {
+            Thread.sleep(timeToSleepCalculate)
+            var countDividers = zeroInt
 
-    private fun calculateSimpleDigits() {
-        for (number in startCalculatePrimeNumberFrom..Int.MAX_VALUE) {
-            Thread.sleep(timeToSleepCalculate.toLong())
-            var count = 0
-            for (i in startLoopIndex..number) {
-                if (number % i == 0) {
-                    count++
+            for (i in startLoopIndex..endOfPrimeNumbersCheck) {
+                if (numbersForCheck % i == zeroInt) {
+                    countDividers++
+                    sendLastCalculateNumber(numbersForCheck)
                 }
             }
 
-            if (count < 2) {
+            if (countDividers < twoInt) {
                 synchronized(waitObject) {
-                    sendLastCalculateNumber(number)
-                    listManager.setData(number.toString())
+                    listManager.setData(numbersForCheck.toString())
                     waitObject.notify()
                 }
             }
+            numbersForCheck++
         }
     }
 }

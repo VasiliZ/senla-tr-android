@@ -75,9 +75,9 @@ class MainActivity : AppCompatActivity() {
                                     .sendBroadcastSync(Intent(BROADCAST_SAVED_PRIME_NUMBERS).apply {
                                         putExtra(EXTRA_PRIME_NUMBER, text)
                                     })
-                                //contentTextView.post {
-                                contentTextView.append(text + LINE_BREAK)
-                                //}
+                                contentTextView.post {
+                                    contentTextView.append(text + LINE_BREAK)
+                                }
                             }
                         }
                     }

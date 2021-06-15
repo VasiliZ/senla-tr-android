@@ -13,23 +13,28 @@ class MainAsyncTask(
     AsyncTask<Void, Void, Void>() {
     var localCount = count
     private val millisForThreadSleep = 5000L
+    private val finishCountValue = 11
+
     override fun doInBackground(vararg params: Void?): Void? {
         while (true) {
             if (isCancelled) Thread.interrupted()
             Thread.sleep(millisForThreadSleep)
             listManager.setData(localCount.toString())
-            if (localCount == 11) {
+
+            if (localCount == finishCountValue) {
                 signalToCloseTasks()
                 break
             }
             sendCount(localCount)
             localCount++
         }
+
         return null
     }
 
     override fun onPostExecute(result: Void?) {
         super.onPostExecute(result)
+
         enableButtonBlock()
     }
 }

@@ -44,7 +44,6 @@ class App : Application() {
                 )
             }
         }
-
         localBroadcastManager.registerReceiver(
             countReceiver, IntentFilter(
                 MainActivity.BROADCAST_SAVED_COUNT
@@ -58,7 +57,6 @@ class App : Application() {
                 )
             }
         }
-
         localBroadcastManager.registerReceiver(
             lastPrimeNumberReceiver, IntentFilter(
                 MainActivity.BROADCAST_SAVED_LAST_CALCULATED_PRIME_NUMBER

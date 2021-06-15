@@ -17,8 +17,12 @@ class MainActivity : AppCompatActivity() {
     private val endOfCount = 10
     private val waitObj = Object()
     private val handler = Handler(Looper.getMainLooper())
-    private val timeToSleepCalculate = 500
+    private val timeToSleepCalculate = 500L
     private val startLoopIndex = 2
+    private val endOfPrimeNumbersCheck = 500
+    private var countForExit = 1
+        private val zeroInt = 0
+    private val twoInt = 2
 
     companion object {
         private const val BREAK_LINE = "\n"
@@ -32,13 +36,24 @@ class MainActivity : AppCompatActivity() {
 
         binding.treadsContentTextView.movementMethod = ScrollingMovementMethod()
         binding.startButton.setOnClickListener {
-            var count = 1
             it.isEnabled = false
             val first = Thread(Runnable {
-                try {
-                    calculateSimpleDigits()
-                } catch (e: InterruptedException) {
-                    return@Runnable
+                var numbersForCheck = startLoopIndex
+                while (shouldExit) {
+                    Thread.sleep(timeToSleepCalculate)
+                    var countDividers = zeroInt
+                    for (i in startLoopIndex..endOfPrimeNumbersCheck) {
+                        if (numbersForCheck % i == zeroInt) {
+                            countDividers++
+                        }
+                    }
+                    if (countDividers < twoInt) {
+                        synchronized(waitObj) {
+                            listManager.setData(numbersForCheck.toString())
+                            waitObj.notify()
+                        }
+                    }
+                    numbersForCheck++
                 }
             })
 
@@ -72,12 +87,11 @@ class MainActivity : AppCompatActivity() {
             val third = Thread(Runnable {
                 while (shouldExit) {
                     Thread.sleep(interval.toLong())
-                    listManager.setData(count.toString())
-                    count++
-                    if (count == endOfCount) {
+                    listManager.setData(countForExit.toString())
+                    countForExit++
+                    if (countForExit == endOfCount) {
                         shouldExit = false
                         fourth.join()
-                        first.interrupt()
                         first.join()
                         second.join()
                         handler.post {
@@ -95,22 +109,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun calculateSimpleDigits() {
-        for (number in startLoopIndex..Int.MAX_VALUE) {
-            Thread.sleep(timeToSleepCalculate.toLong())
-            var count = 0
-            for (i in startLoopIndex..number) {
-                if (number % i == 0) {
-                    count++
-                }
-            }
-
-            if (count < 2) {
-                synchronized(waitObj) {
-                    listManager.setData(number.toString())
-                    waitObj.notify()
-                }
-            }
-        }
-    }
 }

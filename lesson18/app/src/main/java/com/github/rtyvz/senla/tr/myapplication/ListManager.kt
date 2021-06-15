@@ -18,6 +18,7 @@ class ListManager {
                 tempList.add(it)
             }
             list.clear()
+
             return tempList
         }
     }
