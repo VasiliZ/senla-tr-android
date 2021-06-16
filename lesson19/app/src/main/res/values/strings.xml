@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OkHttp</string>
+
+    <!--main activity-->
+    <string name="main_activity_start_label">Старт</string>
+    <string name="wait">подождите окончания операции</string>
 </resources>
