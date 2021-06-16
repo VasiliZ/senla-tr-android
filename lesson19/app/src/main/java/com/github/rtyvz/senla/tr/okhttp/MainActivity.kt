@@ -6,31 +6,48 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvz.senla.tr.okhttp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), TaskCallbacks {
-    var binding: ActivityMainBinding? = null
+    private lateinit var binding: ActivityMainBinding
     private var progress: ProgressDialog? = null
+    private var isRotate: Boolean = false
 
     companion object {
         private const val EXTRA_TEXT_EDIT_VALUE: String = "TEXT_EDIT_VALUE"
+        private const val EXTRA_RESULT_VALUE: String = "RESULT_VALUE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(binding.root)
 
         savedInstanceState?.let {
-            binding?.inputValueTextEdit?.setText(it.getString(EXTRA_TEXT_EDIT_VALUE, ""))
+            binding.inputValueTextEdit.setText(it.getString(EXTRA_TEXT_EDIT_VALUE, ""))
+            binding.responseTextView.text = it.getString(EXTRA_RESULT_VALUE, "")
         }
 
         initProgressDialog()
 
-        binding?.apply {
+        if (isRotate) {
+            progress?.show()
+        }
+
+        binding.apply {
             sendButton.setOnClickListener {
+                progress?.show()
                 var fragment = supportFragmentManager.findFragmentByTag(HandleTaskFragment.TAG)
                 if (fragment == null) {
-                    fragment = HandleTaskFragment()
+                    fragment = HandleTaskFragment().apply {
+                        arguments = Bundle().apply {
+                            putString(
+                                HandleTaskFragment.EXTRA_INPUT_VALUE,
+                                binding.inputValueTextEdit.text.toString()
+                            )
+                        }
+                    }
                     supportFragmentManager.beginTransaction().add(fragment, HandleTaskFragment.TAG)
                         .commit()
+                } else {
+                    (fragment as HandleTaskFragment).restartTask(binding.inputValueTextEdit.text.toString())
                 }
             }
         }
@@ -45,16 +62,18 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(EXTRA_TEXT_EDIT_VALUE, binding?.inputValueTextEdit?.text.toString())
+        outState.putString(EXTRA_TEXT_EDIT_VALUE, binding.inputValueTextEdit.text.toString())
+        outState.putString(EXTRA_RESULT_VALUE, binding.responseTextView.text.toString())
     }
 
     override fun taskRunningYet() {
-        progress?.show()
+        isRotate = true
     }
 
     override fun onPostExecute(it: String) {
         progress?.dismiss()
-        binding?.responseTextView?.text = it
+        isRotate = false
+        binding.responseTextView.text = it
     }
 
     override fun onDestroy() {

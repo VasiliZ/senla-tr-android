@@ -9,7 +9,7 @@ import com.github.rtyvZ.senla.tr.multithreadapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     @Volatile
-    private var shouldExit = true
+    private var shouldWork = true
     private lateinit var binding: ActivityMainBinding
     private val listManager = ListManager()
     private val interval = 5000
@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private val endOfCount = 10
     private val waitObj = Object()
     private val handler = Handler(Looper.getMainLooper())
-    private val timeToSleepCalculate = 500L
+    private val timeToSleepCalculate = 400L
     private val startLoopIndex = 2
     private val endOfPrimeNumbersCheck = 500
     private var countForExit = 1
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             it.isEnabled = false
             val first = Thread(Runnable {
                 var numbersForCheck = startLoopIndex
-                while (shouldExit) {
+                while (shouldWork) {
                     Thread.sleep(timeToSleepCalculate)
                     var countDividers = zeroInt
                     for (i in startLoopIndex..endOfPrimeNumbersCheck) {
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             })
 
             val second = Thread(Runnable {
-                while (shouldExit) {
+                while (shouldWork) {
                     Thread.sleep(writeToUiInterval.toLong())
                     handler.post {
                         val newData = listManager.getData()
@@ -76,28 +76,33 @@ class MainActivity : AppCompatActivity() {
             })
 
             val fourth = Thread(Runnable {
-                while (shouldExit) {
+                while (shouldWork) {
                     synchronized(waitObj) {
                         waitObj.wait()
-                        listManager.setData(TEXT_YUP)
+                        if (shouldWork) {
+                            listManager.setData(TEXT_YUP)
+                        }
                     }
                 }
             })
 
             val third = Thread(Runnable {
-                while (shouldExit) {
+                while (shouldWork) {
                     Thread.sleep(interval.toLong())
                     listManager.setData(countForExit.toString())
                     countForExit++
+
                     if (countForExit == endOfCount) {
-                        shouldExit = false
-                        fourth.join()
+                        shouldWork = false
+                        synchronized(waitObj) {
+                            waitObj.notify()
+                        }
                         first.join()
                         second.join()
+                        fourth.join()
                         handler.post {
                             binding.startButton.isEnabled = true
                         }
-                        break
                     }
                 }
             })

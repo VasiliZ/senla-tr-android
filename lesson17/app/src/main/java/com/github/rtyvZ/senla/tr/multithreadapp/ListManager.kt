@@ -2,17 +2,15 @@ package com.github.rtyvZ.senla.tr.multithreadapp
 
 class ListManager {
     private val list = mutableListOf<String>()
-    private val lock = Object()
 
     fun setData(value: String) {
-        synchronized(lock) {
+        synchronized(this) {
             list.add(value)
-            lock.notifyAll()
         }
     }
 
     fun getData(): List<String>? {
-        synchronized(lock) {
+        synchronized(this) {
             val copyOfList = list.toList()
             deleteData()
             return copyOfList
@@ -20,7 +18,7 @@ class ListManager {
     }
 
     private fun deleteData() {
-        synchronized(lock) {
+        synchronized(this) {
             list.clear()
         }
     }
