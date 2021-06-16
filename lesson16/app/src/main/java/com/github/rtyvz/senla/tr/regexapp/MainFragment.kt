@@ -142,7 +142,8 @@ class MainFragment : Fragment() {
 
     private fun replaceLinks(value: StringBuilder): String {
         return value.replace(regexFindLinks) {
-            TAB + START_WWW_LINK + it.value.replace(EMPTY_SPACE, EMPTY_STRING)
+            StringBuilder(TAB).append(START_WWW_LINK)
+                .append(it.value.replace(EMPTY_SPACE, EMPTY_STRING))
         }
     }
 
