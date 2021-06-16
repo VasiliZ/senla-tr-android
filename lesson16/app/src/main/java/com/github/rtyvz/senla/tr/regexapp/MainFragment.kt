@@ -136,7 +136,7 @@ class MainFragment : Fragment() {
 
     private fun findValueInTags(value: StringBuilder): String {
         return (regexFindTags.findAll(value)).joinToString {
-            it.value
+            StringBuilder(it.value).append(LINE_BREAK)
         }
     }
 
