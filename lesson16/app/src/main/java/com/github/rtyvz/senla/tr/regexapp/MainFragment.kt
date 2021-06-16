@@ -101,9 +101,9 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun prepareResult(resultBuilder: StringBuilder, valueForPrepare: String) {
+    private fun prepareResult(resultBuilder: StringBuilder, searchValues: String) {
         resultBuilder.clear()
-        resultBuilder.append(valueForPrepare)
+        resultBuilder.append(searchValues)
     }
 
     private fun replacePhoneNumber(value: StringBuilder): String {
