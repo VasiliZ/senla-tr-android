@@ -15,7 +15,6 @@ class MultiFuncApp : Application() {
         super.onCreate()
 
         INSTANCE = this
-
         noteBookDir = File(
             StringBuilder()
                 .append(INSTANCE?.filesDir)
@@ -33,5 +32,4 @@ class MultiFuncApp : Application() {
     }
 
     fun getNotebookDir(): String = noteBookDir.absolutePath
-
 }

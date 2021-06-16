@@ -46,15 +46,13 @@ class NotebookFragment : Fragment() {
             (activity as MainActivity).changeToolBar(activity?.getString(R.string.notebook_fragment_label))
         }
         binding?.apply {
-            listFile.apply {
-                adapter = filesAdapter
-            }
-
+            listFile.adapter = filesAdapter
             createNewFileButton.setOnClickListener {
+
                 if (R.bool.isLand.bool(requireContext())) {
-                    (parentFragment as ResetDataFragmentContract).openNewFile()
+                    (parentFragment as ResetDataFragmentContract).onCreateNewFileClicked()
                 } else {
-                    (activity as ResetDataFragmentContract).openNewFile()
+                    (activity as ResetDataFragmentContract).onCreateNewFileClicked()
                 }
             }
         }
@@ -96,4 +94,9 @@ class NotebookFragment : Fragment() {
 
         super.onDestroy()
     }
+}
+
+interface ResetDataFragmentContract {
+    fun setContent(content: String)
+    fun onCreateNewFileClicked()
 }

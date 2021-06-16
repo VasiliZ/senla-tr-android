@@ -122,29 +122,24 @@ class MainActivity : AppCompatActivity(),
     override fun setContent(content: String) {
         val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
         if (fragment is EditFileFragment) {
-            fragment.setContent(content)
+            fragment.setPath(content)
         } else {
             replaceFragment(EditFileFragment().apply {
                 arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, content)
+                    putString(EditFileFragment.EXTRA_FILE_PATH, content)
                 }
             })
         }
     }
 
-    override fun openNewFile() {
+    override fun onCreateNewFileClicked() {
         if (R.bool.isLand.bool(this)) {
             val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
             if (fragment is EditFileFragment) {
-                fragment.setContent(null)
+                fragment.setPath(null)
             }
         } else {
             replaceFragment(EditFileFragment())
         }
     }
-}
-
-
-interface SetContentContract {
-    fun setContent(content: String?)
 }

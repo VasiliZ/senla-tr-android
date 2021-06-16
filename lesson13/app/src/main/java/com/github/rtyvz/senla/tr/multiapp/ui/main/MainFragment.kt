@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.MainFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ext.createDialog
 import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ConfirmExitDialogFragment
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.InformationAboutProgramDialogFragment
 
 class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
@@ -28,41 +29,75 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val dialog = InformationAboutProgramDialogFragment()
         (activity as MainActivity).changeToolBar(activity?.getString(R.string.app_name))
         binding?.apply {
-            aboutAuthorButton.setOnClickListener {
-                activity?.let {
-                    this@MainFragment.createDialog(
-                        it,
-                        getString(R.string.main_fragment_information_about_author),
-                        getString(R.string.dialog_ok_button_label)
-                    ).show()
+            activity?.let { fragmentActivity ->
+                aboutAuthorButton.setOnClickListener {
+                    dialog.apply {
+                        arguments = setDataIntoBundle(
+                            fragmentActivity.getString(R.string.main_fragment_about_author_label),
+                            fragmentActivity.getString(R.string.main_fragment_information_about_author)
+                        )
+                    }
+                    dialog.show(
+                        childFragmentManager,
+                        InformationAboutProgramDialogFragment.TAG
+                    )
                 }
-            }
 
-            aboutProgramButton.setOnClickListener {
-                activity?.let {
-                    this@MainFragment.createDialog(
-                        it,
-                        getString(R.string.main_fragment_about_program),
-                        getString(R.string.dialog_ok_button_label)
-                    ).show()
+                aboutProgramButton.setOnClickListener {
+                    dialog.apply {
+                        arguments = setDataIntoBundle(
+                            fragmentActivity.getString(R.string.main_fragment_about_program_label),
+                            fragmentActivity.getString(R.string.main_fragment_about_program)
+                        )
+                    }
+                    dialog.show(
+                        childFragmentManager,
+                        InformationAboutProgramDialogFragment.TAG
+                    )
                 }
-            }
 
-            closeButton.setOnClickListener {
-                activity?.let {
-                    this@MainFragment.createDialog(
-                        it,
-                        getString(R.string.main_fragment_are_you_sure_label),
-                        getString(R.string.dialog_cancel_button_label),
-                        getString(R.string.dialog_ok_button_label)
-                    ) {
-                        it.finish()
-                    }.show()
+                closeButton.setOnClickListener {
+                    activity?.let {
+                        val confirmDialog = ConfirmExitDialogFragment {
+                            (it as MainActivity).finish()
+                        }
+                        confirmDialog.apply {
+                            arguments = setDataIntoBundle(
+                                fragmentActivity.getString(R.string.main_fragment_are_you_sure_label)
+                            )
+                        }
+                        confirmDialog.show(childFragmentManager, ConfirmExitDialogFragment.TAG)
+                    }
                 }
             }
+        }
+    }
+
+    private fun setDataIntoBundle(
+        title: String,
+        message: String
+    ): Bundle {
+        return Bundle().apply {
+            putString(
+                InformationAboutProgramDialogFragment.EXTRA_DIALOG_TITLE,
+                title
+            )
+            putString(
+                InformationAboutProgramDialogFragment.EXTRA_DIALOG_MESSAGE,
+                message
+            )
+        }
+    }
+
+    private fun setDataIntoBundle(title: String): Bundle {
+        return Bundle().apply {
+            putString(
+                InformationAboutProgramDialogFragment.EXTRA_DIALOG_TITLE,
+                title
+            )
         }
     }
 

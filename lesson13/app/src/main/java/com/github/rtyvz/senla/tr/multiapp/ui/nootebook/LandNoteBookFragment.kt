@@ -43,29 +43,24 @@ class LandNoteBookFragment : Fragment(), ResetDataFragmentContract {
     override fun setContent(content: String) {
         val fragment = childFragmentManager.findFragmentById(R.id.contentContainer)
         if (fragment is EditFileFragment) {
-            fragment.setContent(content)
+            fragment.setPath(content)
         } else {
             setFragment(R.id.contentContainer, EditFileFragment().apply {
                 arguments = Bundle().apply {
-                    putString(EditFileFragment.PATH_FILE_EXTRA, content)
+                    putString(EditFileFragment.EXTRA_FILE_PATH, content)
                 }
             })
         }
     }
 
-    override fun openNewFile() {
+    override fun onCreateNewFileClicked() {
         if (R.bool.isLand.bool(requireActivity())) {
             val fragment = childFragmentManager.findFragmentById(R.id.contentContainer)
             if (fragment is EditFileFragment) {
-                fragment.setContent(null)
+                fragment.setPath(null)
             }
         } else {
             setFragment(R.id.contentContainer, EditFileFragment())
         }
     }
-}
-
-interface ResetDataFragmentContract {
-    fun setContent(content: String)
-    fun openNewFile()
 }
