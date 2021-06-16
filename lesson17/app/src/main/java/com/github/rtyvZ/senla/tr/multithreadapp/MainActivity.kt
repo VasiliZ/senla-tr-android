@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val startLoopIndex = 2
     private val endOfPrimeNumbersCheck = 500
     private var countForExit = 1
-        private val zeroInt = 0
+    private val zeroInt = 0
     private val twoInt = 2
 
     companion object {
@@ -108,5 +108,4 @@ class MainActivity : AppCompatActivity() {
             fourth.start()
         }
     }
-
 }
