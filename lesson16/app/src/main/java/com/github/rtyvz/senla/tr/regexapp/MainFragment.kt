@@ -15,6 +15,12 @@ class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
     private val firstMatchGroup = 0
     private val secondMatchGroup = 1
+    private val regexFindPrefixPhoneNumber = "8\\ \\(0[0-9]{2}\\)\\ ".toRegex()
+    private val regexFindCodeInPhoneNumber = "8\\ \\(0(.*?)\\)".toRegex()
+    private val regexFindFourLetterWord = "\\b\\w[A-Za-zА-Яа-я]{3}\\b".toRegex()
+    private val regexFindEmptySpaces = "\\ +".toRegex()
+    private val regexFindTags = "[^<one?.*>(.*)<\\/one>]".toRegex()
+    private val regexFindLinks = "(\\swww\\.\\S*\\.\\w*)".toRegex()
 
     companion object {
         private const val DASH = "-"
@@ -28,15 +34,9 @@ class MainFragment : Fragment() {
         private const val PREF_FIND_PHONE_NUMBER = "find_phone_numbers"
         private const val PREF_FIND_ALL_WORLDS_IN_TAGS = "find_word_in_tag"
         private const val PREF_FIND_LINKS = "find_links"
-        private const val REGEX_FIND_PHONE_NUMBER =
+        private const val FIND_PHONE_NUMBER_PATTERN =
             "8\\ \\(0[0-9]{2}\\)\\ [0-9]{3}\\-[0-9]{2}\\-[0-9]{2}"
-        private const val REGEX_FIND_PREFIX_PHONE_NUMBER = "8\\ \\(0[0-9]{2}\\)\\ "
-        private const val REGEX_FIND_CODE_PHONE_NUMBER = "8\\ \\(0(.*?)\\)"
-        private const val REGEX_NEW_PREFIX_PHONE_NUMBER = "+375"
-        private const val REGEX_FIND_FOUR_LETTER_WORD = "\\b\\w[A-Za-zА-Яа-я]{3}\\b"
-        private const val REGEX_FIND_EMPTY_SPACES = "\\ +"
-        private const val REGEX_FIND_TAGS = "[^<one?.*>(.*)<\\/one>]"
-        private const val REGEX_FIND_LINKS = "(\\swww\\.\\S*\\.\\w*)"
+        private const val NEW_PREFIX_PHONE_NUMBER = "+375"
     }
 
     override fun onCreateView(
@@ -107,14 +107,15 @@ class MainFragment : Fragment() {
     }
 
     private fun replacePhoneNumber(value: StringBuilder): String {
-        val pattern = Pattern.compile(REGEX_FIND_PHONE_NUMBER)
+        val pattern = Pattern.compile(FIND_PHONE_NUMBER_PATTERN)
         val matcher = pattern.matcher(value)
         val resultBuilder = StringBuilder()
         while (matcher.find()) {
             val match =
-                matcher.group(firstMatchGroup)?.replace(REGEX_FIND_PREFIX_PHONE_NUMBER.toRegex()) { prefix ->
-                    prefix.value.trim().replace(REGEX_FIND_CODE_PHONE_NUMBER.toRegex()) { code ->
-                        REGEX_NEW_PREFIX_PHONE_NUMBER + DASH + code.groups[secondMatchGroup]?.value?.trim()
+                matcher.group(firstMatchGroup)?.replace(regexFindPrefixPhoneNumber) { prefix ->
+                    prefix.value.trim().replace(regexFindCodeInPhoneNumber) { code ->
+                        StringBuilder(NEW_PREFIX_PHONE_NUMBER).append(DASH)
+                            .append(code.groups[secondMatchGroup]?.value?.trim()).toString()
                     } + DASH
                 }
             resultBuilder.append(match).append(LINE_BREAK)
@@ -124,23 +125,23 @@ class MainFragment : Fragment() {
     }
 
     private fun setUppercaseToFourLetterWords(value: StringBuilder): String {
-        return value.replace(REGEX_FIND_FOUR_LETTER_WORD.toRegex()) {
+        return value.replace(regexFindFourLetterWord) {
             it.value.toUpperCase(Locale.ROOT)
         }
     }
 
     private fun replaceEmptySpaces(value: StringBuilder): String {
-        return value.replace(REGEX_FIND_EMPTY_SPACES.toRegex(), DASH)
+        return value.replace(regexFindEmptySpaces, DASH)
     }
 
     private fun findValueInTags(value: StringBuilder): String {
-        return (REGEX_FIND_TAGS.toRegex().findAll(value)).joinToString {
+        return (regexFindTags.findAll(value)).joinToString {
             it.value
         }
     }
 
     private fun replaceLinks(value: StringBuilder): String {
-        return value.replace(REGEX_FIND_LINKS.toRegex()) {
+        return value.replace(regexFindLinks) {
             TAB + START_WWW_LINK + it.value.replace(EMPTY_SPACE, EMPTY_STRING)
         }
     }
