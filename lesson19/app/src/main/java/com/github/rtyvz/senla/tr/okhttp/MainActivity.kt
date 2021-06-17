@@ -7,7 +7,7 @@ import com.github.rtyvz.senla.tr.okhttp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), TaskCallbacks {
     private lateinit var binding: ActivityMainBinding
-    private var progress: ProgressDialog? = null
+    private lateinit var progress: ProgressDialog
     private var isRotate: Boolean = false
 
     companion object {
@@ -33,7 +33,9 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
 
         binding.apply {
             sendButton.setOnClickListener {
-                progress?.show()
+                if (!progress.isShowing) {
+                    progress.show()
+                }
                 var fragment = supportFragmentManager.findFragmentByTag(HandleTaskFragment.TAG)
                 if (fragment == null) {
                     fragment = HandleTaskFragment().apply {
@@ -55,9 +57,9 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
 
     private fun initProgressDialog() {
         progress = ProgressDialog(this@MainActivity)
-        progress?.setMessage(getString(R.string.wait))
-        progress?.setCanceledOnTouchOutside(false)
-        progress?.isIndeterminate = true
+        progress.setMessage(getString(R.string.wait))
+        progress.setCanceledOnTouchOutside(false)
+        progress.isIndeterminate = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -71,13 +73,13 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
     }
 
     override fun onPostExecute(it: String) {
-        progress?.dismiss()
+        progress.dismiss()
         isRotate = false
         binding.responseTextView.text = it
     }
 
     override fun onDestroy() {
-        progress?.dismiss()
+        progress.dismiss()
 
         super.onDestroy()
     }
