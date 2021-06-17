@@ -1,5 +1,6 @@
-package com.github.rtyvz.senla.tr.multiapp.ui
+package com.github.rtyvz.senla.tr.multiapp.ui.main
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +11,6 @@ import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
 import com.github.rtyvz.senla.tr.multiapp.ext.bool
 import com.github.rtyvz.senla.tr.multiapp.ui.calc.CalcFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.main.MainFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity(),
     private var currentTag: String? = null
 
     companion object {
-        const val ADAPTER_DATA_FIELD = "data"
-        const val TAG_IDENTIFIER = "tag"
+        private const val ADAPTER_DATA_FIELD = "data"
+        private const val TAG = "tag"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         savedInstanceState?.let {
-            currentTag = it.getString(TAG_IDENTIFIER)
+            currentTag = it.getString(TAG)
         }
         setSupportActionBar(binding.appBarMain.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(),
             R.layout.drawer_item,
             listOf(
                 ADAPTER_DATA_FIELD,
-                TAG_IDENTIFIER
+                TAG
             ).toTypedArray(),
             intArrayOf(R.id.drawerItemTextView)
         )
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(),
             setOnItemClickListener { parent, _, position, _ ->
                 parent.adapter.getItem(position)
                 val dataAdapter = simpleAdapter.getItem(position) as LinkedHashMap<*, *>
-                replaceFragmentByTag(dataAdapter[TAG_IDENTIFIER].toString())
+                replaceFragmentByTag(dataAdapter[TAG].toString())
             }
         }
 
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(),
         for (i in listTags.indices) {
             val map = mutableMapOf<String, String>()
             map[ADAPTER_DATA_FIELD] = listFromResource[i]
-            map[TAG_IDENTIFIER] = listTags[i]
+            map[TAG] = listTags[i]
             data.add(map)
         }
 
@@ -109,14 +109,20 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun changeToolBar(title: String?) {
+    override fun changeTitleToolBar(title: String?) {
         binding.appBarMain.toolbar.title = title
+    }
+
+    override fun changeToolbarNavIcon(drawable: Drawable?) {
+        binding.appBarMain.toolbar.apply {
+            setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putString(TAG_IDENTIFIER, currentTag)
+        outState.putString(TAG, currentTag)
     }
 
     override fun setContent(content: String) {

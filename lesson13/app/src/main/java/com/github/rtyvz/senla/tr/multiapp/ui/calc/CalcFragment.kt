@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.CalcFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.main.MainActivity
 import java.util.*
 
 class CalcFragment : Fragment() {
@@ -48,10 +48,11 @@ class CalcFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).changeToolBar(activity?.getString(R.string.calc_fragment_title))
+        (activity as MainActivity).changeTitleToolBar(activity?.getString(R.string.calc_fragment_title))
         savedInstanceState?.let {
-            currentNumber = StringBuilder(it.getString(SAVE_CURRENT_INPUTED_VALUE)!!)
-            previousOperations = StringBuilder(it.getString(SAVE_ALL_PREVIOUS_OPERATIONS)!!)
+            currentNumber = StringBuilder(it.getString(SAVE_CURRENT_INPUTED_VALUE) ?: EMPTY_STRING)
+            previousOperations =
+                StringBuilder(it.getString(SAVE_ALL_PREVIOUS_OPERATIONS) ?: EMPTY_STRING)
             it.getStringArrayList(SAVE_STACK_OPERATIONS)?.let { list ->
                 stackOperations.addAll(list)
             }

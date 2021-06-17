@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
+import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.EditFileFragmentBinding
+import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import java.io.File
 
 class EditFileFragment : Fragment() {
@@ -44,7 +46,8 @@ class EditFileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         getFilePathFromArguments()
-
+        //todo change interfaces in calls api and change action icon in edit fragment
+        (activity as ChangeTitleToolBarContract).changeToolbarNavIcon(activity?.getDrawable(R.drawable.ic_baseline_arrow_back_24))
         if (savedFilePath != null) {
             setDataToEditText(readFromFile(savedFilePath.toString()))
         }

@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.MainFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.MainActivity
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ConfirmExitDialogFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.InformationAboutProgramDialogFragment
 
 class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
@@ -29,8 +26,9 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val dialog = InformationAboutProgramDialogFragment()
-        (activity as MainActivity).changeToolBar(activity?.getString(R.string.app_name))
+        val dialog =
+            InformationAboutProgramDialogFragment()
+        (activity as MainActivity).changeTitleToolBar(activity?.getString(R.string.app_name))
         binding?.apply {
             activity?.let { fragmentActivity ->
                 aboutAuthorButton.setOnClickListener {
@@ -61,9 +59,10 @@ class MainFragment : Fragment() {
 
                 closeButton.setOnClickListener {
                     activity?.let {
-                        val confirmDialog = ConfirmExitDialogFragment {
-                            (it as MainActivity).finish()
-                        }
+                        val confirmDialog =
+                            ConfirmExitDialogFragment {
+                                (it as MainActivity).finish()
+                            }
                         confirmDialog.apply {
                             arguments = setDataIntoBundle(
                                 fragmentActivity.getString(R.string.main_fragment_are_you_sure_label)
