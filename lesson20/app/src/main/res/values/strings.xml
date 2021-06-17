@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">LoginApp</string>
+    <!--login activity-->
+    <string name="login_activity_error_label">E-mail</string>
+    <string name="login_activity_password_hint">Password</string>
+    <string name="login_activity_login_label">Login</string>
+    <string name="login_activity_wrong_email">Wrong email</string>
+    <string name="login_activity_error_input_value">Password or email can\'t be empty</string>
+    <string name="login_activity_wait_label">Wait please</string>
+
+    <!--profile activity-->
+    <string name="profile_activity_email_label">E-mail:</string>
+    <string name="profile_activity_first_name_label">First name:</string>
+    <string name="profile_activity_last_name">Last name:</string>
+    <string name="profile_activity_birth_date">Birth date:</string>
+    <string name="profile_activity_notes_label">Notes: \n \n %1$s</string>
+
+    <!--task fragment-->
+    <string name="task_fragment_try_get_token_error">Network error</string>
 </resources>

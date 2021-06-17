@@ -13,4 +13,9 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.LoginApp.TextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">@dimen/middle_text_size</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+    </style>
 </resources>

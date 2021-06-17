@@ -20,6 +20,9 @@ allprojects {
         jcenter()
     }
 }
+ext{
+    okHttpVersion = '4.9.0'
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
