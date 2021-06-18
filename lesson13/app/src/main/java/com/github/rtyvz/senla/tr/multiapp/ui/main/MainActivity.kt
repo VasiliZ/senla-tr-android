@@ -1,27 +1,24 @@
 package com.github.rtyvz.senla.tr.multiapp.ui.main
 
 import android.os.Bundle
-import android.widget.SimpleAdapter
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
-import com.github.rtyvz.senla.tr.multiapp.ext.bool
 import com.github.rtyvz.senla.tr.multiapp.ui.calc.CalcFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.NotebookFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ParentFragmentNotebook
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.ResetDataFragmentContract
+import com.github.rtyvz.senla.tr.multiapp.ui.main.adapter.DrawerSimpleAdapter
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.NotebookFragment
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.ParentNotebookFragment
 
 class MainActivity : AppCompatActivity(),
-    ChangeTitleToolBarContract, ResetDataFragmentContract {
+    ChangeTitleToolBarContract {
     private lateinit var binding: ActivityMainBinding
     private var currentTag: String? = null
 
     companion object {
-        private const val ADAPTER_DATA_FIELD = "data"
+        const val KEY_FOR_ADAPTER_VALUE = "data"
         private const val TAG = "tag"
     }
 
@@ -33,30 +30,14 @@ class MainActivity : AppCompatActivity(),
         savedInstanceState?.let {
             currentTag = it.getString(TAG)
         }
-        setSupportActionBar(binding.appBarMain.toolbar)
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        binding.appBarMain.toolbar.apply {
-            setNavigationIcon(R.drawable.ic_baseline_menu_24)
-            setNavigationOnClickListener {
-                drawerLayout.openDrawer(GravityCompat.START)
-            }
-        }
-        val simpleAdapter = SimpleAdapter(
-            this,
-            prepareDataFromAdapter(),
-            R.layout.drawer_item,
-            listOf(
-                ADAPTER_DATA_FIELD,
-                TAG
-            ).toTypedArray(),
-            intArrayOf(R.id.drawerItemTextView)
-        )
+
+        initToolBar()
+
         binding.navigationItemList.apply {
-            adapter = simpleAdapter
+            adapter = initAdapterSimple()
             setOnItemClickListener { parent, _, position, _ ->
-                parent.adapter.getItem(position)
-                val dataAdapter = simpleAdapter.getItem(position) as LinkedHashMap<*, *>
-                replaceFragmentByTag(dataAdapter[TAG].toString())
+                setAdapterClickItemListener(position, parent)
+                (adapter as DrawerSimpleAdapter).setIndexForSelectedItem(position)
             }
         }
 
@@ -67,6 +48,14 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun initToolBar() {
+        setSupportActionBar(binding.appBarMain.toolbar)
+        binding.appBarMain.toolbar.apply {
+            setNavigationIcon(R.drawable.ic_baseline_menu_24)
+            openDrawer()
+        }
+    }
+
     private fun prepareDataFromAdapter(): ArrayList<Map<String, String>> {
         val listTags = listOf(MainFragment.TAG, NotebookFragment.TAG, CalcFragment.TAG)
         val listFromResource = resources.getStringArray(R.array.drawer_item_list)
@@ -74,13 +63,25 @@ class MainActivity : AppCompatActivity(),
 
         for (i in listTags.indices) {
             val map = mutableMapOf<String, String>()
-            map[ADAPTER_DATA_FIELD] = listFromResource[i]
+            map[KEY_FOR_ADAPTER_VALUE] = listFromResource[i]
             map[TAG] = listTags[i]
             data.add(map)
         }
 
         return data
     }
+
+    private fun initAdapterSimple() =
+        DrawerSimpleAdapter(
+            this,
+            prepareDataFromAdapter(),
+            R.layout.drawer_item,
+            listOf(
+                KEY_FOR_ADAPTER_VALUE,
+                TAG
+            ).toTypedArray(),
+            intArrayOf(R.id.drawerItemTextView)
+        )
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
@@ -90,19 +91,23 @@ class MainActivity : AppCompatActivity(),
         transaction.commit()
     }
 
+    private fun setAdapterClickItemListener(
+        position: Int,
+        parent: AdapterView<*>
+    ) {
+        val dataAdapter = parent.adapter.getItem(position) as LinkedHashMap<*, *>
+        replaceFragmentByTag(dataAdapter[TAG].toString())
+    }
+
     private fun replaceFragmentByTag(tag: String?) {
         tag?.let {
             currentTag = tag
             when (tag) {
                 MainFragment.TAG -> replaceFragment(MainFragment())
                 CalcFragment.TAG -> replaceFragment(CalcFragment())
-                NotebookFragment.TAG -> {
-                    if (R.bool.isLand.bool(this)) {
-                        replaceFragment(ParentFragmentNotebook())
-                    } else {
-                        replaceFragment(NotebookFragment())
-                    }
-                }
+                NotebookFragment.TAG -> replaceFragment(
+                    ParentNotebookFragment()
+                )
             }
             binding.drawerLayout.closeDrawers()
         }
@@ -113,13 +118,17 @@ class MainActivity : AppCompatActivity(),
         if (isEditFragment) {
             binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
             binding.appBarMain.toolbar.setNavigationOnClickListener {
-                onBackPressed()
+                supportFragmentManager.fragments[0].childFragmentManager.popBackStack()
             }
         } else {
             binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
-            binding.appBarMain.toolbar.setNavigationOnClickListener {
-                binding.drawerLayout.openDrawer(GravityCompat.START)
-            }
+            openDrawer()
+        }
+    }
+
+    private fun openDrawer() {
+        binding.appBarMain.toolbar.setNavigationOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 
@@ -127,29 +136,5 @@ class MainActivity : AppCompatActivity(),
         super.onSaveInstanceState(outState)
 
         outState.putString(TAG, currentTag)
-    }
-
-    override fun setContent(content: String) {
-        val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
-        if (fragment is EditFileFragment) {
-            fragment.setPath(content)
-        } else {
-            replaceFragment(EditFileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(EditFileFragment.EXTRA_FILE_PATH, content)
-                }
-            })
-        }
-    }
-
-    override fun onCreateNewFileClicked() {
-        if (R.bool.isLand.bool(this)) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.contentContainer)
-            if (fragment is EditFileFragment) {
-                fragment.setPath(null)
-            }
-        } else {
-            replaceFragment(EditFileFragment())
-        }
     }
 }

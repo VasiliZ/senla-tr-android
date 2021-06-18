@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.multiapp.ui.nootebook
+package com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,11 +11,13 @@ import com.github.rtyvz.senla.tr.multiapp.databinding.EditFileFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import java.io.File
 
-class EditFileFragment : Fragment() {
+class EditPaperNotebookFragment : Fragment() {
     private var binding: EditFileFragmentBinding? = null
     private var savedFilePath: String? = null
-    private var newFileNameForRepeatedFileName: String = EMPTY_STRING
-    private var repeatedFileName = EMPTY_STRING
+    private var newFileNameForRepeatedFileName: String =
+        EMPTY_STRING
+    private var repeatedFileName =
+        EMPTY_STRING
     private val fileNameRegex = "[\\\\/<>]".toRegex()
     private val countStartValue = 0
     private val valueForStartCheckRepeatName = 1
@@ -31,6 +33,7 @@ class EditFileFragment : Fragment() {
         private const val CLOSE_BRACKET = ")"
         private const val SPACE = " "
         const val EXTRA_FILE_PATH = "FILE_PATH"
+        val TAG = EditPaperNotebookFragment.javaClass.simpleName
     }
 
     override fun onCreateView(
@@ -50,6 +53,7 @@ class EditFileFragment : Fragment() {
             activity?.getString(R.string.edit_text_fragment_edit_label),
             true
         )
+        setDataToEditText(readFromFile(savedFilePath))
     }
 
 
@@ -84,11 +88,20 @@ class EditFileFragment : Fragment() {
     }
 
     private fun clearFileName(fileName: String): String =
-        fileName.replace(fileNameRegex, EMPTY_STRING)
+        fileName.replace(
+            fileNameRegex,
+            EMPTY_STRING
+        )
 
     private fun getFileNameFromContent(content: String): String {
         return if (content.contains(LINE_BREAK)) {
-            clearFileName(content.substring(START_STRING_INDEX, content.indexOf(LINE_BREAK)))
+            clearFileName(
+                content.substring(
+                    START_STRING_INDEX, content.indexOf(
+                        LINE_BREAK
+                    )
+                )
+            )
         } else {
             clearFileName(content)
         }
@@ -152,17 +165,17 @@ class EditFileFragment : Fragment() {
     private fun isFileNamesTheSame(text: String, file: File) =
         file.nameWithoutExtension == getFileNameFromContent(text)
 
-    private fun renameFile(text: String, currenFile: File): File? {
+    private fun renameFile(text: String, currentFile: File): File? {
         val firstLineInText = getFileNameFromContent(text)
-        currenFile.parent?.let {
+        currentFile.parent?.let {
             val newFileName = findFileWithTheSameName(firstLineInText, File(it))
             if (newFileName.isBlank()) {
                 val fileNameForRename =
                     File(
-                        currenFile.parent,
+                        currentFile.parent,
                         StringBuilder(firstLineInText).append(FILE_EXT).toString()
                     )
-                currenFile.renameTo(fileNameForRename)
+                currentFile.renameTo(fileNameForRename)
                 return fileNameForRename
             }
         }

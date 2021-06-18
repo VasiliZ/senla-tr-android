@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.multiapp.ui.nootebook
+package com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,26 +8,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
 import com.github.rtyvz.senla.tr.multiapp.R
-import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ext.bool
+import com.github.rtyvz.senla.tr.multiapp.databinding.ListNotebookFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter.FilesAdapter
 import java.io.File
 
 class NotebookFragment : Fragment() {
-    private var binding: NotebookFragmentBinding? = null
+    private var binding: ListNotebookFragmentBinding? = null
     private val filesAdapter by lazy {
         FilesAdapter { path ->
-            if (R.bool.isLand.bool(requireContext())) {
-                (parentFragment as ResetDataFragmentContract).setContent(path)
-            } else {
-                (activity as ResetDataFragmentContract).setContent(path)
-            }
+            (parentFragment as ResetDataFragmentContract).setContent(path)
         }
     }
 
     companion object {
-        const val TAG = "NoteBookFragment"
+        val TAG = NotebookFragment.javaClass.simpleName.toString()
     }
 
     override fun onCreateView(
@@ -35,25 +30,22 @@ class NotebookFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = NotebookFragmentBinding.inflate(inflater)
-        return binding?.root ?: error("can't bind note book fragment")
+        binding = ListNotebookFragmentBinding.inflate(inflater)
+        return binding?.root ?: error("can't bind parent fragment")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!R.bool.isLand.bool(requireContext())) {
-            (activity as ChangeTitleToolBarContract).changeToolbarBehavior(activity?.getString(R.string.notebook_fragment_label), false)
-        }
+        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
+            activity?.getString(R.string.notebook_fragment_label),
+            false
+        )
+
         binding?.apply {
             listFile.adapter = filesAdapter
             createNewFileButton.setOnClickListener {
-
-                if (R.bool.isLand.bool(requireContext())) {
-                    (parentFragment as ResetDataFragmentContract).onCreateNewFileClicked()
-                } else {
-                    (activity as ResetDataFragmentContract).onCreateNewFileClicked()
-                }
+                (parentFragment as ResetDataFragmentContract).onCreateNewFileClicked()
             }
         }
     }
