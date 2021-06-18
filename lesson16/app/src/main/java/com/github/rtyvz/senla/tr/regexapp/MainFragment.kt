@@ -12,12 +12,14 @@ import java.util.*
 import java.util.regex.Pattern
 
 class MainFragment : Fragment() {
+    //todo move this to result fragment
     private var binding: MainFragmentBinding? = null
     private val firstMatchGroup = 0
     private val secondMatchGroup = 1
     private val regexFindPrefixPhoneNumber = "8\\ \\(0[0-9]{2}\\)\\ ".toRegex()
     private val regexFindCodeInPhoneNumber = "8\\ \\(0(.*?)\\)".toRegex()
-    private val regexFindFourLetterWord = "\\b\\w[A-Za-zА-Яа-я]{3}\\b".toRegex()
+    //todo check this
+    private val regexFindFourLetterWord = "\\b[A-Za-zА-Яа-я]{4}\\b".toRegex()
     private val regexFindEmptySpaces = "\\ +".toRegex()
     private val regexFindTags = "[^<one?.*>(.*)<\\/one>]".toRegex()
     private val regexFindLinks = "(\\swww\\.\\S*\\.\\w*)".toRegex()
@@ -28,7 +30,7 @@ class MainFragment : Fragment() {
         private const val EMPTY_STRING = ""
         private const val START_WWW_LINK = "http://"
         private const val LINE_BREAK = "\n"
-        private const val TAB = "\\t"
+        private const val TAB = "\t"
         private const val PREF_FIND_FOUR_LETTER_WORD = "find_four_letter_word"
         private const val PREF_REPLACE_SPACES = "replace_spaces"
         private const val PREF_FIND_PHONE_NUMBER = "find_phone_numbers"
@@ -56,6 +58,7 @@ class MainFragment : Fragment() {
             applyButton.setOnClickListener {
                 resultBuilding = StringBuilder(mainEditText.text.toString())
                 activity?.let {
+                    //todo rename t and any
                     PreferenceManager.getDefaultSharedPreferences(it).all.forEach { (t, any) ->
                         if ((any as Boolean)) {
                             when (t) {
@@ -83,7 +86,6 @@ class MainFragment : Fragment() {
                                         findValueInTags(resultBuilding)
                                     )
                                 }
-
                                 PREF_FIND_LINKS -> {
                                     prepareResult(
                                         resultBuilding,
@@ -126,7 +128,7 @@ class MainFragment : Fragment() {
 
     private fun setUppercaseToFourLetterWords(value: StringBuilder): String {
         return value.replace(regexFindFourLetterWord) {
-            it.value.toUpperCase(Locale.ROOT)
+            it.value.toUpperCase(Locale.getDefault())
         }
     }
 

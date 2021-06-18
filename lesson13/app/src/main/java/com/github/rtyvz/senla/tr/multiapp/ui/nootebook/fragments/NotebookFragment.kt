@@ -22,7 +22,7 @@ class NotebookFragment : Fragment() {
     }
 
     companion object {
-        val TAG = NotebookFragment.javaClass.simpleName.toString()
+        val TAG = NotebookFragment::class.simpleName.toString()
     }
 
     override fun onCreateView(

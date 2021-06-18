@@ -12,21 +12,20 @@ class MainActivity : AppCompatActivity() {
     private var shouldWork = true
     private lateinit var binding: ActivityMainBinding
     private val listManager = ListManager()
-    private val interval = 5000
-    private val writeToUiInterval = 100
     private val endOfCount = 10
     private val waitObj = Object()
     private val handler = Handler(Looper.getMainLooper())
-    private val timeToSleepCalculate = 400L
     private val startLoopIndex = 2
-    private val endOfPrimeNumbersCheck = 500
-    private var countForExit = 1
     private val zeroInt = 0
     private val twoInt = 2
 
     companion object {
         private const val BREAK_LINE = "\n"
         private const val TEXT_YUP = "Yup!"
+        private const val LONG_SLEEP_INTERVAL = 5000L
+        private const val WRITE_TO_UI_INTERVAL = 100L
+        private const val TIME_TO_SLEEP_CALCULATE = 400L
+        private const val END_OF_PRIME_NUMBER_CHECK = 500
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,69 +36,66 @@ class MainActivity : AppCompatActivity() {
         binding.treadsContentTextView.movementMethod = ScrollingMovementMethod()
         binding.startButton.setOnClickListener {
             it.isEnabled = false
-            val first = Thread(Runnable {
-                var numbersForCheck = startLoopIndex
+            binding.treadsContentTextView.text = ""
+            val secondThread = Thread(Runnable {
+                var nextPrimeNumber = startLoopIndex
                 while (shouldWork) {
-                    Thread.sleep(timeToSleepCalculate)
-                    var countDividers = zeroInt
-                    for (i in startLoopIndex..endOfPrimeNumbersCheck) {
-                        if (numbersForCheck % i == zeroInt) {
-                            countDividers++
+                    Thread.sleep(TIME_TO_SLEEP_CALCULATE)
+                    var dividerCount = zeroInt
+                    for (i in nextPrimeNumber..END_OF_PRIME_NUMBER_CHECK) {
+                        if (nextPrimeNumber % i == zeroInt) {
+                            dividerCount++
                         }
                     }
-                    if (countDividers < twoInt) {
+                    if (dividerCount < twoInt) {
                         synchronized(waitObj) {
-                            listManager.setData(numbersForCheck.toString())
+                            listManager.setData(nextPrimeNumber.toString())
                             waitObj.notify()
                         }
                     }
-                    numbersForCheck++
+                    nextPrimeNumber++
                 }
             })
 
-            val second = Thread(Runnable {
+            val firstThread = Thread(Runnable {
                 while (shouldWork) {
-                    Thread.sleep(writeToUiInterval.toLong())
+                    Thread.sleep(WRITE_TO_UI_INTERVAL)
                     handler.post {
-                        val newData = listManager.getData()
-                        newData?.let { list ->
-                            if (list.isNotEmpty()) {
-                                list.forEach { listValue ->
-                                    binding.treadsContentTextView.append(
-                                        listValue + BREAK_LINE
-                                    )
-                                }
-                            }
+                        listManager.getData()?.forEach { listValue ->
+                            binding.treadsContentTextView.append(
+                                listValue + BREAK_LINE
+                            )
                         }
                     }
                 }
             })
 
             val fourth = Thread(Runnable {
-                while (shouldWork) {
-                    synchronized(waitObj) {
+                synchronized(waitObj) {
+                    while (shouldWork) {
                         waitObj.wait()
-                        if (shouldWork) {
-                            listManager.setData(TEXT_YUP)
-                        }
+                        listManager.setData(TEXT_YUP)
                     }
                 }
             })
 
             val third = Thread(Runnable {
+                var countForExit = 1
                 while (shouldWork) {
-                    Thread.sleep(interval.toLong())
+                    Thread.sleep(LONG_SLEEP_INTERVAL)
                     listManager.setData(countForExit.toString())
                     countForExit++
 
                     if (countForExit == endOfCount) {
                         shouldWork = false
+
                         synchronized(waitObj) {
                             waitObj.notify()
                         }
-                        first.join()
-                        second.join()
+                        secondThread.join()
+                        firstThread.join()
                         fourth.join()
+
                         handler.post {
                             binding.startButton.isEnabled = true
                         }
@@ -107,8 +103,8 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            first.start()
-            second.start()
+            secondThread.start()
+            firstThread.start()
             third.start()
             fourth.start()
         }

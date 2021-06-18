@@ -26,56 +26,59 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val dialog =
-            InformationAboutProgramDialogFragment()
-        (activity as MainActivity).changeToolbarBehavior(activity?.getString(R.string.app_name), false)
+
+        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
+            getString(R.string.app_name),
+            false
+        )
+
         binding?.apply {
-            activity?.let { fragmentActivity ->
-                aboutAuthorButton.setOnClickListener {
-                    dialog.apply {
-                        arguments = setDataIntoBundle(
-                            fragmentActivity.getString(R.string.main_fragment_about_author_label),
-                            fragmentActivity.getString(R.string.main_fragment_information_about_author)
-                        )
-                    }
-                    dialog.show(
-                        childFragmentManager,
-                        InformationAboutProgramDialogFragment.TAG
+            aboutAuthorButton.setOnClickListener {
+                val dialog = InformationAboutProgramDialogFragment().apply {
+                    arguments = configureBundle(
+                        getString(R.string.main_fragment_about_author_label),
+                        getString(R.string.main_fragment_information_about_author)
                     )
                 }
+                dialog.show(
+                    childFragmentManager,
+                    InformationAboutProgramDialogFragment.TAG
+                )
+            }
 
-                aboutProgramButton.setOnClickListener {
-                    dialog.apply {
-                        arguments = setDataIntoBundle(
-                            fragmentActivity.getString(R.string.main_fragment_about_program_label),
-                            fragmentActivity.getString(R.string.main_fragment_about_program)
-                        )
-                    }
-                    dialog.show(
-                        childFragmentManager,
-                        InformationAboutProgramDialogFragment.TAG
+            aboutProgramButton.setOnClickListener {
+                val dialog = InformationAboutProgramDialogFragment().apply {
+                    arguments = configureBundle(
+                        getString(R.string.main_fragment_about_program_label),
+                        getString(R.string.main_fragment_about_program)
                     )
                 }
+                dialog.show(
+                    childFragmentManager,
+                    InformationAboutProgramDialogFragment.TAG
+                )
+            }
 
-                closeButton.setOnClickListener {
-                    activity?.let {
-                        val confirmDialog =
-                            ConfirmExitDialogFragment {
-                                (it as MainActivity).finish()
-                            }
-                        confirmDialog.apply {
-                            arguments = setDataIntoBundle(
-                                fragmentActivity.getString(R.string.main_fragment_are_you_sure_label)
-                            )
+            closeButton.setOnClickListener {
+                activity?.let {
+                    val confirmDialog =
+                        ConfirmExitDialogFragment {
+                            //TODO  create interface for this
+                            (it as MainActivity).finish()
                         }
-                        confirmDialog.show(childFragmentManager, ConfirmExitDialogFragment.TAG)
+                    confirmDialog.apply {
+                        arguments = setDataIntoBundle(
+                            getString(R.string.main_fragment_are_you_sure_label)
+                        )
                     }
+                    confirmDialog.show(childFragmentManager, ConfirmExitDialogFragment.TAG)
                 }
             }
         }
     }
 
-    private fun setDataIntoBundle(
+    //todo replace this with help kotlin
+    private fun configureBundle(
         title: String,
         message: String
     ): Bundle {

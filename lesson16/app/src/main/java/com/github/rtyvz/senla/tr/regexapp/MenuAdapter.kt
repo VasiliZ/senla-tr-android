@@ -8,7 +8,7 @@ import android.widget.BaseAdapter
 import com.github.rtyvz.senla.tr.regexapp.databinding.DrawerItemBinding
 import com.github.rtyvz.senla.tr.regexapp.entity.MenuItem
 
-private fun Int.color(context: Context) = context.resources.getColor(this, null)
+private fun Int.toColor(context: Context) = context.resources.getColor(this, null)
 
 class MenuAdapter(
     private val inflater: LayoutInflater,
@@ -16,6 +16,7 @@ class MenuAdapter(
 ) : BaseAdapter() {
     private var selectedItem = -1
 
+    //todo
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View?
         val viewHolder: MenuViewHolder?
@@ -42,9 +43,9 @@ class MenuAdapter(
 
     private fun changeColorMenuItem(position: Int, view: View) {
         if (selectedItem == position) {
-            view.setBackgroundColor(R.color.purple_200.color(inflater.context))
+            view.setBackgroundColor(R.color.purple_200.toColor(inflater.context))
         } else {
-            view.setBackgroundColor(R.color.white.color(inflater.context))
+            view.setBackgroundColor(R.color.white.toColor(inflater.context))
         }
     }
 

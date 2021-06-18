@@ -211,8 +211,9 @@ class CalcFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        binding = null
+
         super.onDestroy()
 
-        binding = null
     }
 }

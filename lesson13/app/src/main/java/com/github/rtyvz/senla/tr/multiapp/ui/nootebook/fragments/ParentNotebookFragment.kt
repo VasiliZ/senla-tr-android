@@ -1,5 +1,6 @@
 package com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileActivity
 
 class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
     private var binding: NotebookFragmentBinding? = null
@@ -23,7 +25,6 @@ class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         createFragmentFromOrientation()
 
@@ -55,13 +56,14 @@ class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
         if (fragment is EditPaperNotebookFragment) {
             fragment.setPath(content)
         } else {
-            createFragment(R.id.notebookContainer,
-                EditPaperNotebookFragment()
-                    .apply {
-                        arguments = Bundle().apply {
-                            putString(EditPaperNotebookFragment.EXTRA_FILE_PATH, content)
-                        }
-                    })
+            startActivity(Intent(activity, EditFileActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putString(
+                        EditPaperNotebookFragment.EXTRA_FILE_PATH,
+                        content
+                    )
+                })
+            })
         }
     }
 
@@ -72,7 +74,7 @@ class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
                 fragment.setPath(null)
             }
         } else {
-            createFragment(R.id.notebookContainer, EditPaperNotebookFragment())
+            startActivity(Intent(activity, EditFileActivity::class.java))
         }
     }
 

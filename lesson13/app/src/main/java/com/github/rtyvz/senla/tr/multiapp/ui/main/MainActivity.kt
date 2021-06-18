@@ -1,9 +1,11 @@
 package com.github.rtyvz.senla.tr.multiapp.ui.main
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.AdapterView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
@@ -12,13 +14,15 @@ import com.github.rtyvz.senla.tr.multiapp.ui.main.adapter.DrawerSimpleAdapter
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.ParentNotebookFragment
 
-class MainActivity : AppCompatActivity(),
-    ChangeTitleToolBarContract {
+class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
     private lateinit var binding: ActivityMainBinding
     private var currentTag: String? = null
+    private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var adapterView: AdapterView<*>
+    private var currentAdapterPosition: Int = -1
 
     companion object {
-        const val KEY_FOR_ADAPTER_VALUE = "data"
+        const val KEY_FOR_ADAPTER_VALUE = "ADAPTER_VALUE"
         private const val TAG = "tag"
     }
 
@@ -32,11 +36,13 @@ class MainActivity : AppCompatActivity(),
         }
 
         initToolBar()
+        initDrawerToggle()
 
         binding.navigationItemList.apply {
             adapter = initAdapterSimple()
             setOnItemClickListener { parent, _, position, _ ->
-                setAdapterClickItemListener(position, parent)
+                replaceFragmentByTag(parent, position)
+                currentAdapterPosition = position
                 (adapter as DrawerSimpleAdapter).setIndexForSelectedItem(position)
             }
         }
@@ -44,16 +50,51 @@ class MainActivity : AppCompatActivity(),
         if (currentTag == null) {
             replaceFragment(MainFragment())
         } else {
-            replaceFragmentByTag(currentTag)
+            replaceFragmentByTag(adapterView, currentAdapterPosition)
         }
     }
 
     private fun initToolBar() {
         setSupportActionBar(binding.appBarMain.toolbar)
-        binding.appBarMain.toolbar.apply {
-            setNavigationIcon(R.drawable.ic_baseline_menu_24)
-            openDrawer()
+    }
+
+    private fun initDrawerToggle() {
+        drawerToggle = ActionBarDrawerToggle(
+            this,
+            binding.drawerLayout,
+            binding.appBarMain.toolbar,
+            R.string.app_name,
+            R.string.app_name
+        )
+
+        binding.drawerLayout
+            .setDrawerListener(
+                drawerToggle
+            )
+        drawerToggle.isDrawerIndicatorEnabled = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (item.itemId == android.R.id.home) {
+            return true
         }
+
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        drawerToggle.onConfigurationChanged(newConfig)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        drawerToggle.syncState()
     }
 
     private fun prepareDataFromAdapter(): ArrayList<Map<String, String>> {
@@ -91,44 +132,28 @@ class MainActivity : AppCompatActivity(),
         transaction.commit()
     }
 
-    private fun setAdapterClickItemListener(
-        position: Int,
-        parent: AdapterView<*>
-    ) {
-        val dataAdapter = parent.adapter.getItem(position) as LinkedHashMap<*, *>
-        replaceFragmentByTag(dataAdapter[TAG].toString())
-    }
-
-    private fun replaceFragmentByTag(tag: String?) {
-        tag?.let {
-            currentTag = tag
-            when (tag) {
-                MainFragment.TAG -> replaceFragment(MainFragment())
-                CalcFragment.TAG -> replaceFragment(CalcFragment())
-                NotebookFragment.TAG -> replaceFragment(
-                    ParentNotebookFragment()
-                )
+    private fun replaceFragmentByTag(parent: AdapterView<*>, position: Int) {
+        adapterView = parent
+        currentTag = (adapterView.adapter.getItem(position) as MutableMap<String, String>)[TAG]
+        when (currentTag) {
+            MainFragment.TAG -> replaceFragment(MainFragment())
+            CalcFragment.TAG -> replaceFragment(CalcFragment())
+            NotebookFragment.TAG -> replaceFragment(ParentNotebookFragment())
+            else -> {
+                replaceFragment(MainFragment())
             }
-            binding.drawerLayout.closeDrawers()
         }
     }
 
     override fun changeToolbarBehavior(title: String?, isEditFragment: Boolean) {
         binding.appBarMain.toolbar.title = title
         if (isEditFragment) {
-            binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
             binding.appBarMain.toolbar.setNavigationOnClickListener {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
                 supportFragmentManager.fragments[0].childFragmentManager.popBackStack()
             }
         } else {
-            binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
-            openDrawer()
-        }
-    }
-
-    private fun openDrawer() {
-        binding.appBarMain.toolbar.setNavigationOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
+            initDrawerToggle()
         }
     }
 
