@@ -10,7 +10,7 @@ import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ext.bool
-import com.github.rtyvz.senla.tr.multiapp.ui.main.MainActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter.FilesAdapter
 import java.io.File
 
@@ -43,7 +43,7 @@ class NotebookFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (!R.bool.isLand.bool(requireContext())) {
-            (activity as MainActivity).changeTitleToolBar(activity?.getString(R.string.notebook_fragment_label))
+            (activity as ChangeTitleToolBarContract).changeToolbarBehavior(activity?.getString(R.string.notebook_fragment_label), false)
         }
         binding?.apply {
             listFile.adapter = filesAdapter

@@ -46,12 +46,12 @@ class EditFileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         getFilePathFromArguments()
-        //todo change interfaces in calls api and change action icon in edit fragment
-        (activity as ChangeTitleToolBarContract).changeToolbarNavIcon(activity?.getDrawable(R.drawable.ic_baseline_arrow_back_24))
-        if (savedFilePath != null) {
-            setDataToEditText(readFromFile(savedFilePath.toString()))
-        }
+        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
+            activity?.getString(R.string.edit_text_fragment_edit_label),
+            true
+        )
     }
+
 
     private fun setDataToEditText(text: String) {
         binding?.editFileEditText?.setText(text)

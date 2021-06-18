@@ -1,6 +1,5 @@
 package com.github.rtyvz.senla.tr.multiapp.ui.main
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -109,13 +108,18 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun changeTitleToolBar(title: String?) {
+    override fun changeToolbarBehavior(title: String?, isEditFragment: Boolean) {
         binding.appBarMain.toolbar.title = title
-    }
-
-    override fun changeToolbarNavIcon(drawable: Drawable?) {
-        binding.appBarMain.toolbar.apply {
-            setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        if (isEditFragment) {
+            binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+            binding.appBarMain.toolbar.setNavigationOnClickListener {
+                onBackPressed()
+            }
+        } else {
+            binding.appBarMain.toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
+            binding.appBarMain.toolbar.setNavigationOnClickListener {
+                binding.drawerLayout.openDrawer(GravityCompat.START)
+            }
         }
     }
 

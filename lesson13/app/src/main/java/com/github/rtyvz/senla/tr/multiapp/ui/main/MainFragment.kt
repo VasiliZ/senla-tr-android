@@ -28,7 +28,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val dialog =
             InformationAboutProgramDialogFragment()
-        (activity as MainActivity).changeTitleToolBar(activity?.getString(R.string.app_name))
+        (activity as MainActivity).changeToolbarBehavior(activity?.getString(R.string.app_name), false)
         binding?.apply {
             activity?.let { fragmentActivity ->
                 aboutAuthorButton.setOnClickListener {
