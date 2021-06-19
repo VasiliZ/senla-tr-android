@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SimpleAdapter
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.DrawerItemBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.main.MainActivity
@@ -32,11 +33,16 @@ class DrawerSimpleAdapter(
         }
         holder.itemTextView.text = data[position][MainActivity.KEY_FOR_ADAPTER_VALUE]
 
-        if (selectedItemId == position) {
-           holder.itemTextView.setTextColor(context.resources.getColor(R.color.teal_200, null))
-        } else {
-            holder.itemTextView.setTextColor(context.resources.getColor(R.color.black, null))
-        }
+        holder.itemTextView.setTextColor(
+            ResourcesCompat.getColor(
+                context.resources,
+                when (selectedItemId) {
+                    position -> R.color.teal_200
+                    else -> R.color.black
+                },
+                null
+            )
+        )
 
         return view
     }

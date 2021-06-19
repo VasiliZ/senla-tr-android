@@ -12,7 +12,7 @@ class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
 
     companion object {
-         val TAG: String = MainFragment::class.java.simpleName
+        val TAG: String = MainFragment::class.java.simpleName
     }
 
     override fun onCreateView(
@@ -26,11 +26,6 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
-            getString(R.string.app_name),
-            false
-        )
 
         binding?.apply {
             aboutAuthorButton.setOnClickListener {
@@ -63,8 +58,7 @@ class MainFragment : Fragment() {
                 activity?.let {
                     val confirmDialog =
                         ConfirmExitDialogFragment {
-                            //TODO  create interface for this
-                            (it as MainActivity).finish()
+                            (it as CloseActivityContract).finishActivity()
                         }
                     confirmDialog.apply {
                         arguments = setDataIntoBundle(
@@ -108,4 +102,8 @@ class MainFragment : Fragment() {
 
         super.onDestroy()
     }
+}
+
+interface CloseActivityContract {
+    fun finishActivity()
 }

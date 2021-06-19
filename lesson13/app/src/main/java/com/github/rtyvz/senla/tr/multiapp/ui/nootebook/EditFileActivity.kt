@@ -19,7 +19,7 @@ class EditFileActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainer, EditPaperNotebookFragment()
+            .replace(R.id.editFragmentContainer, EditPaperNotebookFragment()
                 .apply {
                     arguments = Bundle()
                         .apply {

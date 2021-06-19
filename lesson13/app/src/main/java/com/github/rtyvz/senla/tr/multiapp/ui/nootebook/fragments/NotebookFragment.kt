@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
-import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.ListNotebookFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.adapter.FilesAdapter
 import java.io.File
 

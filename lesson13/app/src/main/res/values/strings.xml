@@ -10,6 +10,8 @@
     </string-array>
 
     <!--main fragment-->
+    <string name="drawer_open">open drawer</string>
+    <string name="drawer_close">close drawer</string>
     <string name="main_fragment_about_program_label">О программе</string>
     <string name="main_fragment_about_author_label">Об авторе</string>
     <string name="main_fragment_close_label">Закрыть</string>
@@ -48,4 +50,5 @@
 
     <!--edit text fragment-->
     <string name="edit_text_fragment_edit_label">Редактирование</string>
+
 </resources>

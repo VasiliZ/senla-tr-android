@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.CalcFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import java.util.*
 
 class CalcFragment : Fragment() {
@@ -48,7 +47,6 @@ class CalcFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(activity?.getString(R.string.calc_fragment_title), false)
         savedInstanceState?.let {
             currentNumber = StringBuilder(it.getString(SAVE_CURRENT_INPUTED_VALUE) ?: EMPTY_STRING)
             previousOperations =

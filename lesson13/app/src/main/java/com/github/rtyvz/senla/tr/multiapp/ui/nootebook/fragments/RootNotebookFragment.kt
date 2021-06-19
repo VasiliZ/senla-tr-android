@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileActivity
 
 class RootNotebookFragment : Fragment(), ResetDataFragmentContract {
