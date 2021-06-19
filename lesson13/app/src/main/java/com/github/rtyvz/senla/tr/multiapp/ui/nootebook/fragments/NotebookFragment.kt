@@ -37,11 +37,6 @@ class NotebookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
-            activity?.getString(R.string.notebook_fragment_label),
-            false
-        )
-
         binding?.apply {
             listFile.adapter = filesAdapter
             createNewFileButton.setOnClickListener {

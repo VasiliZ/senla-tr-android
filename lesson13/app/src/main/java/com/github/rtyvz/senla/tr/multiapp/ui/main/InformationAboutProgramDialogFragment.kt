@@ -9,7 +9,7 @@ import com.github.rtyvz.senla.tr.multiapp.R
 class InformationAboutProgramDialogFragment : DialogFragment() {
 
     companion object {
-        const val TAG = "ConfirmDialogFragment"
+        val TAG: String = InformationAboutProgramDialogFragment::class.java.simpleName
         const val EXTRA_DIALOG_TITLE = "DIALOG_TITLE"
         const val EXTRA_DIALOG_MESSAGE = "DIALOG_MESSAGE"
         private const val EMPTY_STRING = ""

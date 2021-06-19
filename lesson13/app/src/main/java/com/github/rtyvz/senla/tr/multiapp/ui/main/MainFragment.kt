@@ -12,7 +12,7 @@ class MainFragment : Fragment() {
     private var binding: MainFragmentBinding? = null
 
     companion object {
-        const val TAG = "MainFragmentTag"
+         val TAG: String = MainFragment::class.java.simpleName
     }
 
     override fun onCreateView(

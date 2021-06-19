@@ -12,7 +12,7 @@ import com.github.rtyvz.senla.tr.multiapp.databinding.ActivityMainBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.calc.CalcFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.main.adapter.DrawerSimpleAdapter
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.NotebookFragment
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.ParentNotebookFragment
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.RootNotebookFragment
 
 class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
     private lateinit var binding: ActivityMainBinding
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), ChangeTitleToolBarContract {
         when (currentTag) {
             MainFragment.TAG -> replaceFragment(MainFragment())
             CalcFragment.TAG -> replaceFragment(CalcFragment())
-            NotebookFragment.TAG -> replaceFragment(ParentNotebookFragment())
+            NotebookFragment.TAG -> replaceFragment(RootNotebookFragment())
             else -> {
                 replaceFragment(MainFragment())
             }

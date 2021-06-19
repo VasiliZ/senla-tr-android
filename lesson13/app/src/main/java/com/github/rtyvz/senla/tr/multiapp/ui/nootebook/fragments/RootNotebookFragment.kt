@@ -11,7 +11,7 @@ import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
 import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileActivity
 
-class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
+class RootNotebookFragment : Fragment(), ResetDataFragmentContract {
     private var binding: NotebookFragmentBinding? = null
 
     override fun onCreateView(
@@ -27,19 +27,14 @@ class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
         super.onViewCreated(view, savedInstanceState)
 
         createFragmentFromOrientation()
-
-        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
-            activity?.getString(R.string.notebook_fragment_label),
-            false
-        )
     }
 
     private fun createFragmentFromOrientation() {
+        createFragment(R.id.notebookContainer, NotebookFragment())
+
         if (isContentContainerAvailable()) {
             createFragment(R.id.contentContainer, EditPaperNotebookFragment())
         }
-
-        createFragment(R.id.notebookContainer, NotebookFragment())
     }
 
     private fun createFragment(fragmentId: Int, fragment: Fragment) {
@@ -52,29 +47,32 @@ class ParentNotebookFragment : Fragment(), ResetDataFragmentContract {
     private fun isContentContainerAvailable() = binding?.contentContainer != null
 
     override fun setContent(content: String) {
-        val fragment = childFragmentManager.findFragmentByTag(EditPaperNotebookFragment.TAG)
-        if (fragment is EditPaperNotebookFragment) {
-            fragment.setPath(content)
-        } else {
-            startActivity(Intent(activity, EditFileActivity::class.java).apply {
-                putExtras(Bundle().apply {
-                    putString(
-                        EditPaperNotebookFragment.EXTRA_FILE_PATH,
-                        content
-                    )
-                })
-            })
-        }
+        openNewDisplayFromContent(content)
     }
 
     override fun onCreateNewFileClicked() {
+        openNewDisplayFromContent(null)
+    }
+
+    private fun startEditActivity(path: String?) {
+        startActivity(Intent(activity, EditFileActivity::class.java).apply {
+            putExtras(Bundle().apply {
+                putString(
+                    EditPaperNotebookFragment.EXTRA_FILE_PATH,
+                    path
+                )
+            })
+        })
+    }
+
+    private fun openNewDisplayFromContent(path: String?) {
         if (isContentContainerAvailable()) {
             val fragment = childFragmentManager.findFragmentById(R.id.contentContainer)
             if (fragment is EditPaperNotebookFragment) {
-                fragment.setPath(null)
+                fragment.setPath(path)
             }
         } else {
-            startActivity(Intent(activity, EditFileActivity::class.java))
+            startEditActivity(path)
         }
     }
 

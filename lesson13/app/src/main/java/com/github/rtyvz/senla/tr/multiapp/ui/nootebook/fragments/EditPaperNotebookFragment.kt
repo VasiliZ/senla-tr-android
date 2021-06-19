@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.MultiFuncApp
-import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.EditFileFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.main.ChangeTitleToolBarContract
 import java.io.File
 
 class EditPaperNotebookFragment : Fragment() {
@@ -33,7 +31,7 @@ class EditPaperNotebookFragment : Fragment() {
         private const val CLOSE_BRACKET = ")"
         private const val SPACE = " "
         const val EXTRA_FILE_PATH = "FILE_PATH"
-        val TAG = EditPaperNotebookFragment.javaClass.simpleName
+        val TAG: String = EditPaperNotebookFragment::class.java.simpleName
     }
 
     override fun onCreateView(
@@ -49,10 +47,6 @@ class EditPaperNotebookFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         getFilePathFromArguments()
-        (activity as ChangeTitleToolBarContract).changeToolbarBehavior(
-            activity?.getString(R.string.edit_text_fragment_edit_label),
-            true
-        )
         setDataToEditText(readFromFile(savedFilePath))
     }
 

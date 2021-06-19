@@ -1,6 +1,7 @@
 package com.github.rtyvz.senla.tr.multiapp.ui.nootebook
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.EditFileActivityBinding
@@ -14,18 +15,32 @@ class EditFileActivity : AppCompatActivity() {
         binding = EditFileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pathFile = intent?.getStringExtra(EditPaperNotebookFragment.EXTRA_FILE_PATH) ?: ""
-
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.contentContainer, EditPaperNotebookFragment()
+            .replace(R.id.fragmentContainer, EditPaperNotebookFragment()
                 .apply {
                     arguments = Bundle()
                         .apply {
-                            putString(EditPaperNotebookFragment.EXTRA_FILE_PATH, pathFile)
+                            putString(
+                                EditPaperNotebookFragment.EXTRA_FILE_PATH,
+                                intent?.getStringExtra(EditPaperNotebookFragment.EXTRA_FILE_PATH)
+                            )
                         }
                 })
             .addToBackStack(EditPaperNotebookFragment.TAG)
             .commit()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

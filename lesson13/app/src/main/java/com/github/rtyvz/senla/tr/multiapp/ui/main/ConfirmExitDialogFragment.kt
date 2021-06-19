@@ -9,7 +9,7 @@ import com.github.rtyvz.senla.tr.multiapp.R
 class ConfirmExitDialogFragment(private val action: () -> Unit) : DialogFragment() {
 
     companion object {
-        const val TAG = "ConfirmExitDialogFragment"
+        val TAG: String = ConfirmExitDialogFragment::class.java.simpleName
         private const val EXTRA_DIALOG_TITLE = "DIALOG_TITLE"
         private const val EMPTY_STRING = ""
     }
