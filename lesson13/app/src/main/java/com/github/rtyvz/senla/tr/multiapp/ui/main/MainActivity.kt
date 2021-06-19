@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity(), CloseActivityContract {
 
     private fun replaceFragmentByTag(adapter: SimpleAdapter, position: Int) {
         currentTag = (adapter.getItem(position) as MutableMap<String, String>)[TAG]
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        onBackPressed()
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
 
         if (currentFragment != null && currentTag.equals(currentFragment.tag)) {
