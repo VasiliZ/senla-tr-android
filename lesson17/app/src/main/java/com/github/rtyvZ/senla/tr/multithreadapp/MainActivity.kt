@@ -37,25 +37,6 @@ class MainActivity : AppCompatActivity() {
         binding.startButton.setOnClickListener {
             it.isEnabled = false
             binding.treadsContentTextView.text = ""
-            val secondThread = Thread(Runnable {
-                var nextPrimeNumber = startLoopIndex
-                while (shouldWork) {
-                    Thread.sleep(TIME_TO_SLEEP_CALCULATE)
-                    var dividerCount = zeroInt
-                    for (i in nextPrimeNumber..END_OF_PRIME_NUMBER_CHECK) {
-                        if (nextPrimeNumber % i == zeroInt) {
-                            dividerCount++
-                        }
-                    }
-                    if (dividerCount < twoInt) {
-                        synchronized(waitObj) {
-                            listManager.setData(nextPrimeNumber.toString())
-                            waitObj.notify()
-                        }
-                    }
-                    nextPrimeNumber++
-                }
-            })
 
             val firstThread = Thread(Runnable {
                 while (shouldWork) {
@@ -67,6 +48,27 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
+                }
+            })
+
+            val secondThread = Thread(Runnable {
+                var nextPrimeNumber = startLoopIndex
+                while (shouldWork) {
+                    Thread.sleep(TIME_TO_SLEEP_CALCULATE)
+                    var dividerCount = zeroInt
+                    for (i in nextPrimeNumber..END_OF_PRIME_NUMBER_CHECK) {
+                        if (nextPrimeNumber % i == zeroInt) {
+                            dividerCount++
+                        }
+                    }
+
+                    if (dividerCount < twoInt) {
+                        synchronized(waitObj) {
+                            listManager.setData(nextPrimeNumber.toString())
+                            waitObj.notify()
+                        }
+                    }
+                    nextPrimeNumber++
                 }
             })
 
@@ -103,8 +105,8 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            secondThread.start()
             firstThread.start()
+            secondThread.start()
             third.start()
             fourth.start()
         }
