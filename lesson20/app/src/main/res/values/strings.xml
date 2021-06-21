@@ -14,6 +14,7 @@
     <string name="profile_activity_last_name">Last name:</string>
     <string name="profile_activity_birth_date">Birth date:</string>
     <string name="profile_activity_notes_label">Notes: \n \n %1$s</string>
+    <string name="profile_activity_logout_label">Logout</string>
 
     <!--task fragment-->
     <string name="task_fragment_try_get_token_error">Network error</string>

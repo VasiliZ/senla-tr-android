@@ -2,19 +2,19 @@ package com.github.rtyvz.senla.tr.myapplication
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.databinding.ActivityMainBinding
-import com.github.rtyvz.senla.tr.myapplication.tasks.CalculatePrimeNumbersAsyncTask
-import com.github.rtyvz.senla.tr.myapplication.tasks.MainAsyncTask
-import com.github.rtyvz.senla.tr.myapplication.tasks.ReadDataAsyncTask
-import com.github.rtyvz.senla.tr.myapplication.tasks.SleepingAsyncTask
+import com.github.rtyvz.senla.tr.myapplication.task.CalculatePrimeNumbersAsyncTask
+import com.github.rtyvz.senla.tr.myapplication.task.MainAsyncTask
+import com.github.rtyvz.senla.tr.myapplication.task.ReadDataAsyncTask
+import com.github.rtyvz.senla.tr.myapplication.task.SleepingAsyncTask
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     @Volatile
-    private var isThreadCancel: Boolean = true
+    private var shouldThreadCancel: Boolean = true
     private lateinit var binding: ActivityMainBinding
     private val list = ListManager()
     private val waitObject = Object()
@@ -49,71 +49,88 @@ class MainActivity : AppCompatActivity() {
             initDataAfterRotate()
         }
 
+        initTasks()
+
         binding.apply {
-            contentTextView.movementMethod = ScrollingMovementMethod()
             startButton.setOnClickListener {
                 startButton.isEnabled = false
-                calculateTask =
-                    CalculatePrimeNumbersAsyncTask(
-                        list,
-                        waitObject,
-                        lastCalculatedNumber
-                    ) {
-                        localBroadcastManager
-                            .sendBroadcastSync(Intent(BROADCAST_SAVED_LAST_CALCULATED_PRIME_NUMBER).apply {
-                                putExtra(EXTRA_LAST_CALCULATED_PRIME_NUMBER, it)
-                            })
-                    }
-
-                readDataAsyncTask =
-                    ReadDataAsyncTask(
-                        list
-                    ) {
-                        it?.let { list ->
-                            list.forEach { text ->
-                                localBroadcastManager
-                                    .sendBroadcastSync(Intent(BROADCAST_SAVED_PRIME_NUMBERS).apply {
-                                        putExtra(EXTRA_PRIME_NUMBER, text)
-                                    })
-                                contentTextView.post {
-                                    contentTextView.append(text + LINE_BREAK)
-                                }
-                            }
-                        }
-                    }
-
-                sleepingAsyncTask =
-                    SleepingAsyncTask(
-                        waitObject,
-                        list
-                    )
-
-                mainTask =
-                    MainAsyncTask(
-                        list,
-                        {
-                            startButton.isEnabled = true
-                        },
-                        {
-                            calculateTask?.cancel(isThreadCancel)
-                            readDataAsyncTask?.cancel(isThreadCancel)
-                            sleepingAsyncTask?.cancel(isThreadCancel)
-                        },
-                        {
-                            localBroadcastManager
-                                .sendBroadcastSync(Intent(BROADCAST_SAVED_COUNT).apply {
-                                    putExtra(EXTRA_COUNT, it)
-                                })
-                        },
-                        lastCount
-                    )
-
                 calculateTask?.executeOnExecutor(executorService)
                 readDataAsyncTask?.executeOnExecutor(executorService)
                 sleepingAsyncTask?.executeOnExecutor(executorService)
                 mainTask?.executeOnExecutor(executorService)
             }
         }
+    }
+
+    private fun initTasks() {
+        calculateTask = initCalculatePrimeNumberTask()
+        readDataAsyncTask = initReadDataTask()
+        sleepingAsyncTask = initSleepingTask()
+        mainTask = initMainTask()
+    }
+
+    private fun initCalculatePrimeNumberTask(): CalculatePrimeNumbersAsyncTask {
+        return CalculatePrimeNumbersAsyncTask(
+            list,
+            waitObject,
+            lastCalculatedNumber
+        ) {
+            localBroadcastManager
+                .sendBroadcastSync(Intent(BROADCAST_SAVED_LAST_CALCULATED_PRIME_NUMBER).apply {
+                    putExtra(EXTRA_LAST_CALCULATED_PRIME_NUMBER, it)
+                })
+        }
+    }
+
+    private fun initReadDataTask(): ReadDataAsyncTask {
+        return ReadDataAsyncTask(
+            list
+        ) {
+            it?.let { list ->
+                list.forEach { text ->
+                    localBroadcastManager
+                        .sendBroadcastSync(Intent(BROADCAST_SAVED_PRIME_NUMBERS).apply {
+                            putExtra(EXTRA_PRIME_NUMBER, text)
+                        })
+                    binding.apply {
+                        contentTextView.post {
+                            contentTextView.apply {
+                                append(text + LINE_BREAK)
+                                scroll.fullScroll(View.FOCUS_DOWN)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initSleepingTask(): SleepingAsyncTask {
+        return SleepingAsyncTask(
+            waitObject,
+            list
+        )
+    }
+
+    private fun initMainTask(): MainAsyncTask {
+        return MainAsyncTask(
+            list,
+            {
+                binding.startButton.isEnabled = true
+            },
+            {
+                calculateTask?.cancel(shouldThreadCancel)
+                readDataAsyncTask?.cancel(shouldThreadCancel)
+                sleepingAsyncTask?.cancel(shouldThreadCancel)
+            },
+            {
+                localBroadcastManager
+                    .sendBroadcastSync(Intent(BROADCAST_SAVED_COUNT).apply {
+                        putExtra(EXTRA_COUNT, it)
+                    })
+            },
+            lastCount
+        )
     }
 
     private fun initDataAfterRotate() {
@@ -128,10 +145,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        calculateTask?.cancel(isThreadCancel)
-        readDataAsyncTask?.cancel(isThreadCancel)
-        sleepingAsyncTask?.cancel(isThreadCancel)
-        mainTask?.cancel(isThreadCancel)
+        calculateTask?.cancel(shouldThreadCancel)
+        readDataAsyncTask?.cancel(shouldThreadCancel)
+        sleepingAsyncTask?.cancel(shouldThreadCancel)
+        mainTask?.cancel(shouldThreadCancel)
 
         super.onStop()
     }

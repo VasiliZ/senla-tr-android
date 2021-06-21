@@ -11,7 +11,7 @@ import java.net.URL
 class HandleTaskFragment : Fragment() {
     private var callBacks: TaskCallbacks? = null
     private var task: SendRequestAsyncTask? = null
-    private val regexEscapeParam = "([\\\\\\/\\^\\&])".toRegex()
+    private val regexEscapeParam = "([\\\\/<>&])".toRegex()
     private lateinit var inputValue: String
 
     companion object {
@@ -20,6 +20,29 @@ class HandleTaskFragment : Fragment() {
             "https://pub.zame-dev.org/senla-training-addition/lesson-19.php?param="
         private const val EMPTY_STRING = ""
         const val EXTRA_INPUT_VALUE = "INPUT_VALUE"
+
+        class SendRequestAsyncTask(
+            private val url: String,
+            private val callbacks: TaskCallbacks?
+        ) :
+            AsyncTask<Void, Void, String>() {
+            override fun doInBackground(vararg params: Void?): String? {
+                if (isCancelled) Thread.interrupted()
+
+                val request = Request.Builder().url(URL(url)).build()
+                OkHttpClient()
+                    .newCall(request).execute().use {
+                        return it.body?.string()
+                    }
+            }
+
+            override fun onPostExecute(result: String?) {
+                super.onPostExecute(result)
+                result?.let {
+                    callbacks?.onPostExecute(it)
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +70,7 @@ class HandleTaskFragment : Fragment() {
                 .append(inputValue.replace(regexEscapeParam) {
                     EMPTY_STRING
                 })
-                .toString()
+                .toString(), callBacks
         ).execute() as SendRequestAsyncTask
     }
 
@@ -58,26 +81,6 @@ class HandleTaskFragment : Fragment() {
 
         if (task?.status == AsyncTask.Status.RUNNING) {
             (activity as MainActivity).taskRunningYet()
-        }
-    }
-
-    inner class SendRequestAsyncTask(
-        private val url: String
-    ) :
-        AsyncTask<Void, Void, String>() {
-        override fun doInBackground(vararg params: Void?): String? {
-            val request = Request.Builder().url(URL(url)).build()
-            OkHttpClient()
-                .newCall(request).execute().use {
-                    return it.body?.string()
-                }
-        }
-
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            result?.let {
-                callBacks?.onPostExecute(it)
-            }
         }
     }
 
