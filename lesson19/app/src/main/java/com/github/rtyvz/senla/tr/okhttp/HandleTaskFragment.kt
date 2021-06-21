@@ -27,6 +27,8 @@ class HandleTaskFragment : Fragment() {
         ) :
             AsyncTask<Void, Void, String>() {
             override fun doInBackground(vararg params: Void?): String? {
+                if (isCancelled) Thread.interrupted()
+
                 val request = Request.Builder().url(URL(url)).build()
                 OkHttpClient()
                     .newCall(request).execute().use {
