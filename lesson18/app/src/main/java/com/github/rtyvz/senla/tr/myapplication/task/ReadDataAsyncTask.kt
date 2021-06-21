@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.myapplication.tasks
+package com.github.rtyvz.senla.tr.myapplication.task
 
 import android.os.AsyncTask
 import com.github.rtyvz.senla.tr.myapplication.ListManager
@@ -8,12 +8,15 @@ class ReadDataAsyncTask(
     private val block: (List<String>?) -> Unit
 ) :
     AsyncTask<Void, List<String>?, List<String>?>() {
-    private val timeForThreadSleep = 100L
+
+    companion object {
+        private const val TIME_THREAD_SLEEP = 100L
+    }
 
     override fun doInBackground(vararg params: Void?): List<String>? {
         while (true) {
             if (isCancelled) Thread.interrupted()
-            Thread.sleep(timeForThreadSleep)
+            Thread.sleep(TIME_THREAD_SLEEP)
             listManager.getData()?.let {
 
                 if (it.isNotEmpty()) {

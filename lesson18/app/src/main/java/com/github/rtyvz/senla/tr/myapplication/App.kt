@@ -16,6 +16,7 @@ class App : Application() {
 
     companion object {
         lateinit var INSTANCE: App
+        private const val DEFAULT_VALUE = 0
     }
 
     override fun onCreate() {
@@ -40,7 +41,7 @@ class App : Application() {
         val countReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 _state?.setLastCountValue(
-                    intent?.getIntExtra(MainActivity.EXTRA_COUNT, 0) ?: 0
+                    intent?.getIntExtra(MainActivity.EXTRA_COUNT, DEFAULT_VALUE) ?: DEFAULT_VALUE
                 )
             }
         }
@@ -53,7 +54,10 @@ class App : Application() {
         val lastPrimeNumberReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 _state?.setLastPrimeNumber(
-                    intent?.getIntExtra(MainActivity.EXTRA_LAST_CALCULATED_PRIME_NUMBER, 0) ?: 0
+                    intent?.getIntExtra(
+                        MainActivity.EXTRA_LAST_CALCULATED_PRIME_NUMBER,
+                        DEFAULT_VALUE
+                    ) ?: DEFAULT_VALUE
                 )
             }
         }

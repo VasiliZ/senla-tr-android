@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.myapplication.tasks
+package com.github.rtyvz.senla.tr.myapplication.task
 
 import android.os.AsyncTask
 import com.github.rtyvz.senla.tr.myapplication.ListManager
