@@ -8,7 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -110,11 +111,11 @@
             style="@style/Theme.LoginApp.TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/middle_text_size"
             android:text="@string/profile_activity_notes_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/birthDateTextView" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

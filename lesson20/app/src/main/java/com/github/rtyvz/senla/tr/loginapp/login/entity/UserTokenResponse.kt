@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.loginapp
+package com.github.rtyvz.senla.tr.loginapp.login.entity
 
 data class UserTokenResponse(
     val message: String,

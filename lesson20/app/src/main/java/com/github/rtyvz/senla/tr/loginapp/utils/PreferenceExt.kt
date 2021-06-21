@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.loginapp
+package com.github.rtyvz.senla.tr.loginapp.utils
 
 import android.content.SharedPreferences
 
