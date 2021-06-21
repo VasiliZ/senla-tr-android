@@ -16,14 +16,22 @@ import com.github.rtyvz.senla.tr.multiapp.ui.main.adapter.DrawerSimpleAdapter
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.NotebookFragment
 import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.fragments.RootNotebookFragment
 
-
 class MainActivity : AppCompatActivity(), CloseActivityContract {
     private lateinit var binding: ActivityMainBinding
     private var currentTag: String? = null
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private var currentAdapterPosition: Int = -1
     private val simpleAdapter by lazy {
-        initSimpleAdapter()
+        DrawerSimpleAdapter(
+            this,
+            prepareDataFromAdapter(),
+            R.layout.drawer_item,
+            listOf(
+                KEY_FOR_ADAPTER_VALUE,
+                TAG
+            ).toTypedArray(),
+            intArrayOf(R.id.drawerItemTextView)
+        )
     }
 
     companion object {
@@ -112,18 +120,6 @@ class MainActivity : AppCompatActivity(), CloseActivityContract {
 
         return data
     }
-
-    private fun initSimpleAdapter() =
-        DrawerSimpleAdapter(
-            this,
-            prepareDataFromAdapter(),
-            R.layout.drawer_item,
-            listOf(
-                KEY_FOR_ADAPTER_VALUE,
-                TAG
-            ).toTypedArray(),
-            intArrayOf(R.id.drawerItemTextView)
-        )
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
