@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity(),
     private var isTaskRunning = false
 
     companion object {
-        private const val PREFS_USER_TOKEN = "USER_TOKEN"
+        const val PREFS_USER_TOKEN = "USER_TOKEN"
         private const val SAVED_TOKEN = "SAVED_TOKEN"
         private const val COMMA = ","
         private const val EMPTY_STRING = ""

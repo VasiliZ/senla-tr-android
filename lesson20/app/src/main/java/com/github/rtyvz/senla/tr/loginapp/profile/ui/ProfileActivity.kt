@@ -1,11 +1,14 @@
 package com.github.rtyvz.senla.tr.loginapp.profile.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.R
 import com.github.rtyvz.senla.tr.loginapp.databinding.ProfileActivityBinding
+import com.github.rtyvz.senla.tr.loginapp.login.ui.LoginActivity
+import com.github.rtyvz.senla.tr.loginapp.utils.clearPrefs
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,6 +39,13 @@ class ProfileActivity : AppCompatActivity() {
             readUserProfileFromFile(formatter)
         } else {
             setUserDataFromIntent(formatter, intent)
+        }
+
+        binding.logOutButton.setOnClickListener {
+            App.INSTANCE.getUserInformationFile().delete()
+            getSharedPreferences(LoginActivity.PREFS_USER_TOKEN, Context.MODE_PRIVATE).clearPrefs()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
     }
 
