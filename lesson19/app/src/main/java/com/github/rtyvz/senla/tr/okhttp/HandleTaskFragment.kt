@@ -11,7 +11,7 @@ import java.net.URL
 class HandleTaskFragment : Fragment() {
     private var callBacks: TaskCallbacks? = null
     private var task: SendRequestAsyncTask? = null
-    private val regexEscapeParam = "([\\\\\\/\\^\\&])".toRegex()
+    private val regexEscapeParam = "([\\\\/<>&])".toRegex()
     private lateinit var inputValue: String
 
     companion object {

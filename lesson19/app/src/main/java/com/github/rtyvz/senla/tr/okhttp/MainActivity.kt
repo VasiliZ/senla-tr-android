@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
     companion object {
         private const val EXTRA_TEXT_EDIT_VALUE: String = "TEXT_EDIT_VALUE"
         private const val EXTRA_RESULT_VALUE: String = "RESULT_VALUE"
+        private const val STRING_DEFAULT_VALUE = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,14 +22,19 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
         setContentView(binding.root)
 
         savedInstanceState?.let {
-            binding.inputValueTextEdit.setText(it.getString(EXTRA_TEXT_EDIT_VALUE, ""))
-            binding.responseTextView.text = it.getString(EXTRA_RESULT_VALUE, "")
+            binding.inputValueTextEdit.setText(
+                it.getString(
+                    EXTRA_TEXT_EDIT_VALUE,
+                    STRING_DEFAULT_VALUE
+                )
+            )
+            binding.responseTextView.text = it.getString(EXTRA_RESULT_VALUE, STRING_DEFAULT_VALUE)
         }
 
         initProgressDialog()
 
         if (isRotate) {
-            progress?.show()
+            progress.show()
         }
 
         binding.apply {
