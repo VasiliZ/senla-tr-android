@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity(), CloseActivityContract {
 
         if (currentTag == null) {
             replaceFragment(MainFragment())
+            simpleAdapter.setIndexForSelectedItem(0)
         } else {
             replaceFragmentByTag(simpleAdapter, currentAdapterPosition)
         }

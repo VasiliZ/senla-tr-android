@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.rtyvz.senla.tr.multiapp.R
 import com.github.rtyvz.senla.tr.multiapp.databinding.NotebookFragmentBinding
-import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.EditFileActivity
+import com.github.rtyvz.senla.tr.multiapp.ui.nootebook.activity.EditFileActivity
 
 class RootNotebookFragment : Fragment(), ResetDataFragmentContract {
     private var binding: NotebookFragmentBinding? = null

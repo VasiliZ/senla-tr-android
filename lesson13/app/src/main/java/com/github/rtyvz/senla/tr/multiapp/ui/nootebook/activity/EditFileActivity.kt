@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.multiapp.ui.nootebook
+package com.github.rtyvz.senla.tr.multiapp.ui.nootebook.activity
 
 import android.os.Bundle
 import android.view.MenuItem
