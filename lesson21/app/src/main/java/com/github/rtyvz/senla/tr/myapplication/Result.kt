@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.loginapp.utils
+package com.github.rtyvz.senla.tr.myapplication
 
 sealed class Result<out T : Any> {
     data class Success<out T : Any>(val responseBody: T) : Result<T>()
