@@ -48,7 +48,7 @@ class ProfileActivity : AppCompatActivity() {
                 )
             }
 
-            fragment.executeFetchUserProfileTask(
+            fragment.executeUpdateUserProfileTask(
                 prefs.getString(LoginActivity.SAVED_TOKEN).toString()
             )
         }
