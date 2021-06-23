@@ -3,6 +3,7 @@ package com.github.rtyvz.senla.tr.loginapp.task
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.github.rtyvz.senla.tr.loginapp.R
@@ -42,6 +43,19 @@ class FragmentWithTasks : Fragment() {
         private const val LAST_NAME_FIELD_RESPONSE = "lastName"
         private const val BIRTH_DATE_FIELD_RESPONSE = "birthDate"
         private const val NOTES_FIELD_RESPONSE = "notes"
+
+        fun newInstance(email: String, password: String) = FragmentWithTasks().apply {
+            arguments = bundleOf().apply {
+                putString(
+                    EXTRA_USER_EMAIL,
+                    email
+                )
+                putString(
+                    EXTRA_USER_PASSWORD,
+                    password
+                )
+            }
+        }
 
         class LoginTask(
             private val httpClient: OkHttpClient,

@@ -49,6 +49,8 @@ dependencies {
     implementation "com.parse.bolts:bolts-tasks:$bolts_version"
     /*okHttp*/
     implementation "com.squareup.okhttp3:okhttp:$okHttp_version"
+    /*swipe refresh layout*/
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$refresh_layout_version"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

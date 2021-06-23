@@ -1,12 +1,15 @@
 package com.github.rtyvz.senla.tr.myapplication.common
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.models.*
+import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -14,7 +17,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class BoltsFragment : Fragment() {
-    private lateinit var userEmail: String
+    private var userEmail: String? = null
     private lateinit var userPassword: String
     private val client = OkHttpClient()
     private val gsonBuilder = GsonBuilder().create()
@@ -34,27 +37,26 @@ class BoltsFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
-        callBacks = activity as ActivityCallBacks
+        if (activity is ActivityCallBacks) {
+            callBacks = activity as ActivityCallBacks
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         retainInstance = true
-
         userEmail = arguments?.getString(
             EXTRA_USER_EMAIL,
             EMPTY_STRING
-        ) ?: EMPTY_STRING
+        )
         userPassword = arguments?.getString(
             EXTRA_USER_PASSWORD,
             EMPTY_STRING
         ) ?: EMPTY_STRING
-        getTokenTask()
     }
 
-    private fun getTokenTask(): Task<String> {
+    fun getTokenTask(): Task<String> {
         return Task.callInBackground {
             return@callInBackground client.newCall(
                 createRequest(
@@ -67,7 +69,7 @@ class BoltsFragment : Fragment() {
         }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
             if (it.result.status.contains(STATUS_OK)) {
                 saveTokenTask(it.result)
-                return@Continuation executeGetUserProfileTask(it.result.token)
+                return@Continuation executeFetchUserProfileTask(it.result.token)
             } else {
                 callBacks?.error(it.result.message)
                 return@Continuation null
@@ -98,7 +100,7 @@ class BoltsFragment : Fragment() {
     ).post(json.toRequestBody()).build()
 
 
-    private fun executeGetUserProfileTask(token: String): Task<Result<UserProfileEntity>>? {
+    fun executeFetchUserProfileTask(token: String): Task<Result<UserProfileEntity>>? {
         return Task.callInBackground {
             client.newCall(
                 createRequest(
@@ -113,9 +115,18 @@ class BoltsFragment : Fragment() {
             )
         }.continueWith {
             if (it.result.responseStatus.contains(STATUS_OK)) {
+                LocalBroadcastManager.getInstance(requireActivity())
+                    .sendBroadcast(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
+                        putExtras(Bundle().apply {
+                            putParcelable(
+                                ProfileActivity.EXTRA_USER_PROFILE,
+                                it.result.toUserProfileEntity(userEmail)
+                            )
+                        })
+                    })
                 return@continueWith Result.Success(it.result.toUserProfileEntity(userEmail))
             } else {
-                return@continueWith Result.Error(it.result.message?: EMPTY_STRING)
+                return@continueWith Result.Error(it.result.message ?: EMPTY_STRING)
             }
         }
     }

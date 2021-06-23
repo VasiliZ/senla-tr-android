@@ -19,8 +19,6 @@ class ProfileActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_USER_PROFILE = "USER_PROFILE"
-        private const val DEFAULT_STRING_VALUE = ""
-        private const val DEFAULT_LONG_VALUE = 0L
         private const val COMMA = ","
         private const val DATE_FORMAT = "dd.MM.yyyy"
     }

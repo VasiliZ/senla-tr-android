@@ -13,6 +13,7 @@ import com.github.rtyvz.senla.tr.myapplication.databinding.LoginActivityBinding
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
+import com.github.rtyvz.senla.tr.myapplication.utils.getString
 import com.github.rtyvz.senla.tr.myapplication.utils.putString
 
 class LoginActivity : AppCompatActivity(),
@@ -24,50 +25,67 @@ class LoginActivity : AppCompatActivity(),
 
     companion object {
         private const val EMPTY_STRING = ""
-        const val PREFS_USER_TOKEN = "USER_TOKEN"
-        const val SAVE_TOKEN = "TOKEN"
+        const val PREFS_USER = "PREFS_USER"
+        const val SAVED_EMAIL = "EMAIL"
+        const val SAVED_TOKEN = "TOKEN"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = LoginActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        initProgress()
-        prefs = getSharedPreferences(PREFS_USER_TOKEN, Context.MODE_PRIVATE)
-        binding.apply {
-            loginButton.setOnClickListener {
-                when {
-                    userEmailEditText.text.isNullOrBlank() || userPasswordEditText.text.isNullOrBlank() ->
-                        errorTextView.text =
-                            getString(R.string.login_activity_fields_is_empty_error)
-                    !userEmailEditText.text.toString().matches(regexEmail) -> {
-                        errorTextView.text = getString(R.string.login_activity_it_isnt_email_error)
-                    }
-                    else -> {
-                        errorTextView.text =
-                            EMPTY_STRING
+        prefs = getSharedPreferences(PREFS_USER, Context.MODE_PRIVATE)
+        if (prefs.getString(SAVED_TOKEN) == EMPTY_STRING) {
+            setContentView(binding.root)
 
-                        supportFragmentManager.beginTransaction()
-                            .add(
-                                BoltsFragment()
-                                    .apply {
-                                        arguments = Bundle().apply {
-                                            putString(
-                                                BoltsFragment.EXTRA_USER_EMAIL,
-                                                userEmailEditText.text.toString()
-                                            )
-                                            putString(
-                                                BoltsFragment.EXTRA_USER_PASSWORD,
-                                                userPasswordEditText.text.toString()
-                                            )
-                                        }
-                                    },
-                                BoltsFragment.TAG
-                            ).commit()
+            initProgress()
+            binding.apply {
+                loginButton.setOnClickListener {
+                    when {
+                        userEmailEditText.text.isNullOrBlank() || userPasswordEditText.text.isNullOrBlank() ->
+                            errorTextView.text =
+                                getString(R.string.login_activity_fields_is_empty_error)
+                        !userEmailEditText.text.toString().matches(regexEmail) -> {
+                            errorTextView.text =
+                                getString(R.string.login_activity_it_isnt_email_error)
+                        }
+                        else -> {
+                            errorTextView.text =
+                                EMPTY_STRING
+
+                            var fragment =
+                                supportFragmentManager.findFragmentByTag(BoltsFragment.TAG)
+
+                            if (fragment == null) {
+                                fragment = BoltsFragment()
+
+                                supportFragmentManager.beginTransaction()
+                                    .add(
+                                        fragment
+                                            .apply {
+                                                arguments = Bundle().apply {
+                                                    putString(
+                                                        BoltsFragment.EXTRA_USER_EMAIL,
+                                                        userEmailEditText.text.toString()
+                                                    )
+                                                    putString(
+                                                        BoltsFragment.EXTRA_USER_PASSWORD,
+                                                        userPasswordEditText.text.toString()
+                                                    )
+                                                }
+                                            },
+                                        BoltsFragment.TAG
+                                    ).commit()
+                                fragment.getTokenTask()
+                            } else {
+                                (fragment as BoltsFragment).getTokenTask()
+                            }
+                        }
                     }
                 }
             }
+        } else {
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
     }
 
@@ -80,7 +98,7 @@ class LoginActivity : AppCompatActivity(),
     }
 
     override fun saveToken(token: String) {
-        prefs.putString(SAVE_TOKEN, token)
+        prefs.putString(SAVED_TOKEN, token)
     }
 
     override fun error(errorMsg: String) {
@@ -90,11 +108,16 @@ class LoginActivity : AppCompatActivity(),
     override fun saveUserProfile(result: Result<UserProfileEntity>) {
         when (result) {
             is Result.Success -> {
+                saveUserEmail()
                 startProfileActivity(result.responseBody)
                 finish()
             }
             is Result.Error -> binding.errorTextView.text = result.error
         }
+    }
+
+    private fun saveUserEmail() {
+        prefs.putString(SAVED_EMAIL, binding.userEmailEditText.text.toString())
     }
 
     private fun startProfileActivity(profileResponseData: UserProfileEntity) {

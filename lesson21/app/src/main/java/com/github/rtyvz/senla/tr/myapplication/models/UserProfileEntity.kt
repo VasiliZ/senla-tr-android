@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class UserProfileEntity(
-    val userEmail: String,
+    val userEmail: String? = null,
     val firstUserName: String,
     val lastUserName: String,
     val birthDate: String,

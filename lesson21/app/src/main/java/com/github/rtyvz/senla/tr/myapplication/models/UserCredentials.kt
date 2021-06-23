@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UserCredentials(
     @SerializedName("email")
-    val userEmail: String,
+    val userEmail: String? = null,
     @SerializedName("password")
     val userPassword: String
 )

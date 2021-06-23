@@ -77,7 +77,10 @@ class LoginActivity : AppCompatActivity(),
                                     supportFragmentManager.findFragmentByTag(FragmentWithTasks.TAG)
 
                                 if (fragment == null) {
-                                    fragment = createTaskFragment()
+                                    fragment = FragmentWithTasks.newInstance(
+                                        binding.emailEditText.text.toString(),
+                                        binding.passwordEditText.text.toString()
+                                    )
                                     supportFragmentManager.beginTransaction()
                                         .add(
                                             fragment,
@@ -96,20 +99,6 @@ class LoginActivity : AppCompatActivity(),
             }
         }
     }
-
-    private fun createTaskFragment() = FragmentWithTasks()
-        .apply {
-            arguments = Bundle().apply {
-                putString(
-                    FragmentWithTasks.EXTRA_USER_EMAIL,
-                    binding.emailEditText.text.toString()
-                )
-                putString(
-                    FragmentWithTasks.EXTRA_USER_PASSWORD,
-                    binding.passwordEditText.text.toString()
-                )
-            }
-        }
 
     private fun initProgress() {
         progress = ProgressDialog(this).apply {
