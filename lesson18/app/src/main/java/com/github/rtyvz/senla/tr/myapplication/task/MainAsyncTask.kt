@@ -1,16 +1,17 @@
 package com.github.rtyvz.senla.tr.myapplication.task
 
+import android.content.Intent
 import android.os.AsyncTask
-import com.github.rtyvz.senla.tr.myapplication.ListManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.myapplication.MainActivity
 
 class MainAsyncTask(
-    private val listManager: ListManager,
+    private val listData: MutableList<String>,
     private val enableButtonBlock: () -> Unit,
     private val signalToCloseTasks: () -> Unit,
-    private val sendCount: (Int) -> Unit,
+    private val localBroadcastManager: LocalBroadcastManager,
     count: Int
-) :
-    AsyncTask<Void, Void, Void>() {
+) : AsyncTask<Void, Void, Void>() {
     var localCount = count
 
     companion object {
@@ -22,13 +23,19 @@ class MainAsyncTask(
         while (true) {
             if (isCancelled) Thread.interrupted()
             Thread.sleep(TIME_TO_THREAD_SlEEP)
-            listManager.setData(localCount.toString())
+            synchronized(listData) {
+                listData.add(localCount.toString())
+            }
 
             if (localCount == FINISH_CALCULATE_VALUES_CONDITION) {
                 signalToCloseTasks()
                 break
             }
-            sendCount(localCount)
+
+            localBroadcastManager
+                .sendBroadcastSync(Intent(MainActivity.BROADCAST_SAVED_COUNT).apply {
+                    putExtra(MainActivity.EXTRA_COUNT, localCount)
+                })
             localCount++
         }
 

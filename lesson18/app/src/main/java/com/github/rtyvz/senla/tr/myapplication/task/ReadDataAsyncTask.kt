@@ -1,13 +1,14 @@
 package com.github.rtyvz.senla.tr.myapplication.task
 
+import android.content.Intent
 import android.os.AsyncTask
-import com.github.rtyvz.senla.tr.myapplication.ListManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.myapplication.MainActivity
 
 class ReadDataAsyncTask(
-    private val listManager: ListManager,
-    private val block: (List<String>?) -> Unit
-) :
-    AsyncTask<Void, List<String>?, List<String>?>() {
+    private val listData: MutableList<String>,
+    private val localBroadcastManager: LocalBroadcastManager
+) : AsyncTask<Void, List<String>?, List<String>?>() {
 
     companion object {
         private const val TIME_THREAD_SLEEP = 100L
@@ -17,20 +18,10 @@ class ReadDataAsyncTask(
         while (true) {
             if (isCancelled) Thread.interrupted()
             Thread.sleep(TIME_THREAD_SLEEP)
-            listManager.getData()?.let {
-
-                if (it.isNotEmpty()) {
-                    onProgressUpdate(it)
-                }
-            }
-        }
-    }
-
-    override fun onProgressUpdate(vararg values: List<String>?) {
-        super.onProgressUpdate(*values)
-
-        values[0]?.let {
-            block(it)
+            localBroadcastManager
+                .sendBroadcastSync(Intent(MainActivity.BROADCAST_READ_DATA).apply {
+                    putStringArrayListExtra(MainActivity.EXTRA_READ_DATA, ArrayList(listData))
+                })
         }
     }
 }

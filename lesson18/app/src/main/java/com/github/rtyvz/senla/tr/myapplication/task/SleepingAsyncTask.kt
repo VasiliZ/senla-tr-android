@@ -1,13 +1,14 @@
 package com.github.rtyvz.senla.tr.myapplication.task
 
+import android.content.Intent
 import android.os.AsyncTask
-import com.github.rtyvz.senla.tr.myapplication.ListManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.myapplication.MainActivity
 
 class SleepingAsyncTask(
     private val objectToWakeUp: Object,
-    private val listManager: ListManager
-) :
-    AsyncTask<Void, Void, Void>() {
+    private val localBroadcastManager: LocalBroadcastManager
+) : AsyncTask<Void, Void, Void>() {
 
     companion object {
         private const val YUP = "Yup!"
@@ -18,7 +19,10 @@ class SleepingAsyncTask(
             if (isCancelled) Thread.interrupted()
             synchronized(objectToWakeUp) {
                 objectToWakeUp.wait()
-                listManager.setData(YUP)
+                localBroadcastManager
+                    .sendBroadcastSync(Intent(MainActivity.BROADCAST_SEND_YUP).apply {
+                        putExtra(MainActivity.EXTRA_YUP, YUP)
+                    })
             }
         }
     }
