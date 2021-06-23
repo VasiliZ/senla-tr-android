@@ -1,5 +1,5 @@
 package com.github.rtyvz.senla.tr.myapplication.models
 
-class State {
-
-}
+data class State(
+    var isTaskRunning: Boolean = false
+)

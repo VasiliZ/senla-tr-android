@@ -9,6 +9,7 @@ import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.models.*
+import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
 import com.google.gson.GsonBuilder
@@ -22,6 +23,7 @@ class BoltsFragment : Fragment() {
     private val client = OkHttpClient()
     private val gsonBuilder = GsonBuilder().create()
     private var callBacks: ActivityCallBacks? = null
+    private lateinit var localBroadcastManager: LocalBroadcastManager
 
     companion object {
         val TAG: String = BoltsFragment::class.java.simpleName
@@ -33,6 +35,13 @@ class BoltsFragment : Fragment() {
         private const val REQUEST_METHOD_LOGIN = "login"
         private const val REQUEST_METHOD_PROFILE = "profile"
         private const val STATUS_OK = "ok"
+
+        fun newInstance(email: String, password: String) = BoltsFragment().apply {
+            arguments = Bundle().apply {
+                putString(EXTRA_USER_EMAIL, email)
+                putString(EXTRA_USER_PASSWORD, password)
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -46,6 +55,7 @@ class BoltsFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         retainInstance = true
+        localBroadcastManager = LocalBroadcastManager.getInstance(requireContext())
         userEmail = arguments?.getString(
             EXTRA_USER_EMAIL,
             EMPTY_STRING
@@ -54,9 +64,18 @@ class BoltsFragment : Fragment() {
             EXTRA_USER_PASSWORD,
             EMPTY_STRING
         ) ?: EMPTY_STRING
+
+        if (arguments != null) {
+            getTokenTask()
+        }
     }
 
     fun getTokenTask(): Task<String> {
+        localBroadcastManager.sendBroadcast(
+            Intent(LoginActivity.BROADCAST_RUNNING_TASK_FLAG).apply {
+                putExtra(LoginActivity.EXTRA_RUNNING_TASK_FLAG, true)
+            })
+
         return Task.callInBackground {
             return@callInBackground client.newCall(
                 createRequest(
@@ -68,7 +87,9 @@ class BoltsFragment : Fragment() {
             return@onSuccess gsonBuilder.fromJson(it.result, TokenResponse::class.java)
         }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
             if (it.result.status.contains(STATUS_OK)) {
-                saveTokenTask(it.result)
+                it.result?.let {
+                    callBacks?.saveToken(it.token)
+                }
                 return@Continuation executeFetchUserProfileTask(it.result.token)
             } else {
                 callBacks?.error(it.result.message)
@@ -81,14 +102,6 @@ class BoltsFragment : Fragment() {
             } else {
                 callBacks?.saveUserProfile(it.result)
                 return@continueWith null
-            }
-        }
-    }
-
-    private fun saveTokenTask(result: TokenResponse?): Task<Unit>? {
-        return Task.call {
-            result?.let {
-                callBacks?.saveToken(it.token)
             }
         }
     }
@@ -115,7 +128,7 @@ class BoltsFragment : Fragment() {
             )
         }.continueWith {
             if (it.result.responseStatus.contains(STATUS_OK)) {
-                LocalBroadcastManager.getInstance(requireActivity())
+                localBroadcastManager
                     .sendBroadcast(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
                         putExtras(Bundle().apply {
                             putParcelable(

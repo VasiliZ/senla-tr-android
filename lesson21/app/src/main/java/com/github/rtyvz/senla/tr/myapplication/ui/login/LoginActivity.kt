@@ -1,11 +1,11 @@
 package com.github.rtyvz.senla.tr.myapplication.ui.login
 
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.common.ActivityCallBacks
 import com.github.rtyvz.senla.tr.myapplication.common.BoltsFragment
@@ -20,25 +20,37 @@ class LoginActivity : AppCompatActivity(),
     ActivityCallBacks {
     private lateinit var binding: LoginActivityBinding
     private val regexEmail = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z-.]+\$".toRegex()
-    private lateinit var progressDialog: ProgressDialog
+    private var progressDialog: ProgressDialog? = null
     private lateinit var prefs: SharedPreferences
+    private var localBroadcastManager: LocalBroadcastManager? = null
+    private lateinit var runningTaskReceiver: BroadcastReceiver
 
     companion object {
-        private const val EMPTY_STRING = ""
         const val PREFS_USER = "PREFS_USER"
         const val SAVED_EMAIL = "EMAIL"
         const val SAVED_TOKEN = "TOKEN"
+        const val BROADCAST_RUNNING_TASK_FLAG = "local:BROADCAST_RUNNING_TASK_FLAG"
+        const val EXTRA_RUNNING_TASK_FLAG = "RUNNING_TASK_FLAG"
+        private const val EMPTY_STRING = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = LoginActivityBinding.inflate(layoutInflater)
 
+        binding = LoginActivityBinding.inflate(layoutInflater)
         prefs = getSharedPreferences(PREFS_USER, Context.MODE_PRIVATE)
+
         if (prefs.getString(SAVED_TOKEN) == EMPTY_STRING) {
             setContentView(binding.root)
 
+            localBroadcastManager = LocalBroadcastManager.getInstance(this)
             initProgress()
+
+            if (App.INSTANCE.getState().isTaskRunning) {
+                progressDialog?.show()
+            }
+
+            initRunningTaskReceiver()
             binding.apply {
                 loginButton.setOnClickListener {
                     when {
@@ -50,6 +62,7 @@ class LoginActivity : AppCompatActivity(),
                                 getString(R.string.login_activity_it_isnt_email_error)
                         }
                         else -> {
+                            progressDialog?.show()
                             errorTextView.text =
                                 EMPTY_STRING
 
@@ -57,26 +70,17 @@ class LoginActivity : AppCompatActivity(),
                                 supportFragmentManager.findFragmentByTag(BoltsFragment.TAG)
 
                             if (fragment == null) {
-                                fragment = BoltsFragment()
-
-                                supportFragmentManager.beginTransaction()
+                                fragment = BoltsFragment
+                                    .newInstance(
+                                        binding.userEmailEditText.text.toString(),
+                                        binding.userPasswordEditText.text.toString()
+                                    )
+                                supportFragmentManager
+                                    .beginTransaction()
                                     .add(
-                                        fragment
-                                            .apply {
-                                                arguments = Bundle().apply {
-                                                    putString(
-                                                        BoltsFragment.EXTRA_USER_EMAIL,
-                                                        userEmailEditText.text.toString()
-                                                    )
-                                                    putString(
-                                                        BoltsFragment.EXTRA_USER_PASSWORD,
-                                                        userPasswordEditText.text.toString()
-                                                    )
-                                                }
-                                            },
+                                        fragment,
                                         BoltsFragment.TAG
                                     ).commit()
-                                fragment.getTokenTask()
                             } else {
                                 (fragment as BoltsFragment).getTokenTask()
                             }
@@ -97,6 +101,21 @@ class LoginActivity : AppCompatActivity(),
         }
     }
 
+    private fun initRunningTaskReceiver() {
+        runningTaskReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                App.INSTANCE.getState().isTaskRunning = intent?.getBooleanExtra(
+                    EXTRA_RUNNING_TASK_FLAG, false
+                ) ?: false
+            }
+        }
+        localBroadcastManager?.registerReceiver(
+            runningTaskReceiver, IntentFilter(
+                BROADCAST_RUNNING_TASK_FLAG
+            )
+        )
+    }
+
     override fun saveToken(token: String) {
         prefs.putString(SAVED_TOKEN, token)
     }
@@ -109,6 +128,8 @@ class LoginActivity : AppCompatActivity(),
         when (result) {
             is Result.Success -> {
                 saveUserEmail()
+                progressDialog?.dismiss()
+                App.INSTANCE.getState().isTaskRunning = false
                 startProfileActivity(result.responseBody)
                 finish()
             }
@@ -126,5 +147,12 @@ class LoginActivity : AppCompatActivity(),
                 putParcelable(ProfileActivity.EXTRA_USER_PROFILE, profileResponseData)
             })
         })
+    }
+
+    override fun onStop() {
+        localBroadcastManager?.unregisterReceiver(runningTaskReceiver)
+        progressDialog?.dismiss()
+
+        super.onStop()
     }
 }
