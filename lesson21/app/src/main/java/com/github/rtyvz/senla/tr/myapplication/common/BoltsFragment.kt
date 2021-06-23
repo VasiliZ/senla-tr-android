@@ -1,14 +1,13 @@
-package com.github.rtyvz.senla.tr.myapplication
+package com.github.rtyvz.senla.tr.myapplication.common
 
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import bolts.Continuation
 import bolts.Task
-import com.github.rtyvz.senla.tr.myapplication.models.TokenEntity
-import com.github.rtyvz.senla.tr.myapplication.models.TokenResponse
-import com.github.rtyvz.senla.tr.myapplication.models.UserCredentials
-import com.github.rtyvz.senla.tr.myapplication.models.UserProfile
+import com.github.rtyvz.senla.tr.myapplication.R
+import com.github.rtyvz.senla.tr.myapplication.models.*
+import com.github.rtyvz.senla.tr.myapplication.utils.Result
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -44,8 +43,14 @@ class BoltsFragment : Fragment() {
 
         retainInstance = true
 
-        userEmail = arguments?.getString(EXTRA_USER_EMAIL, EMPTY_STRING) ?: EMPTY_STRING
-        userPassword = arguments?.getString(EXTRA_USER_PASSWORD, EMPTY_STRING) ?: EMPTY_STRING
+        userEmail = arguments?.getString(
+            EXTRA_USER_EMAIL,
+            EMPTY_STRING
+        ) ?: EMPTY_STRING
+        userPassword = arguments?.getString(
+            EXTRA_USER_PASSWORD,
+            EMPTY_STRING
+        ) ?: EMPTY_STRING
         getTokenTask()
     }
 
@@ -59,7 +64,7 @@ class BoltsFragment : Fragment() {
             ).execute().body?.string()
         }.onSuccess {
             return@onSuccess gsonBuilder.fromJson(it.result, TokenResponse::class.java)
-        }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfile>>> {
+        }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
             if (it.result.status.contains(STATUS_OK)) {
                 saveTokenTask(it.result)
                 return@Continuation executeGetUserProfileTask(it.result.token)
@@ -93,7 +98,7 @@ class BoltsFragment : Fragment() {
     ).post(json.toRequestBody()).build()
 
 
-    private fun executeGetUserProfileTask(token: String): Task<Result<UserProfile>>? {
+    private fun executeGetUserProfileTask(token: String): Task<Result<UserProfileEntity>>? {
         return Task.callInBackground {
             client.newCall(
                 createRequest(
@@ -104,13 +109,13 @@ class BoltsFragment : Fragment() {
         }.onSuccess {
             return@onSuccess gsonBuilder.fromJson(
                 it.result,
-                UserProfile::class.java
+                UserProfileResponse::class.java
             )
         }.continueWith {
             if (it.result.responseStatus.contains(STATUS_OK)) {
-                return@continueWith Result.Success(it.result)
+                return@continueWith Result.Success(it.result.toUserProfileEntity(userEmail))
             } else {
-                return@continueWith Result.Error(it.result.message)
+                return@continueWith Result.Error(it.result.message?: EMPTY_STRING)
             }
         }
     }
@@ -125,5 +130,5 @@ class BoltsFragment : Fragment() {
 interface ActivityCallBacks {
     fun saveToken(token: String)
     fun error(errorMsg: String)
-    fun saveUserProfile(result: Result<UserProfile>)
+    fun saveUserProfile(result: Result<UserProfileEntity>)
 }

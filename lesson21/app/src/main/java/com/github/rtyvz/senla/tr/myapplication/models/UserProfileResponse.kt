@@ -2,10 +2,9 @@ package com.github.rtyvz.senla.tr.myapplication.models
 
 import com.google.gson.annotations.SerializedName
 
-data class UserProfile(
+data class UserProfileResponse(
     @SerializedName("status")
     val responseStatus: String,
-    val userEmail: String,
     @SerializedName("firstName")
     val firstUserName: String,
     @SerializedName("lastName")
@@ -15,5 +14,11 @@ data class UserProfile(
     @SerializedName("notes")
     val userNotes: String,
     @SerializedName("message")
-    val message: String
-)
+    val message: String? = null
+) {
+    fun toUserProfileEntity(userEmail: String): UserProfileEntity {
+        return UserProfileEntity(
+            userEmail, firstUserName, lastUserName, birthDate, userNotes, message
+        )
+    }
+}

@@ -6,6 +6,16 @@
     <string name="login_activity_login_label">Login</string>
     <string name="login_activity_fields_is_empty_error">Пароль или емеил не должны быть пусты</string>
     <string name="login_activity_it_isnt_email_error">Введите корректный e-mail</string>
-    <string name="bolts_fragment_request_error">Request error. Please try again later.</string>
     <string name="login_activity_wait_label">wait please</string>
+
+    <!--profile activity-->
+    <string name="profile_activity_email_label">E-mail:</string>
+    <string name="profile_activity_first_name_label">First name:</string>
+    <string name="profile_activity_last_name">Last name:</string>
+    <string name="profile_activity_birth_date">Birth date:</string>
+    <string name="profile_activity_notes_label">Notes: \n \n %1$s</string>
+    <string name="profile_activity_logout_label">Logout</string>
+
+    <!--fragment-->
+    <string name="bolts_fragment_request_error">Request error. Please try again later.</string>
 </resources>
