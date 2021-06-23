@@ -143,11 +143,7 @@ class LoginActivity : AppCompatActivity(),
 
                 startActivity(Intent(this, ProfileActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putString(ProfileActivity.EXTRA_EMAIL, userInformation.email)
-                        putString(ProfileActivity.EXTRA_FIRST_USER_NAME, userInformation.firstName)
-                        putString(ProfileActivity.EXTRA_LAST_USER_NAME, userInformation.lastName)
-                        putLong(ProfileActivity.EXTRA_BIRTHDAY, userInformation.birthDate)
-                        putString(ProfileActivity.EXTRA_NOTES, userInformation.notes)
+                        putParcelable(ProfileActivity.EXTRA_USER_PROFILE, response.responseBody)
                     })
                 })
                 disableProgress()

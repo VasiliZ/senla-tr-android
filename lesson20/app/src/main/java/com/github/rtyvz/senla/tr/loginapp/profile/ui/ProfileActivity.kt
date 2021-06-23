@@ -8,6 +8,7 @@ import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.R
 import com.github.rtyvz.senla.tr.loginapp.databinding.ProfileActivityBinding
 import com.github.rtyvz.senla.tr.loginapp.login.ui.LoginActivity
+import com.github.rtyvz.senla.tr.loginapp.profile.entity.UserProfileResponse
 import com.github.rtyvz.senla.tr.loginapp.utils.clearPrefs
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -17,11 +18,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ProfileActivityBinding
 
     companion object {
-        const val EXTRA_FIRST_USER_NAME = "FIRST_USER_NAME"
-        const val EXTRA_LAST_USER_NAME = "LAST_USER_NAME"
-        const val EXTRA_BIRTHDAY = "BIRTHDAY"
-        const val EXTRA_NOTES = "NOTES"
-        const val EXTRA_EMAIL = "EMAIL"
+        const val EXTRA_USER_PROFILE = "USER_PROFILE"
         private const val DEFAULT_STRING_VALUE = ""
         private const val DEFAULT_LONG_VALUE = 0L
         private const val COMMA = ","
@@ -51,21 +48,13 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun setUserDataFromIntent(formatter: SimpleDateFormat, intent: Intent) {
         binding.apply {
-            emailValueTextView.text = intent.getStringExtra(EXTRA_EMAIL) ?: DEFAULT_STRING_VALUE
-            firstNameValueTextView.text =
-                intent.getStringExtra(EXTRA_FIRST_USER_NAME) ?: DEFAULT_STRING_VALUE
-            lastNameValueTextView.text =
-                intent.getStringExtra(EXTRA_LAST_USER_NAME) ?: DEFAULT_STRING_VALUE
-            birthDateValueTextView.text = formatDate(
-                formatter, intent.getLongExtra(
-                    EXTRA_BIRTHDAY,
-                    DEFAULT_LONG_VALUE
-                )
-            )
-            notesTextView.text = formatNotes(
-                intent.getStringExtra(EXTRA_NOTES)
-                    ?: DEFAULT_STRING_VALUE
-            )
+            intent.getParcelableExtra<UserProfileResponse>(EXTRA_USER_PROFILE)?.apply {
+                emailValueTextView.text = email
+                firstNameValueTextView.text = firstName
+                lastNameValueTextView.text = firstName
+                birthDateValueTextView.text = formatDate(formatter, birthDate)
+                notesTextView.text = formatNotes(notes)
+            }
         }
     }
 
