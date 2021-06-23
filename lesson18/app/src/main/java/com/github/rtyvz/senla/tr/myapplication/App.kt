@@ -27,7 +27,7 @@ class App : Application() {
 
         val primeNumberReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                _state?.addValueToList(
+                _state?.listOfData?.add(
                     intent?.getStringExtra(MainActivity.EXTRA_PRIME_NUMBER).toString()
                 )
             }
@@ -40,9 +40,10 @@ class App : Application() {
 
         val countReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                _state?.setLastCountValue(
-                    intent?.getIntExtra(MainActivity.EXTRA_COUNT, DEFAULT_VALUE) ?: DEFAULT_VALUE
-                )
+                _state?.valueOfCount = (
+                        intent?.getIntExtra(MainActivity.EXTRA_COUNT, DEFAULT_VALUE)
+                            ?: DEFAULT_VALUE
+                        )
             }
         }
         localBroadcastManager.registerReceiver(
@@ -53,12 +54,12 @@ class App : Application() {
 
         val lastPrimeNumberReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                _state?.setLastPrimeNumber(
-                    intent?.getIntExtra(
-                        MainActivity.EXTRA_LAST_CALCULATED_PRIME_NUMBER,
-                        DEFAULT_VALUE
-                    ) ?: DEFAULT_VALUE
-                )
+                _state?.lastCalculatedNumber = (
+                        intent?.getIntExtra(
+                            MainActivity.EXTRA_LAST_CALCULATED_PRIME_NUMBER,
+                            DEFAULT_VALUE
+                        ) ?: DEFAULT_VALUE
+                        )
             }
         }
         localBroadcastManager.registerReceiver(

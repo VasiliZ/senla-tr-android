@@ -136,8 +136,8 @@ class MainActivity : AppCompatActivity() {
     private fun initDataAfterRotate() {
         App.INSTANCE.state?.let {
             //добавляю 1 потому что эти данные уже по факту были выведены +/-
-            lastCalculatedNumber = it.lastPrimeNumber + 1
-            lastCount = it.lastCount + 1
+            lastCalculatedNumber = it.lastCalculatedNumber + 1
+            lastCount = it.valueOfCount + 1
             it.listOfData.forEach { listValue ->
                 binding.contentTextView.append(listValue + LINE_BREAK)
             }
