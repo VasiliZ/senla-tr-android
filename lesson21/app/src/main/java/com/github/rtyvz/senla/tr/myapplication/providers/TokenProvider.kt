@@ -65,7 +65,7 @@ class TokenProvider(
                 return@continueWith null
             } else {
                 localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
-                    putExtra(LoginActivity.EXTRA_USER_PROFILE, it)
+                    putExtra(LoginActivity.EXTRA_USER_PROFILE, it.result)
                 })
                 return@continueWith null
             }

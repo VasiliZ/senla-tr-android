@@ -24,15 +24,14 @@ class ProfileActivity : AppCompatActivity() {
         binding = ProfileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (App.INSTANCE.state.userProfile != null) {
-            App.INSTANCE.state.userProfile?.let {
-                setUserDataFromIntent(
-                    SimpleDateFormat(
-                        DATE_FORMAT,
-                        Locale.getDefault()
-                    ), it
-                )
-            }
+        val state = App.INSTANCE.state.userProfile
+        if (state != null) {
+            updateUI(
+                SimpleDateFormat(
+                    DATE_FORMAT,
+                    Locale.getDefault()
+                ), state
+            )
         } else {
             startActivity(Intent(this, LoginActivity::class.java))
         }
@@ -44,7 +43,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUserDataFromIntent(
+    private fun updateUI(
         formatter: SimpleDateFormat,
         userProfileResponse: UserProfileResponse
     ) {

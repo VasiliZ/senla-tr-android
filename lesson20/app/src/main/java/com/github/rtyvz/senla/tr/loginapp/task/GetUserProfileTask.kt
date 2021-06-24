@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.login.ui.LoginActivity
 import com.github.rtyvz.senla.tr.loginapp.profile.entity.UserProfileResponse
 import com.github.rtyvz.senla.tr.loginapp.utils.Result
@@ -13,8 +14,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class GetUserProfileTask(
-    private val httpClient: OkHttpClient,
-    private val localBroadcastManager: LocalBroadcastManager
+    private val httpClient: OkHttpClient
 ) : AsyncTask<String, Void, Result<UserProfileResponse>>() {
     private lateinit var userEmail: String
 
@@ -63,6 +63,7 @@ class GetUserProfileTask(
                         birthDate = jsonObject.getLong(BIRTH_DATE_FIELD_RESPONSE),
                         notes = jsonObject.getString(NOTES_FIELD_RESPONSE)
                     )
+
                 return Result.Success(userProfile)
             }
         }
@@ -72,9 +73,10 @@ class GetUserProfileTask(
     override fun onPostExecute(result: Result<UserProfileResponse>?) {
         super.onPostExecute(result)
 
-        localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
-            putExtra(LoginActivity.EXTRA_USER_PROFILE, result)
-        })
+        LocalBroadcastManager.getInstance(App.INSTANCE)
+            .sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
+                putExtra(LoginActivity.EXTRA_USER_PROFILE, result)
+            })
     }
 
     private fun userTokenToJson(token: String) =

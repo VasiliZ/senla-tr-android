@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.R
 import com.github.rtyvz.senla.tr.loginapp.login.entity.UserTokenResponse
 import com.github.rtyvz.senla.tr.loginapp.login.ui.LoginActivity
@@ -16,8 +17,7 @@ import org.json.JSONObject
 
 class LoginTask(
     private val httpClient: OkHttpClient,
-    private val context: Context,
-    private val localBroadcastManager: LocalBroadcastManager
+    private val context: Context
 ) : AsyncTask<String, Void, Result<UserTokenResponse>>() {
     private lateinit var userEmail: String
     private lateinit var userPassword: String
@@ -41,6 +41,7 @@ class LoginTask(
     override fun doInBackground(vararg params: String?): Result<UserTokenResponse>? {
         try {
             if (isCancelled) Thread.interrupted()
+
             userEmail = params[0].toString()
             userPassword = params[1].toString()
             httpClient.newCall(prepareTokenRequest()).execute().use {
@@ -96,8 +97,9 @@ class LoginTask(
     override fun onPostExecute(result: Result<UserTokenResponse>?) {
         super.onPostExecute(result)
 
-        localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
-            putExtra(LoginActivity.EXTRA_USER_TOKEN, result)
-        })
+        LocalBroadcastManager.getInstance(App.INSTANCE)
+            .sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
+                putExtra(LoginActivity.EXTRA_USER_TOKEN, result)
+            })
     }
 }

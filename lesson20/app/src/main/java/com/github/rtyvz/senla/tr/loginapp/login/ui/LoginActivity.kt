@@ -1,23 +1,27 @@
 package com.github.rtyvz.senla.tr.loginapp.login.ui
 
 import android.app.ProgressDialog
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.R
+import com.github.rtyvz.senla.tr.loginapp.State
 import com.github.rtyvz.senla.tr.loginapp.databinding.LoginActivityBinding
 import com.github.rtyvz.senla.tr.loginapp.login.entity.UserTokenResponse
 import com.github.rtyvz.senla.tr.loginapp.profile.entity.UserProfileResponse
 import com.github.rtyvz.senla.tr.loginapp.profile.ui.ProfileActivity
 import com.github.rtyvz.senla.tr.loginapp.utils.Result
+import com.github.rtyvz.senla.tr.loginapp.utils.TasksProvider
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: LoginActivityBinding
     private val checkEmailRegex =
         "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$".toRegex()
-    private lateinit var prefs: SharedPreferences
     private var progress: ProgressDialog? = null
     private lateinit var tokenReceiver: BroadcastReceiver
     private lateinit var profileReceiver: BroadcastReceiver
@@ -37,9 +41,16 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
+
         initProgress()
         initTokenReceiver()
         initUserProfileReceiver()
+
+        val state = App.INSTANCE.state
+        if (state == null) {
+            App.INSTANCE.state = State()
+        }
+
         binding.apply {
             loginButton.setOnClickListener {
                 when {
@@ -56,8 +67,8 @@ class LoginActivity : AppCompatActivity() {
                         progress?.show()
                         errorTextView.text = EMPTY_STRING
                         //start task
-                        App.INSTANCE.state.isTasksRunning = true
-                        App.TasksProvider.provideLoginTask().execute(
+                        App.INSTANCE.state?.isTasksRunning = true
+                        TasksProvider.provideLoginTask().execute(
                             binding.emailEditText.text.toString(),
                             binding.passwordEditText.text.toString()
                         )
@@ -70,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (App.INSTANCE.state.isTasksRunning) {
+        if (App.INSTANCE.state?.isTasksRunning == true) {
             progress?.show()
         }
 
@@ -82,11 +93,7 @@ class LoginActivity : AppCompatActivity() {
     private fun initUserProfileReceiver() {
         profileReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                requestResult(
-                    intent?.getParcelableExtra(
-                        EXTRA_USER_PROFILE
-                    )
-                )
+                handleResult(intent?.getParcelableExtra(EXTRA_USER_PROFILE))
             }
         }
     }
@@ -123,7 +130,7 @@ class LoginActivity : AppCompatActivity() {
     private fun saveToken(result: Result<UserTokenResponse>?) {
         when (result) {
             is Result.Success -> {
-                App.TasksProvider.provideFetchProfileTask().execute(
+                TasksProvider.provideProfileTask().execute(
                     result.responseBody.token,
                     binding.emailEditText.text.toString()
                 )
@@ -135,12 +142,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestResult(response: Result<UserProfileResponse>?) {
+    private fun handleResult(response: Result<UserProfileResponse>?) {
         when (response) {
             is Result.Success -> {
                 val userInformation = response.responseBody
-                App.INSTANCE.state.isTasksRunning = false
-                App.INSTANCE.state.userProfile = userInformation
+                App.INSTANCE.state?.isTasksRunning = false
+                App.INSTANCE.state?.userProfile = userInformation
                 startActivity(Intent(this, ProfileActivity::class.java))
                 finish()
             }

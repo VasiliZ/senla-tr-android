@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 
 class App : Application() {
-    private val state: State = State()
+    var state: State? = null
 
     companion object {
         lateinit var INSTANCE: App
@@ -29,8 +29,4 @@ class App : Application() {
         okHttpClient = OkHttpClient.Builder().build()
         gson = GsonBuilder().create()
     }
-
-    fun getState() = state
-
-
 }
