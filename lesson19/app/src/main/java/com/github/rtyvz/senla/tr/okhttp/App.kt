@@ -4,7 +4,7 @@ import android.app.Application
 
 class App : Application() {
 
-    private val state = State()
+    var state: State? = null
 
     companion object {
         lateinit var INSTANCE: App
@@ -15,6 +15,4 @@ class App : Application() {
 
         INSTANCE = this
     }
-
-    fun getState() = state
 }

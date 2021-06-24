@@ -67,11 +67,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        App.INSTANCE.state = State()
+        if (App.INSTANCE.state == null) {
+            App.INSTANCE.state = State()
+        }
+
         App.INSTANCE.state?.let {
             state = it
         }
-
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
 
         if (state.printedValues.isNotBlank()) {

@@ -9,7 +9,6 @@ import java.net.URL
 
 class SendRequestAsyncTask(
     private val url: String,
-    private val localBroadcastManager: LocalBroadcastManager,
     private val sendValue: String
 ) : AsyncTask<Void, Void, String>() {
 
@@ -25,9 +24,11 @@ class SendRequestAsyncTask(
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
         result?.let {
-            localBroadcastManager.sendBroadcast(Intent(MainActivity.BROADCAST_RESPONSE_VALUE).apply {
-                putExtra(MainActivity.EXTRA_REQUEST, it)
-            })
+
+            LocalBroadcastManager.getInstance(App.INSTANCE)
+                .sendBroadcastSync(Intent(MainActivity.BROADCAST_RESPONSE_VALUE).apply {
+                    putExtra(MainActivity.EXTRA_REQUEST, it)
+                })
         }
     }
 }

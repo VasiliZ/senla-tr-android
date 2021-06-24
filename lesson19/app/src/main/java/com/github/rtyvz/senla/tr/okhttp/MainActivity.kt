@@ -28,15 +28,23 @@ class MainActivity : AppCompatActivity() {
         private var task: SendRequestAsyncTask? = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        initRequestReceiver()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (App.INSTANCE.state == null) {
+            App.INSTANCE.state = State()
+        }
+
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         initStateValue()
         initProgressDialog()
-        initRequestReceiver()
 
         if (task?.status == AsyncTask.Status.RUNNING) {
             progress.show()
@@ -49,7 +57,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 task = SendRequestAsyncTask(
                     URL_WITHOUT_PARAM,
-                    localBroadcastManager,
                     binding.inputValueTextEdit.text.toString()
                 )
                 task?.execute()
@@ -58,10 +65,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initStateValue() {
-        val appState = App.INSTANCE.getState()
+        val appState = App.INSTANCE.state
         binding.apply {
-            inputValueTextEdit.setText(appState.inputValue)
-            responseTextView.text = appState.responseValue
+            inputValueTextEdit.setText(appState?.inputValue)
+            responseTextView.text = appState?.responseValue
         }
     }
 
@@ -70,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val response = intent?.extras?.getString(EXTRA_REQUEST) ?: EMPTY_STRING
                 binding.responseTextView.text = response
-                App.INSTANCE.getState().responseValue = response
+                App.INSTANCE.state?.responseValue = response
                 progress.dismiss()
             }
         }
@@ -95,11 +102,11 @@ class MainActivity : AppCompatActivity() {
         outState.putString(EXTRA_RESULT_VALUE, binding.responseTextView.text.toString())
     }
 
-    override fun onDestroy() {
+    override fun onPause() {
         progress.dismiss()
         localBroadcastManager.unregisterReceiver(requestReceiver)
-        App.INSTANCE.getState().inputValue = binding.inputValueTextEdit.text.toString()
+        App.INSTANCE.state?.inputValue = binding.inputValueTextEdit.text.toString()
 
-        super.onDestroy()
+        super.onPause()
     }
 }
