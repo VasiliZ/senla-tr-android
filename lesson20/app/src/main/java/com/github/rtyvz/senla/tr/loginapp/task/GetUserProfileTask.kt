@@ -1,6 +1,7 @@
 package com.github.rtyvz.senla.tr.loginapp.task
 
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.loginapp.login.ui.LoginActivity
@@ -18,9 +19,7 @@ class GetUserProfileTask(
     private lateinit var userEmail: String
 
     companion object {
-        private const val LINK_WITHOUT_METHOD =
-            "https://pub.zame-dev.org/senla-training-addition/lesson-20.php?method="
-        private const val PROFILE_METHOD = "profile"
+        private const val PROFILE_METHOD_PARAMETER = "profile"
         private const val JSON_TOKEN_FIELD = "token"
         private const val STATUS_FIELD_RESPONSE = "status"
         private const val ERROR_FIELD_RESPONSE = "error"
@@ -29,15 +28,22 @@ class GetUserProfileTask(
         private const val LAST_NAME_FIELD_RESPONSE = "lastName"
         private const val BIRTH_DATE_FIELD_RESPONSE = "birthDate"
         private const val NOTES_FIELD_RESPONSE = "notes"
+        private const val METHOD_NAME = "method"
+        private const val URI_SCHEME = "https"
+        private const val URI_AUTHORITY = "pub.zame-dev.org"
+        private const val URI_FIRST_PART_PATH = "senla-training-addition"
+        private const val URI_SECOND_PART_PATH = "lesson-20.php"
     }
 
     override fun doInBackground(vararg params: String?): Result<UserProfileResponse>? {
         val requestBody = userTokenToJson(params[0].toString()).toRequestBody()
         userEmail = params[1].toString()
         val request = Request.Builder().url(
-            StringBuilder(LINK_WITHOUT_METHOD).append(
-                PROFILE_METHOD
-            ).toString()
+            Uri.Builder().scheme(URI_SCHEME)
+                .authority(URI_AUTHORITY)
+                .appendPath(URI_FIRST_PART_PATH)
+                .appendPath(URI_SECOND_PART_PATH)
+                .appendQueryParameter(METHOD_NAME, PROFILE_METHOD_PARAMETER).build().toString()
         ).post(requestBody)
             .build()
 
@@ -65,11 +71,9 @@ class GetUserProfileTask(
 
     override fun onPostExecute(result: Result<UserProfileResponse>?) {
         super.onPostExecute(result)
-        result?.let {
-            localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
-                putExtra(LoginActivity.EXTRA_USER_PROFILE, it)
-            })
-        }
+        localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
+            putExtra(LoginActivity.EXTRA_USER_PROFILE, result)
+        })
     }
 
     private fun userTokenToJson(token: String) =

@@ -2,6 +2,7 @@ package com.github.rtyvz.senla.tr.loginapp.task
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.loginapp.R
@@ -23,6 +24,10 @@ class LoginTask(
 
     companion object {
         private const val JSON_EMAIL_FIELD = "email"
+        private const val URI_SCHEME = "https"
+        private const val URI_AUTHORITY = "pub.zame-dev.org"
+        private const val URI_FIRST_PART_PATH = "senla-training-addition"
+        private const val URI_SECOND_PART_PATH = "lesson-20.php"
         private const val JSON_PASSWORD_FIELD = "password"
         private const val TOKEN_FIELD_RESPONSE = "token"
         private const val LOGIN_METHOD = "login"
@@ -30,8 +35,7 @@ class LoginTask(
         private const val ERROR_FIELD_RESPONSE = "error"
         private const val MESSAGE_FIELD_RESPONSE = "message"
         private const val EMPTY_STRING = ""
-        private const val LINK_WITHOUT_METHOD =
-            "https://pub.zame-dev.org/senla-training-addition/lesson-20.php?method="
+        private const val METHOD_NAME = "method"
     }
 
     override fun doInBackground(vararg params: String?): Result<UserTokenResponse>? {
@@ -71,9 +75,14 @@ class LoginTask(
     private fun prepareTokenRequest(): Request {
         val requestBody = userCredentialsToJson().toRequestBody()
         return Request.Builder().url(
-            StringBuilder(LINK_WITHOUT_METHOD).append(
-                LOGIN_METHOD
-            ).toString()
+            Uri.Builder().scheme(URI_SCHEME)
+                .authority(URI_AUTHORITY)
+                .appendPath(URI_FIRST_PART_PATH)
+                .appendPath(URI_SECOND_PART_PATH)
+                .appendQueryParameter(
+                    METHOD_NAME,
+                    LOGIN_METHOD
+                ).build().toString()
         ).post(requestBody)
             .build()
     }
@@ -85,10 +94,10 @@ class LoginTask(
 
     override fun onPostExecute(result: Result<UserTokenResponse>?) {
         super.onPostExecute(result)
-        result?.let {
-            localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
-                putExtra(LoginActivity.EXTRA_USER_TOKEN, it)
-            })
-        }
+
+        localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
+            putExtra(LoginActivity.EXTRA_USER_TOKEN, result)
+        })
+
     }
 }

@@ -37,13 +37,6 @@ class LoginActivity : AppCompatActivity() {
         private const val EMPTY_STRING = ""
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        initTokenReceiver()
-        initUserProfileReceiver()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,9 +46,6 @@ class LoginActivity : AppCompatActivity() {
         prefs = getSharedPreferences(PREFS_USER_TOKEN, Context.MODE_PRIVATE)
         initProgress()
 
-        if (App.INSTANCE.state.isTasksRunning) {
-            progress?.show()
-        }
 
         val token = prefs.getString(SAVED_TOKEN).toString()
 
@@ -65,6 +55,8 @@ class LoginActivity : AppCompatActivity() {
         } else {
             setContentView(binding.root)
 
+            initTokenReceiver()
+            initUserProfileReceiver()
             binding.apply {
                 loginButton.setOnClickListener {
                     when {
@@ -93,6 +85,18 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (App.INSTANCE.state.isTasksRunning) {
+            progress?.show()
+        }
+
+        registerProfileReceiver()
+        registerTokenReceiver()
+    }
+
+
     private fun initUserProfileReceiver() {
         profileReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -103,6 +107,9 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    private fun registerProfileReceiver() {
         localBroadcastManager.registerReceiver(
             profileReceiver,
             IntentFilter(BROADCAST_USER_PROFILE)
@@ -117,6 +124,9 @@ class LoginActivity : AppCompatActivity() {
                 saveToken(token)
             }
         }
+    }
+
+    private fun registerTokenReceiver() {
         localBroadcastManager.registerReceiver(tokenReceiver, IntentFilter(BROADCAST_USER_TOKEN))
     }
 
