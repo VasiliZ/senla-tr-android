@@ -20,14 +20,11 @@ class GetUserProfileTask(
     companion object {
         private const val LINK_WITHOUT_METHOD =
             "https://pub.zame-dev.org/senla-training-addition/lesson-20.php?method="
-
         private const val PROFILE_METHOD = "profile"
-
         private const val JSON_TOKEN_FIELD = "token"
         private const val STATUS_FIELD_RESPONSE = "status"
         private const val ERROR_FIELD_RESPONSE = "error"
         private const val MESSAGE_FIELD_RESPONSE = "message"
-
         private const val FIRST_NAME_FIELD_RESPONSE = "firstName"
         private const val LAST_NAME_FIELD_RESPONSE = "lastName"
         private const val BIRTH_DATE_FIELD_RESPONSE = "birthDate"
@@ -69,7 +66,7 @@ class GetUserProfileTask(
     override fun onPostExecute(result: Result<UserProfileResponse>?) {
         super.onPostExecute(result)
         result?.let {
-            localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
+            localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
                 putExtra(LoginActivity.EXTRA_USER_PROFILE, it)
             })
         }

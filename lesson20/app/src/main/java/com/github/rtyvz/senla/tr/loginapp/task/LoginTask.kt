@@ -36,6 +36,7 @@ class LoginTask(
 
     override fun doInBackground(vararg params: String?): Result<UserTokenResponse>? {
         try {
+            if (isCancelled) Thread.interrupted()
             userEmail = params[0].toString()
             userPassword = params[1].toString()
             httpClient.newCall(prepareTokenRequest()).execute().use {
@@ -82,11 +83,10 @@ class LoginTask(
         .put(JSON_PASSWORD_FIELD, userPassword)
         .toString()
 
-
     override fun onPostExecute(result: Result<UserTokenResponse>?) {
         super.onPostExecute(result)
         result?.let {
-            localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
+            localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
                 putExtra(LoginActivity.EXTRA_USER_TOKEN, it)
             })
         }

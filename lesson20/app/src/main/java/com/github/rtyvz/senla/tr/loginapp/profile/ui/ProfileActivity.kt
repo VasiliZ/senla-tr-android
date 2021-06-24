@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.R
+import com.github.rtyvz.senla.tr.loginapp.State
 import com.github.rtyvz.senla.tr.loginapp.databinding.ProfileActivityBinding
 import com.github.rtyvz.senla.tr.loginapp.login.ui.LoginActivity
 import com.github.rtyvz.senla.tr.loginapp.profile.entity.UserProfileResponse
@@ -40,6 +41,7 @@ class ProfileActivity : AppCompatActivity() {
             App.INSTANCE.getUserInformationFile().delete()
             getSharedPreferences(LoginActivity.PREFS_USER_TOKEN, Context.MODE_PRIVATE).clearPrefs()
             startActivity(Intent(this, LoginActivity::class.java))
+            App.INSTANCE.state = State()
             finish()
         }
     }
