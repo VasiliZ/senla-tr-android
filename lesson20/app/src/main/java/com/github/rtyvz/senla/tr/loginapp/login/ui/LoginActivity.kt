@@ -1,35 +1,42 @@
 package com.github.rtyvz.senla.tr.loginapp.login.ui
 
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
+import android.os.AsyncTask
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.loginapp.App
 import com.github.rtyvz.senla.tr.loginapp.R
 import com.github.rtyvz.senla.tr.loginapp.databinding.LoginActivityBinding
 import com.github.rtyvz.senla.tr.loginapp.login.entity.UserTokenResponse
 import com.github.rtyvz.senla.tr.loginapp.profile.entity.UserProfileResponse
 import com.github.rtyvz.senla.tr.loginapp.profile.ui.ProfileActivity
-import com.github.rtyvz.senla.tr.loginapp.task.FragmentWithTasks
-import com.github.rtyvz.senla.tr.loginapp.task.TaskCallbacks
+import com.github.rtyvz.senla.tr.loginapp.task.GetUserProfileTask
+import com.github.rtyvz.senla.tr.loginapp.task.LoginTask
 import com.github.rtyvz.senla.tr.loginapp.utils.Result
 import com.github.rtyvz.senla.tr.loginapp.utils.getString
 import com.github.rtyvz.senla.tr.loginapp.utils.putString
 import java.nio.charset.Charset
 
-class LoginActivity : AppCompatActivity(),
-    TaskCallbacks {
+class LoginActivity : AppCompatActivity() {
     private lateinit var binding: LoginActivityBinding
     private val checkEmailRegex =
         "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$".toRegex()
     private lateinit var prefs: SharedPreferences
     private var progress: ProgressDialog? = null
-    private var isTaskRunning = false
+    private lateinit var tokenReceiver: BroadcastReceiver
+    private lateinit var profileReceiver: BroadcastReceiver
+    private lateinit var localBroadcastManager: LocalBroadcastManager
+    private var loginTask: LoginTask = App.TasksProvider.provideLoginTask()
+    private var fetchProfileTask: GetUserProfileTask = App.TasksProvider.provideFetchProfileTask()
 
     companion object {
+        const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
         const val PREFS_USER_TOKEN = "USER_TOKEN"
+        const val EXTRA_USER_TOKEN = "USER_TOKEN"
+        const val EXTRA_USER_PROFILE = "USER_PROFILE"
+        const val BROADCAST_USER_TOKEN = "local:BROADCAST_USER_TOKEN"
         private const val SAVED_TOKEN = "SAVED_TOKEN"
         private const val COMMA = ","
         private const val EMPTY_STRING = ""
@@ -38,8 +45,18 @@ class LoginActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        initTokenReceiver()
+        initUserProfileReceiver()
         binding = LoginActivityBinding.inflate(layoutInflater)
         prefs = getSharedPreferences(PREFS_USER_TOKEN, Context.MODE_PRIVATE)
+
+        if (loginTask.status == AsyncTask.Status.RUNNING
+            || fetchProfileTask.status == AsyncTask.Status.RUNNING
+        ) {
+            progress?.show()
+        }
+
         val token = prefs.getString(SAVED_TOKEN).toString()
 
         if (token.isNotBlank()) {
@@ -49,9 +66,6 @@ class LoginActivity : AppCompatActivity(),
             setContentView(binding.root)
             initProgress()
 
-            if (isTaskRunning) {
-                progress?.show()
-            }
             binding.apply {
                 loginButton.setOnClickListener {
                     val email = emailEditText.text
@@ -67,37 +81,47 @@ class LoginActivity : AppCompatActivity(),
                                     getString(R.string.login_activity_wrong_email)
                             }
                             else -> {
-                                isTaskRunning = true
-                                if (isTaskRunning) {
-                                    progress?.show()
-                                }
+                                progress?.show()
                                 errorTextView.text = EMPTY_STRING
                                 //start task
-                                var fragment =
-                                    supportFragmentManager.findFragmentByTag(FragmentWithTasks.TAG)
-
-                                if (fragment == null) {
-                                    fragment = FragmentWithTasks.newInstance(
-                                        binding.emailEditText.text.toString(),
-                                        binding.passwordEditText.text.toString()
-                                    )
-                                    supportFragmentManager.beginTransaction()
-                                        .add(
-                                            fragment,
-                                            FragmentWithTasks.TAG
-                                        ).commit()
-                                } else {
-                                    (fragment as FragmentWithTasks).restartLoginTask(
-                                        binding.emailEditText.text.toString(),
-                                        binding.passwordEditText.text.toString()
-                                    )
-                                }
+                                App.INSTANCE.state.isTasksRunning = true
+                                loginTask.execute(
+                                    binding.emailEditText.text.toString(),
+                                    binding.passwordEditText.text.toString()
+                                )
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun initUserProfileReceiver() {
+        profileReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                requestResult(
+                    intent?.getParcelableExtra(
+                        EXTRA_USER_PROFILE
+                    )
+                )
+            }
+        }
+        localBroadcastManager.registerReceiver(
+            profileReceiver,
+            IntentFilter(BROADCAST_USER_PROFILE)
+        )
+    }
+
+    private fun initTokenReceiver() {
+        tokenReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val token =
+                    intent?.getParcelableExtra<Result<UserTokenResponse>>(EXTRA_USER_TOKEN)
+                saveToken(token)
+            }
+        }
+        localBroadcastManager.registerReceiver(tokenReceiver, IntentFilter(BROADCAST_USER_TOKEN))
     }
 
     private fun initProgress() {
@@ -108,14 +132,18 @@ class LoginActivity : AppCompatActivity(),
         }
     }
 
-    private fun saveToken(token: String) {
+    private fun putTokenIntoPrefs(token: String) {
         prefs.putString(SAVED_TOKEN, token)
     }
 
-    override fun saveToken(result: Result<UserTokenResponse>) {
+    private fun saveToken(result: Result<UserTokenResponse>?) {
         when (result) {
             is Result.Success -> {
-                saveToken(result.responseBody.token)
+                fetchProfileTask.execute(
+                    result.responseBody.token,
+                    binding.emailEditText.text.toString()
+                )
+                putTokenIntoPrefs(result.responseBody.token)
             }
             is Result.Error -> {
                 disableProgress()
@@ -124,12 +152,11 @@ class LoginActivity : AppCompatActivity(),
         }
     }
 
-    override fun requestResult(response: Result<UserProfileResponse>) {
+    private fun requestResult(response: Result<UserProfileResponse>?) {
         when (response) {
             is Result.Success -> {
                 val userInformation = response.responseBody
                 writeUserDataToFile(userInformation)
-
                 startActivity(Intent(this, ProfileActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putParcelable(ProfileActivity.EXTRA_USER_PROFILE, response.responseBody)
@@ -169,16 +196,12 @@ class LoginActivity : AppCompatActivity(),
     }
 
     private fun disableProgress() {
-        isTaskRunning = false
         progress?.dismiss()
     }
 
-    override fun taskRunningYet() {
-        isTaskRunning = true
-    }
 
     override fun onDestroy() {
-        progress?.dismiss()
+        disableProgress()
 
         super.onDestroy()
     }

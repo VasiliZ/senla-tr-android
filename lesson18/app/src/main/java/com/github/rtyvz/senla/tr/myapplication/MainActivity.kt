@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val executorService = Executors.newFixedThreadPool(4)
     private var lastCalculatedNumber = 2
     private var lastCount = 1
-    private val state = App.INSTANCE.getGetState()
+    private lateinit var state: State
     private lateinit var calculateTask: CalculatePrimeNumbersAsyncTask
     private lateinit var readDataAsyncTask: ReadDataAsyncTask
     private lateinit var sleepingAsyncTask: SleepingAsyncTask
@@ -52,10 +52,25 @@ class MainActivity : AppCompatActivity() {
         private const val EMPTY_STRING = ""
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        initCountReceiver()
+        initPrimeNumberReceiver()
+        initLastPrimeNumberReceiver()
+        initReadDataReceiver()
+        initWriteYupReceiver()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        App.INSTANCE.state = State()
+        App.INSTANCE.state?.let {
+            state = it
+        }
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -76,18 +91,12 @@ class MainActivity : AppCompatActivity() {
                 mainTask.executeOnExecutor(executorService)
             }
         }
-
-        initCountReceiver()
-        initPrimeNumberReceiver()
-        initLastPrimeNumberReceiver()
-        initReadDataReceiver()
-        initWriteYupReceiver()
     }
 
     private fun initPrimeNumberReceiver() {
         primeNumberReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                synchronized(App.INSTANCE.getGetState().listOfData) {
+                synchronized(state.listOfData) {
                     state.listOfData.add(
                         intent?.extras?.get(EXTRA_PRIME_NUMBER).toString()
                     )
@@ -137,7 +146,7 @@ class MainActivity : AppCompatActivity() {
     private fun initReadDataReceiver() {
         readDataReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                synchronized(App.INSTANCE.getGetState().listOfData) {
+                synchronized(state.listOfData) {
                     intent?.getStringArrayListExtra(EXTRA_READ_DATA)?.forEach {
                         binding.apply {
                             contentTextView.post {
@@ -162,11 +171,13 @@ class MainActivity : AppCompatActivity() {
     private fun initWriteYupReceiver() {
         writeYupReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                val yupValue = intent?.extras?.getString(
+                    EXTRA_YUP
+                ) ?: EMPTY_STRING
+
                 synchronized(state.listOfData) {
                     state.listOfData.add(
-                        intent?.extras?.getString(
-                            EXTRA_YUP
-                        ) ?: EMPTY_STRING
+                        yupValue
                     )
                 }
             }
@@ -185,7 +196,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCalculatePrimeNumberTask(): CalculatePrimeNumbersAsyncTask {
         return CalculatePrimeNumbersAsyncTask(
-            localBroadcastManager,
             waitObject,
             lastCalculatedNumber
         )
@@ -193,14 +203,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initReadDataTask(): ReadDataAsyncTask {
         return ReadDataAsyncTask(
-            state.listOfData, localBroadcastManager
+            state.listOfData
         )
     }
 
     private fun initSleepingTask(): SleepingAsyncTask {
         return SleepingAsyncTask(
-            waitObject,
-            localBroadcastManager
+            waitObject
         )
     }
 
@@ -215,16 +224,11 @@ class MainActivity : AppCompatActivity() {
                 readDataAsyncTask.cancel(shouldThreadCancel)
                 sleepingAsyncTask.cancel(shouldThreadCancel)
             },
-            localBroadcastManager,
             lastCount
         )
     }
 
-    override fun onStop() {
-        calculateTask.cancel(shouldThreadCancel)
-        readDataAsyncTask.cancel(shouldThreadCancel)
-        sleepingAsyncTask.cancel(shouldThreadCancel)
-        mainTask.cancel(shouldThreadCancel)
+    override fun onPause() {
         localBroadcastManager.unregisterReceiver(primeNumberReceiver)
         localBroadcastManager.unregisterReceiver(countReceiver)
         localBroadcastManager.unregisterReceiver(lastPrimeNumberReceiver)
@@ -232,6 +236,6 @@ class MainActivity : AppCompatActivity() {
         localBroadcastManager.unregisterReceiver(writeYupReceiver)
         state.printedValues = binding.contentTextView.text.toString()
 
-        super.onStop()
+        super.onPause()
     }
 }

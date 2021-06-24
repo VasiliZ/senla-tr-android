@@ -3,13 +3,13 @@ package com.github.rtyvz.senla.tr.myapplication.task
 import android.content.Intent
 import android.os.AsyncTask
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.MainActivity
 
 class MainAsyncTask(
     private val listData: MutableList<String>,
     private val enableButtonBlock: () -> Unit,
     private val signalToCloseTasks: () -> Unit,
-    private val localBroadcastManager: LocalBroadcastManager,
     count: Int
 ) : AsyncTask<Void, Void, Void>() {
     var localCount = count
@@ -22,6 +22,7 @@ class MainAsyncTask(
     override fun doInBackground(vararg params: Void?): Void? {
         while (true) {
             if (isCancelled) Thread.interrupted()
+            val localBroadcastManager = LocalBroadcastManager.getInstance(App.INSTANCE)
             Thread.sleep(TIME_TO_THREAD_SlEEP)
             synchronized(listData) {
                 listData.add(localCount.toString())

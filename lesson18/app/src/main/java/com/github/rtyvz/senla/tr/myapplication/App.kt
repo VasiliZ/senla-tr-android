@@ -3,8 +3,7 @@ package com.github.rtyvz.senla.tr.myapplication
 import android.app.Application
 
 class App : Application() {
-    private var state = State()
-
+    var state: State? = null
 
     companion object {
         lateinit var INSTANCE: App
@@ -15,6 +14,4 @@ class App : Application() {
 
         INSTANCE = this
     }
-
-    fun getGetState() = state
 }
