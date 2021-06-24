@@ -24,13 +24,13 @@ class ProfileActivity : AppCompatActivity() {
         binding = ProfileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val state = App.INSTANCE.state.userProfile
+        val state = App.INSTANCE.state?.userProfile
         if (state != null) {
             updateUI(
-                SimpleDateFormat(
-                    DATE_FORMAT,
-                    Locale.getDefault()
-                ), state
+                    SimpleDateFormat(
+                            DATE_FORMAT,
+                            Locale.getDefault()
+                    ), state
             )
         } else {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -44,15 +44,15 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun updateUI(
-        formatter: SimpleDateFormat,
-        userProfileResponse: UserProfileResponse
+            formatter: SimpleDateFormat,
+            userProfileResponse: UserProfileResponse
     ) {
         binding.apply {
             emailValueTextView.text = userProfileResponse.email
             firstNameValueTextView.text = userProfileResponse.firstName
             lastNameValueTextView.text = userProfileResponse.lastName
             birthDateValueTextView.text = formatDate(formatter, userProfileResponse.birthDate)
-            notesTextView.text = formatNotes(userProfileResponse.notes)
+            notesValueTextView.text = userProfileResponse.notes
         }
     }
 
@@ -62,8 +62,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun formatNotes(stringForFormat: String): String {
         return String.format(
-            resources.getString(R.string.profile_activity_notes_label),
-            stringForFormat
+                resources.getString(R.string.profile_activity_notes_label),
+                stringForFormat
         )
     }
 }
