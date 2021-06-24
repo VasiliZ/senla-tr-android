@@ -37,6 +37,7 @@ class UpdateProfileTask(
         userEmail: String
     ): Task<Result<UserProfileEntity>>? {
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
+
         return Task.callInBackground {
             client.newCall(
                 createRequest(
