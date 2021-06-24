@@ -19,7 +19,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ProfileActivityBinding
 
     companion object {
-        const val EXTRA_USER_PROFILE = "USER_PROFILE"
         private const val COMMA = ","
         private const val DATE_FORMAT = "dd.MM.yyyy"
     }
@@ -31,10 +30,12 @@ class ProfileActivity : AppCompatActivity() {
 
         val formatter = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
 
-        if (intent.extras == null) {
-            readUserProfileFromFile(formatter)
+        if (App.INSTANCE.state.userProfile != null) {
+            App.INSTANCE.state.userProfile?.let {
+                setUserDataFromIntent(formatter, it)
+            }
         } else {
-            setUserDataFromIntent(formatter, intent)
+            readUserProfileFromFile(formatter)
         }
 
         binding.logOutButton.setOnClickListener {
@@ -46,15 +47,16 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUserDataFromIntent(formatter: SimpleDateFormat, intent: Intent) {
+    private fun setUserDataFromIntent(
+        formatter: SimpleDateFormat,
+        userProfileResponse: UserProfileResponse
+    ) {
         binding.apply {
-            intent.getParcelableExtra<UserProfileResponse>(EXTRA_USER_PROFILE)?.apply {
-                emailValueTextView.text = email
-                firstNameValueTextView.text = firstName
-                lastNameValueTextView.text = firstName
-                birthDateValueTextView.text = formatDate(formatter, birthDate)
-                notesTextView.text = formatNotes(notes)
-            }
+            emailValueTextView.text = userProfileResponse.email
+            firstNameValueTextView.text = userProfileResponse.firstName
+            lastNameValueTextView.text = userProfileResponse.lastName
+            birthDateValueTextView.text = formatDate(formatter, userProfileResponse.birthDate)
+            notesTextView.text = formatNotes(userProfileResponse.notes)
         }
     }
 

@@ -164,11 +164,8 @@ class LoginActivity : AppCompatActivity() {
                 val userInformation = response.responseBody
                 writeUserDataToFile(userInformation)
                 App.INSTANCE.state.isTasksRunning = false
-                startActivity(Intent(this, ProfileActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-                        putParcelable(ProfileActivity.EXTRA_USER_PROFILE, response.responseBody)
-                    })
-                })
+                App.INSTANCE.state.userProfile = userInformation
+                startActivity(Intent(this, ProfileActivity::class.java))
                 finish()
             }
             is Result.Error -> {

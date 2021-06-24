@@ -2,17 +2,18 @@ package com.github.rtyvz.senla.tr.myapplication.providers
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Continuation
 import bolts.Task
+import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.R
-import com.github.rtyvz.senla.tr.myapplication.common.BoltsFragment
 import com.github.rtyvz.senla.tr.myapplication.models.TokenResponse
 import com.github.rtyvz.senla.tr.myapplication.models.UserCredentials
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -20,12 +21,19 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class TokenProvider(
     private val okHttpClient: OkHttpClient,
     private val context: Context,
-    private val gsonBuilder: GsonBuilder,
-    private val url:String
+    private val gsonBuilder: Gson
 ) {
-    companion object{
 
+    companion object {
+        private const val METHOD_NAME = "method"
+        private const val REQUEST_METHOD_LOGIN = "login"
+        private const val STATUS_OK = "ok"
+        private const val URI_SCHEME = "https"
+        private const val URI_AUTHORITY = "pub.zame-dev.org"
+        private const val URI_FIRST_PART_PATH = "senla-training-addition"
+        private const val URI_SECOND_PART_PATH = "lesson-20.php"
     }
+
     private fun initTokenTask(userEmail: String, userPassword: String): Task<String> {
         LocalBroadcastManager.getInstance(context).sendBroadcast(
             Intent(LoginActivity.BROADCAST_RUNNING_TASK_FLAG).apply {
@@ -35,18 +43,17 @@ class TokenProvider(
         return Task.callInBackground {
             return@callInBackground okHttpClient.newCall(
                 createRequest(
-                    BoltsFragment.REQUEST_METHOD_LOGIN,
                     gsonBuilder.toJson(UserCredentials(userEmail, userPassword))
                 )
             ).execute().body?.string()
         }.onSuccess {
             return@onSuccess gsonBuilder.fromJson(it.result, TokenResponse::class.java)
         }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
-            if (it.result.status.contains(BoltsFragment.STATUS_OK)) {
+            if (it.result.status.contains(STATUS_OK)) {
                 it.result?.let {
-                    callBacks?.saveToken(it.token)
+                    //todo call broadcast
                 }
-                return@Continuation executeUpdateUserProfileTask(it.result.token)
+                return@Continuation App.(it.result.token)
             } else {
                 callBacks?.error(it.result.message)
                 return@Continuation null
@@ -62,10 +69,15 @@ class TokenProvider(
         }
     }
 
-    private fun createRequest(method: String, json: String) = Request.Builder().url(
-        StringBuilder(BoltsFragment.URL_WITHOUT_METHOD).append(
-            method
-        ).toString()
+    private fun createRequest(json: String) = Request.Builder().url(
+        Uri.Builder().scheme(URI_SCHEME)
+            .authority(URI_AUTHORITY)
+            .appendPath(URI_FIRST_PART_PATH)
+            .appendPath(URI_SECOND_PART_PATH)
+            .appendQueryParameter(
+                METHOD_NAME,
+                REQUEST_METHOD_LOGIN
+            ).build().toString()
     ).post(json.toRequestBody()).build()
 
 }
