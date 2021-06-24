@@ -8,10 +8,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
-import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.databinding.ProfileActivityBinding
 import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
+import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.profile_activity.*
 import java.text.SimpleDateFormat
@@ -27,6 +27,7 @@ class ProfileActivity : AppCompatActivity() {
         const val EXTRA_USER_PROFILE = "USER_PROFILE"
         const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
         private const val DATE_FORMAT = "dd.MM.yyyy hh:mm"
+        private const val EMPTY_STRING = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +45,18 @@ class ProfileActivity : AppCompatActivity() {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         initUserProfileReceiver()
+        val state = App.INSTANCE.state
+
+        if (state != null) {
+            updateUI(state.userProfile)
+        } else {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         binding.pullToRefreshLayout.setOnRefreshListener {
-            App.TaskProvider.getProfileTask().executeUpdateUserProfileTask(
-                App.INSTANCE.state?.token ?: "",
-                App.INSTANCE.state?.email ?: ""
+            TaskProvider.getProfileTask().executeUpdateUserProfileTask(
+                App.INSTANCE.state?.token ?: EMPTY_STRING,
+                App.INSTANCE.state?.email ?: EMPTY_STRING
             )
         }
 
@@ -58,15 +67,14 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun formatDate(formatter: SimpleDateFormat, millisForFormat: Long): String {
-        return formatter.format(Date(millisForFormat))
+    override fun onResume() {
+        super.onResume()
+
+        registerProfileReceiver()
     }
 
-    private fun formatNotes(stringForFormat: String): String {
-        return String.format(
-            resources.getString(R.string.profile_activity_notes_label),
-            stringForFormat
-        )
+    private fun formatDate(formatter: SimpleDateFormat, millisForFormat: Long): String {
+        return formatter.format(Date(millisForFormat))
     }
 
     private fun initUserProfileReceiver() {
@@ -76,11 +84,11 @@ class ProfileActivity : AppCompatActivity() {
                 binding.pullToRefreshLayout.isRefreshing = false
             }
         }
+    }
 
+    private fun registerProfileReceiver() {
         localBroadcastManager.registerReceiver(
-            userProfileReceiver, IntentFilter(
-                BROADCAST_USER_PROFILE
-            )
+            userProfileReceiver, IntentFilter(BROADCAST_USER_PROFILE)
         )
     }
 
@@ -90,7 +98,7 @@ class ProfileActivity : AppCompatActivity() {
             firstNameValueTextView.text = firstUserName
             lastNameValueTextView.text = lastUserName
             birthDateValueTextView.text = formatDate(formatter, birthDate.toLong())
-            notesTextView.text = formatNotes(userNotes)
+            notesValueTextView.text = userNotes
         }
     }
 

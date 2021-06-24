@@ -11,7 +11,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.databinding.LoginActivityBinding
+import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
+import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
 
@@ -20,17 +22,20 @@ class LoginActivity : AppCompatActivity() {
     private val regexEmail = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z-.]+\$".toRegex()
     private var progressDialog: ProgressDialog? = null
     private var localBroadcastManager: LocalBroadcastManager? = null
-    private lateinit var runningTaskReceiver: BroadcastReceiver
     private lateinit var userProfileReceiver: BroadcastReceiver
     private lateinit var userTokenReceiver: BroadcastReceiver
+    private lateinit var userTokenErrorReceiver: BroadcastReceiver
+    private lateinit var taskIsFaultReceiver: BroadcastReceiver
 
     companion object {
-        const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
-        const val BROADCAST_RUNNING_TASK_FLAG = "local:BROADCAST_RUNNING_TASK_FLAG"
-        const val BROADCAST_TOKEN = "local:TOKEN"
-        const val EXTRA_USER_PROFILE = "USER_PROFILE"
+        const val BROADCAST_FETCH_USER_PROFILE = "local:BROADCAST_FETCH_USER_PROFILE"
+        const val BROADCAST_TOKEN = "local:BROADCAST_TOKEN"
+        const val BROADCAST_TOKEN_RESPONSE_ERROR = "local:BROADCAST_TOKEN_RESPONSE_ERROR"
+        const val BROADCAST_TASK_IS_FAULTED = "local:BROADCAST_TASK_IS_FAULT"
+        const val EXTRA_FETCH_USER_PROFILE = "FETCH_USER_PROFILE"
         const val EXTRA_USER_TOKEN = "USER_TOKEN"
-        const val EXTRA_RUNNING_TASK_FLAG = "RUNNING_TASK_FLAG"
+        const val EXTRA_TASK_IS_FAULTED = "TASK_IS_FAULT"
+        const val EXTRA_USER_TOKEN_ERROR = "USER_TOKEN_ERROR"
         private const val EMPTY_STRING = ""
     }
 
@@ -40,10 +45,18 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
+
         initProfileReceiver()
         initTokenReceiver()
-        initRunningTaskReceiver()
+        initTokenErrorResponseReceiver()
+        initFaultTaskReceiver()
         initProgress()
+
+        val state = App.INSTANCE.state
+        if (state == null) {
+            App.INSTANCE.state = State()
+        }
+
         binding.apply {
             loginButton.setOnClickListener {
                 when {
@@ -58,12 +71,32 @@ class LoginActivity : AppCompatActivity() {
                         progressDialog?.show()
                         errorTextView.text =
                             EMPTY_STRING
-                        App.TaskProvider.getTokenTask().initTokenTask(
+                        App.INSTANCE.state?.isTaskRunning = true
+                        TaskProvider.getTokenTask().initTokenTask(
                             binding.userEmailEditText.text.toString(),
                             binding.userPasswordEditText.text.toString()
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun initFaultTaskReceiver() {
+        taskIsFaultReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                progressDialog?.dismiss()
+                binding.errorTextView.text = getString(R.string.login_activity_request_error)
+            }
+        }
+    }
+
+    private fun initTokenErrorResponseReceiver() {
+        userTokenErrorReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                progressDialog?.dismiss()
+                App.INSTANCE.state?.isTaskRunning = false
+                binding.errorTextView.text = intent?.getStringExtra(EXTRA_USER_TOKEN_ERROR)
             }
         }
     }
@@ -79,7 +112,9 @@ class LoginActivity : AppCompatActivity() {
     private fun initProfileReceiver() {
         userProfileReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                saveUserProfile(intent?.getParcelableExtra(EXTRA_USER_PROFILE))
+                App.INSTANCE.state?.isTaskRunning = false
+                App.INSTANCE.state?.email = binding.userEmailEditText.text.toString()
+                saveUserProfile(intent?.getParcelableExtra(EXTRA_FETCH_USER_PROFILE))
             }
         }
     }
@@ -88,15 +123,37 @@ class LoginActivity : AppCompatActivity() {
         super.onResume()
 
         registerProfileReceiver()
+        registerTokenReceiver()
+        registerErrorTokenResponseReceiver()
+        registerRequestErrorReceiver()
 
+        if (App.INSTANCE.state?.isTaskRunning == true) {
+            progressDialog?.show()
+        }
+    }
+
+    private fun registerRequestErrorReceiver() {
+        localBroadcastManager?.registerReceiver(
+            taskIsFaultReceiver, IntentFilter(
+                BROADCAST_TASK_IS_FAULTED
+            )
+        )
+    }
+
+    private fun registerErrorTokenResponseReceiver() {
+        localBroadcastManager?.registerReceiver(
+            userTokenErrorReceiver, IntentFilter(BROADCAST_TOKEN_RESPONSE_ERROR)
+        )
     }
 
     private fun registerProfileReceiver() {
         localBroadcastManager?.registerReceiver(
-            userProfileReceiver, IntentFilter(
-                BROADCAST_USER_PROFILE
-            )
+            userProfileReceiver, IntentFilter(BROADCAST_FETCH_USER_PROFILE)
         )
+    }
+
+    private fun registerTokenReceiver() {
+        localBroadcastManager?.registerReceiver(userTokenReceiver, IntentFilter(BROADCAST_TOKEN))
     }
 
     private fun initProgress() {
@@ -107,44 +164,24 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun initRunningTaskReceiver() {
-        runningTaskReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                App.INSTANCE.state?.isTaskRunning = intent?.getBooleanExtra(
-                    EXTRA_RUNNING_TASK_FLAG, false
-                ) ?: false
-            }
-        }
-        localBroadcastManager?.registerReceiver(
-            runningTaskReceiver, IntentFilter(
-                BROADCAST_RUNNING_TASK_FLAG
-            )
-        )
-    }
-
     private fun saveUserProfile(result: Result<UserProfileEntity>?) {
         when (result) {
             is Result.Success -> {
                 progressDialog?.dismiss()
+                App.INSTANCE.state?.userProfile = result.responseBody
                 App.INSTANCE.state?.isTaskRunning = false
-                startProfileActivity(result.responseBody)
+                startActivity(Intent(this, ProfileActivity::class.java))
                 finish()
             }
             is Result.Error -> binding.errorTextView.text = result.error
         }
     }
 
-    private fun startProfileActivity(profileResponseData: UserProfileEntity) {
-        startActivity(Intent(this, ProfileActivity::class.java).apply {
-            putExtras(Bundle().apply {
-                putParcelable(ProfileActivity.EXTRA_USER_PROFILE, profileResponseData)
-            })
-        })
-    }
-
     override fun onPause() {
-        localBroadcastManager?.unregisterReceiver(runningTaskReceiver)
+        localBroadcastManager?.unregisterReceiver(userTokenReceiver)
         localBroadcastManager?.unregisterReceiver(userProfileReceiver)
+        localBroadcastManager?.unregisterReceiver(userTokenErrorReceiver)
+        localBroadcastManager?.unregisterReceiver(taskIsFaultReceiver)
         progressDialog?.dismiss()
 
         super.onPause()

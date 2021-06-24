@@ -13,9 +13,10 @@
     <string name="profile_activity_first_name_label">First name:</string>
     <string name="profile_activity_last_name">Last name:</string>
     <string name="profile_activity_birth_date">Birth date:</string>
-    <string name="profile_activity_notes_label">Notes: \n \n%1$s</string>
+    <string name="profile_activity_notes_label">Notes:</string>
     <string name="profile_activity_logout_label">Logout</string>
 
     <!--fragment-->
     <string name="bolts_fragment_request_error">Request error. Please try again later.</string>
+    <string name="login_activity_request_error">Произошла ошибка во время выполнения запроса</string>
 </resources>

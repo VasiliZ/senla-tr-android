@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Task
-import com.github.rtyvz.senla.tr.myapplication.models.TokenEntity
+import com.github.rtyvz.senla.tr.myapplication.models.TokenRequest
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileResponse
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
@@ -16,7 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class ProfileProvider(
+class UpdateProfileTask(
     private val client: OkHttpClient,
     private val gson: Gson,
     private val context: Context
@@ -40,7 +40,7 @@ class ProfileProvider(
         return Task.callInBackground {
             client.newCall(
                 createRequest(
-                    gson.toJson(TokenEntity(token))
+                    gson.toJson(TokenRequest(token))
                 )
             ).execute().body?.string()
         }.onSuccess {

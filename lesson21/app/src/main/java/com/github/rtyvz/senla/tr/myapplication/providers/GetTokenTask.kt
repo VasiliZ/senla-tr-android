@@ -6,9 +6,8 @@ import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Continuation
 import bolts.Task
-import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.models.TokenResponse
-import com.github.rtyvz.senla.tr.myapplication.models.UserCredentials
+import com.github.rtyvz.senla.tr.myapplication.models.UserCredentialsRequest
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
@@ -17,7 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class TokenProvider(
+class GetTokenTask(
     private val okHttpClient: OkHttpClient,
     private val context: Context,
     private val gson: Gson
@@ -35,15 +34,11 @@ class TokenProvider(
 
     fun initTokenTask(userEmail: String, userPassword: String): Task<String> {
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
-        localBroadcastManager.sendBroadcast(
-            Intent(LoginActivity.BROADCAST_RUNNING_TASK_FLAG).apply {
-                putExtra(LoginActivity.EXTRA_RUNNING_TASK_FLAG, true)
-            })
 
         return Task.callInBackground {
             return@callInBackground okHttpClient.newCall(
                 createRequest(
-                    gson.toJson(UserCredentials(userEmail, userPassword))
+                    gson.toJson(UserCredentialsRequest(userEmail, userPassword))
                 )
             ).execute().body?.string()
         }.onSuccess {
@@ -55,17 +50,25 @@ class TokenProvider(
                         putExtra(LoginActivity.EXTRA_USER_TOKEN, it.token)
                     })
                 }
-                return@Continuation App.TaskProvider.getProfileTask()
+                return@Continuation TaskProvider.getProfileTask()
                     .executeUpdateUserProfileTask(it.result.token, userEmail)
             } else {
+                localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_TOKEN_RESPONSE_ERROR).apply {
+                    putExtra(LoginActivity.EXTRA_USER_TOKEN_ERROR, it.result.message)
+                })
                 return@Continuation null
             }
         }).continueWith {
             if (it.isFaulted) {
+                localBroadcastManager.sendBroadcast(Intent(
+                    LoginActivity.BROADCAST_TASK_IS_FAULTED
+                ).apply {
+                    putExtra(LoginActivity.EXTRA_TASK_IS_FAULTED, it.result)
+                })
                 return@continueWith null
             } else {
-                localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
-                    putExtra(LoginActivity.EXTRA_USER_PROFILE, it.result)
+                localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_FETCH_USER_PROFILE).apply {
+                    putExtra(LoginActivity.EXTRA_FETCH_USER_PROFILE, it.result)
                 })
                 return@continueWith null
             }
@@ -82,5 +85,4 @@ class TokenProvider(
                 REQUEST_METHOD_LOGIN
             ).build().toString()
     ).post(json.toRequestBody()).build()
-
 }
