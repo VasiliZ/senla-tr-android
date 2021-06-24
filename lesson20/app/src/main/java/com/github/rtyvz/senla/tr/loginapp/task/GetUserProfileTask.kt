@@ -28,7 +28,7 @@ class GetUserProfileTask(
         private const val LAST_NAME_FIELD_RESPONSE = "lastName"
         private const val BIRTH_DATE_FIELD_RESPONSE = "birthDate"
         private const val NOTES_FIELD_RESPONSE = "notes"
-        private const val METHOD_NAME = "method"
+        private const val PARAM_METHOD_NAME = "method"
         private const val URI_SCHEME = "https"
         private const val URI_AUTHORITY = "pub.zame-dev.org"
         private const val URI_FIRST_PART_PATH = "senla-training-addition"
@@ -36,25 +36,29 @@ class GetUserProfileTask(
     }
 
     override fun doInBackground(vararg params: String?): Result<UserProfileResponse>? {
-        val requestBody = userTokenToJson(params[0].toString()).toRequestBody()
+        val requestBody = convertUserTokenToJson(params[0].toString()).toRequestBody()
         userEmail = params[1].toString()
+
         val request = Request.Builder().url(
             Uri.Builder().scheme(URI_SCHEME)
                 .authority(URI_AUTHORITY)
                 .appendPath(URI_FIRST_PART_PATH)
                 .appendPath(URI_SECOND_PART_PATH)
-                .appendQueryParameter(METHOD_NAME, PROFILE_METHOD_PARAMETER).build().toString()
+                .appendQueryParameter(PARAM_METHOD_NAME, PROFILE_METHOD_PARAMETER).build()
+                .toString()
         ).post(requestBody)
             .build()
 
         httpClient.newCall(request).execute().use {
             it.body?.let { body ->
                 val jsonObject = JSONObject(body.string())
+
                 if (jsonObject.getString(STATUS_FIELD_RESPONSE)
                         .contains(ERROR_FIELD_RESPONSE)
                 ) {
-                    return Result.Error(jsonObject.getString(MESSAGE_FIELD_RESPONSE))
+                    return Result.Error(jsonObject.optString(MESSAGE_FIELD_RESPONSE))
                 }
+
                 val userProfile =
                     UserProfileResponse(
                         email = userEmail,
@@ -79,6 +83,6 @@ class GetUserProfileTask(
             })
     }
 
-    private fun userTokenToJson(token: String) =
+    private fun convertUserTokenToJson(token: String) =
         JSONObject().put(JSON_TOKEN_FIELD, token).toString()
 }

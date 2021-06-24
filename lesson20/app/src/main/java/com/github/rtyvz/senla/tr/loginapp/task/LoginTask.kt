@@ -35,15 +35,14 @@ class LoginTask(
         private const val ERROR_FIELD_RESPONSE = "error"
         private const val MESSAGE_FIELD_RESPONSE = "message"
         private const val EMPTY_STRING = ""
-        private const val METHOD_NAME = "method"
+        private const val PARAM_METHOD_NAME = "method"
     }
 
     override fun doInBackground(vararg params: String?): Result<UserTokenResponse>? {
         try {
-            if (isCancelled) Thread.interrupted()
-
             userEmail = params[0].toString()
             userPassword = params[1].toString()
+
             httpClient.newCall(prepareTokenRequest()).execute().use {
                 it.body?.let { body ->
                     val jsonObject = JSONObject(body.string())
@@ -52,8 +51,9 @@ class LoginTask(
                             ERROR_FIELD_RESPONSE
                         )
                     ) {
-                        return Result.Error(jsonObject.getString(MESSAGE_FIELD_RESPONSE))
+                        return Result.Error(jsonObject.optString(MESSAGE_FIELD_RESPONSE))
                     }
+
                     val token = jsonObject.getString(TOKEN_FIELD_RESPONSE)
                     return Result.Success(
                         UserTokenResponse(
@@ -64,32 +64,31 @@ class LoginTask(
                 }
             }
         } catch (e: Exception) {
-            e.localizedMessage?.let {
-                return Result.Error(
-                    context.getString(R.string.task_fragment_try_get_token_error)
-                )
-            }
+            return Result.Error(
+                context.getString(R.string.task_fragment_try_get_token_error)
+            )
         }
 
         return null
     }
 
     private fun prepareTokenRequest(): Request {
-        val requestBody = userCredentialsToJson().toRequestBody()
+        val requestBody = convertUserCredentialsToJson().toRequestBody()
+
         return Request.Builder().url(
             Uri.Builder().scheme(URI_SCHEME)
                 .authority(URI_AUTHORITY)
                 .appendPath(URI_FIRST_PART_PATH)
                 .appendPath(URI_SECOND_PART_PATH)
                 .appendQueryParameter(
-                    METHOD_NAME,
+                    PARAM_METHOD_NAME,
                     LOGIN_METHOD
                 ).build().toString()
         ).post(requestBody)
             .build()
     }
 
-    private fun userCredentialsToJson() = JSONObject()
+    private fun convertUserCredentialsToJson() = JSONObject()
         .put(JSON_EMAIL_FIELD, userEmail)
         .put(JSON_PASSWORD_FIELD, userPassword)
         .toString()
