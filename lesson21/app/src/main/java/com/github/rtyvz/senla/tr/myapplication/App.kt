@@ -2,6 +2,7 @@ package com.github.rtyvz.senla.tr.myapplication
 
 import android.app.Application
 import com.github.rtyvz.senla.tr.myapplication.models.State
+import com.github.rtyvz.senla.tr.myapplication.providers.ProfileProvider
 import com.github.rtyvz.senla.tr.myapplication.providers.TokenProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -18,7 +19,7 @@ class App : Application() {
 
     object TaskProvider {
         fun getTokenTask() = TokenProvider(okHttpClient, INSTANCE, gson)
-
+        fun getProfileTask() = ProfileProvider(okHttpClient, gson, INSTANCE)
     }
 
     override fun onCreate() {

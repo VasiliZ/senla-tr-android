@@ -7,7 +7,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.myapplication.App
-import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.models.TokenResponse
 import com.github.rtyvz.senla.tr.myapplication.models.UserCredentials
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
@@ -21,7 +20,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class TokenProvider(
     private val okHttpClient: OkHttpClient,
     private val context: Context,
-    private val gsonBuilder: Gson
+    private val gson: Gson
 ) {
 
     companion object {
@@ -43,27 +42,25 @@ class TokenProvider(
         return Task.callInBackground {
             return@callInBackground okHttpClient.newCall(
                 createRequest(
-                    gsonBuilder.toJson(UserCredentials(userEmail, userPassword))
+                    gson.toJson(UserCredentials(userEmail, userPassword))
                 )
             ).execute().body?.string()
         }.onSuccess {
-            return@onSuccess gsonBuilder.fromJson(it.result, TokenResponse::class.java)
+            return@onSuccess gson.fromJson(it.result, TokenResponse::class.java)
         }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
             if (it.result.status.contains(STATUS_OK)) {
                 it.result?.let {
                     //todo call broadcast
                 }
-                return@Continuation App.(it.result.token)
+                return@Continuation App.TaskProvider.getProfileTask()
+                    .executeUpdateUserProfileTask(it.result.token, userEmail)
             } else {
-                callBacks?.error(it.result.message)
                 return@Continuation null
             }
         }).continueWith {
             if (it.isFaulted) {
-                callBacks?.error(getString(R.string.bolts_fragment_request_error))
                 return@continueWith null
             } else {
-                callBacks?.saveUserProfile(it.result)
                 return@continueWith null
             }
         }
