@@ -1,19 +1,31 @@
 package com.github.rtyvz.senla.tr.okhttp
 
 import android.app.ProgressDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.AsyncTask
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.okhttp.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), TaskCallbacks {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var progress: ProgressDialog
-    private var isRotate: Boolean = false
+    private lateinit var localBroadcastManager: LocalBroadcastManager
+    private lateinit var requestReceiver: BroadcastReceiver
 
     companion object {
+        const val EXTRA_REQUEST = "REQUEST"
+        const val BROADCAST_RESPONSE_VALUE = "local:BROADCAST_RESPONSE_VALUE"
         private const val EXTRA_TEXT_EDIT_VALUE: String = "TEXT_EDIT_VALUE"
         private const val EXTRA_RESULT_VALUE: String = "RESULT_VALUE"
-        private const val STRING_DEFAULT_VALUE = ""
+        private const val EMPTY_STRING: String = ""
+        private const val URL_WITHOUT_PARAM =
+            "https://pub.zame-dev.org/senla-training-addition/lesson-19.php?param="
+        private var task: SendRequestAsyncTask? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,19 +33,12 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        savedInstanceState?.let {
-            binding.inputValueTextEdit.setText(
-                it.getString(
-                    EXTRA_TEXT_EDIT_VALUE,
-                    STRING_DEFAULT_VALUE
-                )
-            )
-            binding.responseTextView.text = it.getString(EXTRA_RESULT_VALUE, STRING_DEFAULT_VALUE)
-        }
-
+        localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        initStateValue()
         initProgressDialog()
+        initRequestReceiver()
 
-        if (isRotate) {
+        if (task?.status == AsyncTask.Status.RUNNING) {
             progress.show()
         }
 
@@ -42,23 +47,39 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
                 if (!progress.isShowing) {
                     progress.show()
                 }
-                var fragment = supportFragmentManager.findFragmentByTag(HandleTaskFragment.TAG)
-                if (fragment == null) {
-                    fragment = HandleTaskFragment().apply {
-                        arguments = Bundle().apply {
-                            putString(
-                                HandleTaskFragment.EXTRA_INPUT_VALUE,
-                                binding.inputValueTextEdit.text.toString()
-                            )
-                        }
-                    }
-                    supportFragmentManager.beginTransaction().add(fragment, HandleTaskFragment.TAG)
-                        .commit()
-                } else {
-                    (fragment as HandleTaskFragment).restartTask(binding.inputValueTextEdit.text.toString())
-                }
+                task = SendRequestAsyncTask(
+                    URL_WITHOUT_PARAM,
+                    localBroadcastManager,
+                    binding.inputValueTextEdit.text.toString()
+                )
+                task?.execute()
             }
         }
+    }
+
+    private fun initStateValue() {
+        val appState = App.INSTANCE.getState()
+        binding.apply {
+            inputValueTextEdit.setText(appState.inputValue)
+            responseTextView.text = appState.responseValue
+        }
+    }
+
+    private fun initRequestReceiver() {
+        requestReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val response = intent?.extras?.getString(EXTRA_REQUEST) ?: EMPTY_STRING
+                binding.responseTextView.text = response
+                App.INSTANCE.getState().responseValue = response
+                progress.dismiss()
+            }
+        }
+
+        localBroadcastManager.registerReceiver(
+            requestReceiver, IntentFilter(
+                BROADCAST_RESPONSE_VALUE
+            )
+        )
     }
 
     private fun initProgressDialog() {
@@ -74,18 +95,10 @@ class MainActivity : AppCompatActivity(), TaskCallbacks {
         outState.putString(EXTRA_RESULT_VALUE, binding.responseTextView.text.toString())
     }
 
-    override fun taskRunningYet() {
-        isRotate = true
-    }
-
-    override fun onPostExecute(it: String) {
-        progress.dismiss()
-        isRotate = false
-        binding.responseTextView.text = it
-    }
-
     override fun onDestroy() {
         progress.dismiss()
+        localBroadcastManager.unregisterReceiver(requestReceiver)
+        App.INSTANCE.getState().inputValue = binding.inputValueTextEdit.text.toString()
 
         super.onDestroy()
     }
