@@ -98,6 +98,5 @@ class LoginTask(
         localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_TOKEN).apply {
             putExtra(LoginActivity.EXTRA_USER_TOKEN, result)
         })
-
     }
 }
