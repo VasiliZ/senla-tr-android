@@ -62,10 +62,10 @@ class GetUserProfileTask(
                 val userProfile =
                     UserProfileResponse(
                         email = userEmail,
-                        firstName = jsonObject.getString(FIRST_NAME_FIELD_RESPONSE),
-                        lastName = jsonObject.getString(LAST_NAME_FIELD_RESPONSE),
-                        birthDate = jsonObject.getLong(BIRTH_DATE_FIELD_RESPONSE),
-                        notes = jsonObject.getString(NOTES_FIELD_RESPONSE)
+                        firstName = jsonObject.optString(FIRST_NAME_FIELD_RESPONSE),
+                        lastName = jsonObject.optString(LAST_NAME_FIELD_RESPONSE),
+                        birthDate = jsonObject.optLong(BIRTH_DATE_FIELD_RESPONSE),
+                        notes = jsonObject.optString(NOTES_FIELD_RESPONSE)
                     )
 
                 return Result.Success(userProfile)
