@@ -28,11 +28,6 @@ class MainActivity : AppCompatActivity() {
         private var task: SendRequestAsyncTask? = null
     }
 
-    override fun onResume() {
-        super.onResume()
-        initRequestReceiver()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -45,10 +40,7 @@ class MainActivity : AppCompatActivity() {
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         initStateValue()
         initProgressDialog()
-
-        if (task?.status == AsyncTask.Status.RUNNING) {
-            progress.show()
-        }
+        initRequestReceiver()
 
         binding.apply {
             sendButton.setOnClickListener {
@@ -64,11 +56,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (task?.status == AsyncTask.Status.RUNNING) {
+            progress.show()
+        }
+
+        registerRequestReceiver()
+    }
+
     private fun initStateValue() {
-        val appState = App.INSTANCE.state
         binding.apply {
-            inputValueTextEdit.setText(appState?.inputValue)
-            responseTextView.text = appState?.responseValue
+            inputValueTextEdit.setText(App.INSTANCE.state?.inputValue)
+            responseTextView.text = App.INSTANCE.state?.responseValue
         }
     }
 
@@ -81,7 +82,9 @@ class MainActivity : AppCompatActivity() {
                 progress.dismiss()
             }
         }
+    }
 
+    private fun registerRequestReceiver(){
         localBroadcastManager.registerReceiver(
             requestReceiver, IntentFilter(
                 BROADCAST_RESPONSE_VALUE

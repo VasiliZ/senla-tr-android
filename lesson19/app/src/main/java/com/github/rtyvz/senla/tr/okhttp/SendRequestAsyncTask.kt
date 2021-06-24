@@ -12,9 +12,16 @@ class SendRequestAsyncTask(
     private val sendValue: String
 ) : AsyncTask<Void, Void, String>() {
 
+    companion object {
+        private const val EMPTY_STRING = ""
+    }
+
     override fun doInBackground(vararg params: Void?): String? {
         val request =
-            Request.Builder().url(URL(StringBuilder(url).append(sendValue).toString())).build()
+            Request.Builder()
+                .url(
+                    URL(StringBuilder(url).append(sendValue).toString())
+                ).build()
         OkHttpClient()
             .newCall(request).execute().use {
                 return it.body?.string()
@@ -23,12 +30,9 @@ class SendRequestAsyncTask(
 
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
-        result?.let {
-
-            LocalBroadcastManager.getInstance(App.INSTANCE)
-                .sendBroadcastSync(Intent(MainActivity.BROADCAST_RESPONSE_VALUE).apply {
-                    putExtra(MainActivity.EXTRA_REQUEST, it)
-                })
-        }
+        LocalBroadcastManager.getInstance(App.INSTANCE)
+            .sendBroadcastSync(Intent(MainActivity.BROADCAST_RESPONSE_VALUE).apply {
+                putExtra(MainActivity.EXTRA_REQUEST, result ?: EMPTY_STRING)
+            })
     }
 }
