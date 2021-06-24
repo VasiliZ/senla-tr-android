@@ -46,6 +46,7 @@ class LoginTask(
             httpClient.newCall(prepareTokenRequest()).execute().use {
                 it.body?.let { body ->
                     val jsonObject = JSONObject(body.string())
+
                     if (jsonObject.getString(STATUS_FIELD_RESPONSE).contains(
                             ERROR_FIELD_RESPONSE
                         )

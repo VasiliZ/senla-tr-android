@@ -71,6 +71,7 @@ class GetUserProfileTask(
 
     override fun onPostExecute(result: Result<UserProfileResponse>?) {
         super.onPostExecute(result)
+
         localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
             putExtra(LoginActivity.EXTRA_USER_PROFILE, result)
         })

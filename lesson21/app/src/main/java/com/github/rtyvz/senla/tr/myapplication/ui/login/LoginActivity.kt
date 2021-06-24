@@ -8,7 +8,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.common.ActivityCallBacks
-import com.github.rtyvz.senla.tr.myapplication.common.BoltsFragment
 import com.github.rtyvz.senla.tr.myapplication.databinding.LoginActivityBinding
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
@@ -21,15 +20,20 @@ class LoginActivity : AppCompatActivity(),
     private lateinit var binding: LoginActivityBinding
     private val regexEmail = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z-.]+\$".toRegex()
     private var progressDialog: ProgressDialog? = null
-    private lateinit var prefs: SharedPreferences
     private var localBroadcastManager: LocalBroadcastManager? = null
+    private lateinit var prefs: SharedPreferences
     private lateinit var runningTaskReceiver: BroadcastReceiver
+    private lateinit var userTokenReceiver: BroadcastReceiver
 
     companion object {
         const val PREFS_USER = "PREFS_USER"
         const val SAVED_EMAIL = "EMAIL"
         const val SAVED_TOKEN = "TOKEN"
+        const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
+        const val BROADCAST_TOKEN = "local:BROADCAST_TOKEN"
         const val BROADCAST_RUNNING_TASK_FLAG = "local:BROADCAST_RUNNING_TASK_FLAG"
+        const val EXTRA_USER_TOKEN = "USER_TOKEN"
+        const val EXTRA_USER_PROFILE = "USER_PROFILE"
         const val EXTRA_RUNNING_TASK_FLAG = "RUNNING_TASK_FLAG"
         private const val EMPTY_STRING = ""
     }
@@ -40,6 +44,7 @@ class LoginActivity : AppCompatActivity(),
         binding = LoginActivityBinding.inflate(layoutInflater)
         prefs = getSharedPreferences(PREFS_USER, Context.MODE_PRIVATE)
 
+        initTokenReceiver()
         if (prefs.getString(SAVED_TOKEN) == EMPTY_STRING) {
             setContentView(binding.root)
 
@@ -65,25 +70,10 @@ class LoginActivity : AppCompatActivity(),
                             progressDialog?.show()
                             errorTextView.text =
                                 EMPTY_STRING
-
-                            var fragment =
-                                supportFragmentManager.findFragmentByTag(BoltsFragment.TAG)
-
-                            if (fragment == null) {
-                                fragment = BoltsFragment
-                                    .newInstance(
-                                        binding.userEmailEditText.text.toString(),
-                                        binding.userPasswordEditText.text.toString()
-                                    )
-                                supportFragmentManager
-                                    .beginTransaction()
-                                    .add(
-                                        fragment,
-                                        BoltsFragment.TAG
-                                    ).commit()
-                            } else {
-                                (fragment as BoltsFragment).getTokenTask()
-                            }
+                            App.TaskProvider.getTokenTask().initTokenTask(
+                                binding.userEmailEditText.text.toString(),
+                                binding.userPasswordEditText.text.toString()
+                            )
                         }
                     }
                 }
@@ -91,6 +81,24 @@ class LoginActivity : AppCompatActivity(),
         } else {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
+    }
+
+    private fun initTokenReceiver() {
+        userTokenReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                saveToken(intent?.getStringExtra(EXTRA_USER_TOKEN) ?: EMPTY_STRING)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        registerTokenReceiver()
+    }
+
+    private fun registerTokenReceiver() {
+        localBroadcastManager?.registerReceiver(userTokenReceiver, IntentFilter(BROADCAST_TOKEN))
     }
 
     private fun initProgress() {
@@ -149,10 +157,10 @@ class LoginActivity : AppCompatActivity(),
         })
     }
 
-    override fun onStop() {
+    override fun onPause() {
         localBroadcastManager?.unregisterReceiver(runningTaskReceiver)
         progressDialog?.dismiss()
 
-        super.onStop()
+        super.onPause()
     }
 }

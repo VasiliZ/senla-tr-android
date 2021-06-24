@@ -33,8 +33,9 @@ class TokenProvider(
         private const val URI_SECOND_PART_PATH = "lesson-20.php"
     }
 
-    private fun initTokenTask(userEmail: String, userPassword: String): Task<String> {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(
+    fun initTokenTask(userEmail: String, userPassword: String): Task<String> {
+        val localBroadcastManager = LocalBroadcastManager.getInstance(context)
+        localBroadcastManager.sendBroadcast(
             Intent(LoginActivity.BROADCAST_RUNNING_TASK_FLAG).apply {
                 putExtra(LoginActivity.EXTRA_RUNNING_TASK_FLAG, true)
             })
@@ -50,7 +51,9 @@ class TokenProvider(
         }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
             if (it.result.status.contains(STATUS_OK)) {
                 it.result?.let {
-                    //todo call broadcast
+                    localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_TOKEN).apply {
+                        putExtra(LoginActivity.EXTRA_USER_TOKEN, it.token)
+                    })
                 }
                 return@Continuation App.TaskProvider.getProfileTask()
                     .executeUpdateUserProfileTask(it.result.token, userEmail)
@@ -61,6 +64,9 @@ class TokenProvider(
             if (it.isFaulted) {
                 return@continueWith null
             } else {
+                localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_USER_PROFILE).apply {
+                    putExtra(LoginActivity.EXTRA_USER_PROFILE, it)
+                })
                 return@continueWith null
             }
         }

@@ -47,10 +47,6 @@ class ProfileActivity : AppCompatActivity() {
                     prefs.getString(LoginActivity.SAVED_TOKEN).toString()
                 )
             }
-
-            fragment.executeFetchUserProfileTask(
-                prefs.getString(LoginActivity.SAVED_TOKEN).toString()
-            )
         }
 
         intent?.let {
