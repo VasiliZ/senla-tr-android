@@ -6,7 +6,6 @@ import com.github.rtyvz.senla.tr.myapplication.network.UserApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -16,7 +15,6 @@ class App : Application() {
     companion object {
         lateinit var INSTANCE: App
         lateinit var okHttpClient: OkHttpClient
-        lateinit var gson: Gson
         lateinit var api: UserApi
         private const val BASE_URL =
             "https://pub.zame-dev.org/senla-training-addition/lesson-21.php/"
@@ -28,7 +26,6 @@ class App : Application() {
         INSTANCE = this
         okHttpClient = OkHttpClient.Builder()
             .build()
-        gson = GsonBuilder().create()
         api = provideApi()
     }
 

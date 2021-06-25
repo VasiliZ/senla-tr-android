@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
@@ -14,6 +15,9 @@ import com.github.rtyvz.senla.tr.myapplication.databinding.LoginActivityBinding
 import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
+import com.github.rtyvz.senla.tr.myapplication.tester.Tester
+import com.github.rtyvz.senla.tr.myapplication.tester.TesterAttribute
+import com.github.rtyvz.senla.tr.myapplication.tester.TesterMethod
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
 import com.github.rtyvz.senla.tr.myapplication.utils.Result
 
@@ -37,6 +41,13 @@ class LoginActivity : AppCompatActivity() {
         const val EXTRA_TASK_IS_FAULTED = "TASK_IS_FAULT"
         const val EXTRA_USER_TOKEN_ERROR = "USER_TOKEN_ERROR"
         private const val EMPTY_STRING = ""
+
+        /*for reflection*/
+        private const val TESTER_CONSTRUCTOR_PARAMETER = "test reflection"
+        private const val DO_PUBLIC_METHOD_NAME = "doPublic"
+        private const val DO_PROTECTED_METHOD_NAME = "doProtected"
+        private const val DO_PRIVATE_METHOD_NAME = "doPrivate"
+        private const val DEBUG_TAG = "TAG"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +55,8 @@ class LoginActivity : AppCompatActivity() {
         binding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initTesterClass()
+        callTestAttrsfFromReflection()
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
 
         initProfileReceiver()
@@ -79,6 +92,49 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun initTesterClass() {
+        val constructor = Tester::class.java.constructors.first()
+        val testerInstance = constructor.newInstance("sdfasd") as Tester
+    }
+
+    private fun callTestAttrsfFromReflection() {
+        val fullClassName = Tester::class.java.name
+        val tester = Class.forName(fullClassName)
+        val testerInstance = tester.constructors.first().newInstance(TESTER_CONSTRUCTOR_PARAMETER)
+
+        val doPublicMethod = tester.getDeclaredMethod(DO_PUBLIC_METHOD_NAME)
+        doPublicMethod.isAccessible = true
+        doPublicMethod.invoke(testerInstance)
+
+        val doProtectedMethod = tester.getDeclaredMethod(DO_PROTECTED_METHOD_NAME)
+        doProtectedMethod.isAccessible = true
+        doProtectedMethod.invoke(testerInstance)
+
+        val doPrivateMethod = tester.getDeclaredMethod(DO_PRIVATE_METHOD_NAME)
+        doPrivateMethod.isAccessible = true
+        doPrivateMethod.invoke(testerInstance)
+
+        tester.constructors.forEach {
+            Log.e(DEBUG_TAG, it.toString())
+        }
+
+        tester.declaredMethods.forEach {
+            if (it.isAnnotationPresent(TesterMethod::class.java)) {
+                val annotation = it.getAnnotation(TesterMethod::class.java)
+                Log.e(DEBUG_TAG, "${annotation.description} ${annotation.isInner}")
+            }
+            Log.e(DEBUG_TAG, it.toString())
+        }
+
+        tester.declaredFields.forEach {
+            if (it.isAnnotationPresent(TesterAttribute::class.java)) {
+                val annotation = it.getAnnotation(TesterAttribute::class.java)
+                Log.e(DEBUG_TAG, annotation.info)
+            }
+            Log.e(DEBUG_TAG, it.toString())
         }
     }
 
