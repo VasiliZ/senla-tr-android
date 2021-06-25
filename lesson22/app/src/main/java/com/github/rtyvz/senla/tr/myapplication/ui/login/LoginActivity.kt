@@ -55,7 +55,6 @@ class LoginActivity : AppCompatActivity() {
         binding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initTesterClass()
         callTestAttrsfFromReflection()
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -93,11 +92,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun initTesterClass() {
-        val constructor = Tester::class.java.constructors.first()
-        val testerInstance = constructor.newInstance("sdfasd") as Tester
     }
 
     private fun callTestAttrsfFromReflection() {
