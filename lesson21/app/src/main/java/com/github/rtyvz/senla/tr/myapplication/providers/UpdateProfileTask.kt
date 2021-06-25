@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Task
+import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.models.TokenRequest
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileResponse
@@ -18,8 +19,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class UpdateProfileTask(
     private val client: OkHttpClient,
-    private val gson: Gson,
-    private val context: Context
+    private val gson: Gson
 ) {
     companion object {
         private const val METHOD_NAME = "method"
@@ -36,7 +36,7 @@ class UpdateProfileTask(
         token: String,
         userEmail: String
     ): Task<Result<UserProfileEntity>>? {
-        val localBroadcastManager = LocalBroadcastManager.getInstance(context)
+        val localBroadcastManager = LocalBroadcastManager.getInstance(App.INSTANCE)
 
         return Task.callInBackground {
             client.newCall(

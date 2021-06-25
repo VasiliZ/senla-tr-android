@@ -16,7 +16,7 @@ data class UserProfileResponse(
     @SerializedName("message")
     val message: String? = null
 ) {
-    fun toUserProfileEntity(userEmail: String? = null): UserProfileEntity {
+    fun toUserProfileEntity(userEmail: String): UserProfileEntity {
         return UserProfileEntity(
             userEmail, firstUserName, lastUserName, birthDate, userNotes, message
         )

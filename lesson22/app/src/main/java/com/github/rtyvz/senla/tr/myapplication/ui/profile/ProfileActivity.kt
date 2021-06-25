@@ -1,31 +1,33 @@
 package com.github.rtyvz.senla.tr.myapplication.ui.profile
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.github.rtyvz.senla.tr.myapplication.R
-import com.github.rtyvz.senla.tr.myapplication.common.BoltsFragment
+import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.databinding.ProfileActivityBinding
+import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
+import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
-import com.github.rtyvz.senla.tr.myapplication.utils.clearProfilePrefs
-import com.github.rtyvz.senla.tr.myapplication.utils.getString
 import kotlinx.android.synthetic.main.profile_activity.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ProfileActivityBinding
-    private lateinit var prefs: SharedPreferences
     private lateinit var userProfileReceiver: BroadcastReceiver
-    private val formatter = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
     private lateinit var localBroadcastManager: LocalBroadcastManager
+    private val formatter = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
 
     companion object {
         const val EXTRA_USER_PROFILE = "USER_PROFILE"
         const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
         private const val DATE_FORMAT = "dd.MM.yyyy hh:mm"
+        private const val EMPTY_STRING = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,52 +35,46 @@ class ProfileActivity : AppCompatActivity() {
         binding = ProfileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (App.INSTANCE.state != null) {
+            App.INSTANCE.state?.let {
+                updateUI(it.userProfile)
+            }
+        } else {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         initUserProfileReceiver()
-        prefs = getSharedPreferences(LoginActivity.PREFS_USER, Context.MODE_PRIVATE)
+        val state = App.INSTANCE.state
+
+        if (state != null) {
+            updateUI(state.userProfile)
+        } else {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         binding.pullToRefreshLayout.setOnRefreshListener {
-            var fragment = supportFragmentManager.findFragmentByTag(BoltsFragment.TAG)
-
-            if (fragment == null) {
-                fragment = BoltsFragment()
-                supportFragmentManager.beginTransaction().add(fragment, BoltsFragment.TAG).commit()
-            } else {
-                (fragment as BoltsFragment).executeUpdateUserProfileTask(
-                    prefs.getString(LoginActivity.SAVED_TOKEN).toString()
-                )
-            }
-
-            fragment.executeUpdateUserProfileTask(
-                prefs.getString(LoginActivity.SAVED_TOKEN).toString()
+            TaskProvider.getProfileTask().executeUpdateUserProfileTask(
+                App.INSTANCE.state?.token ?: EMPTY_STRING,
+                App.INSTANCE.state?.email ?: EMPTY_STRING
             )
         }
 
-        intent?.let {
-            it.getParcelableExtra<UserProfileEntity>(EXTRA_USER_PROFILE)?.apply {
-                emailValueTextView.text = userEmail
-                firstNameValueTextView.text = firstUserName
-                lastNameValueTextView.text = lastUserName
-                birthDateValueTextView.text = formatDate(formatter, birthDate.toLong())
-                notesTextView.text = formatNotes(userNotes)
-            }
-        }
-
         binding.logOutButton.setOnClickListener {
-            prefs.clearProfilePrefs()
             startActivity(Intent(this, LoginActivity::class.java))
+            App.INSTANCE.state = State()
             finish()
         }
     }
 
-    private fun formatDate(formatter: SimpleDateFormat, millisForFormat: Long): String {
-        return formatter.format(Date(millisForFormat))
+    override fun onResume() {
+        super.onResume()
+
+        registerProfileReceiver()
     }
 
-    private fun formatNotes(stringForFormat: String): String {
-        return String.format(
-            resources.getString(R.string.profile_activity_notes_label),
-            stringForFormat
-        )
+    private fun formatDate(formatter: SimpleDateFormat, millisForFormat: Long): String {
+        return formatter.format(Date(millisForFormat))
     }
 
     private fun initUserProfileReceiver() {
@@ -88,21 +84,21 @@ class ProfileActivity : AppCompatActivity() {
                 binding.pullToRefreshLayout.isRefreshing = false
             }
         }
+    }
 
+    private fun registerProfileReceiver() {
         localBroadcastManager.registerReceiver(
-            userProfileReceiver, IntentFilter(
-                BROADCAST_USER_PROFILE
-            )
+            userProfileReceiver, IntentFilter(BROADCAST_USER_PROFILE)
         )
     }
 
     private fun updateUI(profile: UserProfileEntity?) {
         profile?.apply {
-            emailValueTextView.text = userEmail ?: prefs.getString(LoginActivity.SAVED_EMAIL)
+            emailValueTextView.text = userEmail
             firstNameValueTextView.text = firstUserName
             lastNameValueTextView.text = lastUserName
             birthDateValueTextView.text = formatDate(formatter, birthDate.toLong())
-            notesTextView.text = formatNotes(userNotes)
+            notesValueTextView.text = userNotes
         }
     }
 
