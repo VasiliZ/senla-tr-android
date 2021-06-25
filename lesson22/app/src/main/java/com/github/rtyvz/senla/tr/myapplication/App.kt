@@ -25,11 +25,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
         INSTANCE = this
         okHttpClient = OkHttpClient.Builder()
-            .addNetworkInterceptor(interceptor)
             .build()
         gson = GsonBuilder().create()
         api = provideApi()
