@@ -3,13 +3,14 @@ package com.github.rtyvz.senla.tr.myapplication.providers
 import android.content.Intent
 import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.myapplication.App
+import com.github.rtyvz.senla.tr.myapplication.models.Result
 import com.github.rtyvz.senla.tr.myapplication.models.TokenRequest
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.network.UserApi
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
-import com.github.rtyvz.senla.tr.myapplication.utils.Result
 
 class UpdateProfileTask(
     private val api: UserApi
@@ -31,7 +32,7 @@ class UpdateProfileTask(
                 .body()
         }.onSuccess {
             return@onSuccess it.result
-        }.continueWith {
+        }.continueWith(Continuation {
             if (it.result?.responseStatus?.contains(STATUS_OK) == true) {
                 localBroadcastManager
                     .sendBroadcast(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
@@ -42,10 +43,10 @@ class UpdateProfileTask(
                             )
                         })
                     })
-                return@continueWith Result.Success(it.result?.toUserProfileEntity(userEmail))
+                return@Continuation Result.Success(it.result?.toUserProfileEntity(userEmail))
             } else {
-                return@continueWith Result.Error(it.result?.message ?: EMPTY_STRING)
+                return@Continuation Result.Error(it.result?.message ?: EMPTY_STRING)
             }
-        }
+        }, Task.UI_THREAD_EXECUTOR)
     }
 }

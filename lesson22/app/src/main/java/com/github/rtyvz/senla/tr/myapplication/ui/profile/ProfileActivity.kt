@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.databinding.ProfileActivityBinding
-import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
@@ -27,7 +26,6 @@ class ProfileActivity : AppCompatActivity() {
         const val EXTRA_USER_PROFILE = "USER_PROFILE"
         const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
         private const val DATE_FORMAT = "dd.MM.yyyy hh:mm"
-        private const val EMPTY_STRING = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,16 +33,6 @@ class ProfileActivity : AppCompatActivity() {
         binding = ProfileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (App.INSTANCE.state != null) {
-            App.INSTANCE.state?.let {
-                updateUI(it.userProfile)
-            }
-        } else {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-
-        localBroadcastManager = LocalBroadcastManager.getInstance(this)
-        initUserProfileReceiver()
         val state = App.INSTANCE.state
 
         if (state != null) {
@@ -53,17 +41,23 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        binding.pullToRefreshLayout.setOnRefreshListener {
-            TaskProvider.getProfileTask().executeUpdateUserProfileTask(
-                App.INSTANCE.state?.token ?: EMPTY_STRING,
-                App.INSTANCE.state?.email ?: EMPTY_STRING
-            )
-        }
+        localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        initUserProfileReceiver()
 
-        binding.logOutButton.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            App.INSTANCE.state = State()
-            finish()
+        binding.apply {
+            pullToRefreshLayout.setOnRefreshListener {
+                if (state != null) {
+                    TaskProvider.getProfileTask().executeUpdateUserProfileTask(
+                        state.token,
+                        state.email
+                    )
+                }
+            }
+            logOutButton.setOnClickListener {
+                startActivity(Intent(this@ProfileActivity, LoginActivity::class.java))
+                App.INSTANCE.state = null
+                finish()
+            }
         }
     }
 

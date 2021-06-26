@@ -26,7 +26,6 @@ class ProfileActivity : AppCompatActivity() {
         const val EXTRA_USER_PROFILE = "USER_PROFILE"
         const val BROADCAST_USER_PROFILE = "local:BROADCAST_USER_PROFILE"
         private const val DATE_FORMAT = "dd.MM.yyyy hh:mm"
-        private const val EMPTY_STRING = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +35,7 @@ class ProfileActivity : AppCompatActivity() {
 
         val state = App.INSTANCE.state
         if (state != null) {
-            App.INSTANCE.state?.let {
-                updateUI(it.userProfile)
-            }
+            updateUI(state.userProfile)
         } else {
             startActivity(Intent(this, LoginActivity::class.java))
         }
