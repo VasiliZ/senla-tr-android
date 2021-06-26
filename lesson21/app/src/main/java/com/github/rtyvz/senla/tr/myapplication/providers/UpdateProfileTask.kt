@@ -1,17 +1,17 @@
 package com.github.rtyvz.senla.tr.myapplication.providers
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.myapplication.App
+import com.github.rtyvz.senla.tr.myapplication.models.Result
 import com.github.rtyvz.senla.tr.myapplication.models.TokenRequest
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileResponse
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
-import com.github.rtyvz.senla.tr.myapplication.utils.Result
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -39,32 +39,26 @@ class UpdateProfileTask(
         val localBroadcastManager = LocalBroadcastManager.getInstance(App.INSTANCE)
 
         return Task.callInBackground {
-            client.newCall(
-                createRequest(
-                    gson.toJson(TokenRequest(token))
-                )
-            ).execute().body?.string()
-        }.onSuccess {
-            return@onSuccess gson.fromJson(
-                it.result,
-                UserProfileResponse::class.java
-            )
-        }.continueWith {
-            if (it.result.responseStatus.contains(STATUS_OK)) {
+            client.newCall(createRequest(gson.toJson(TokenRequest(token))))
+                .execute().body?.string()
+        }.continueWith(Continuation {
+            val profileResponse = gson.fromJson(it.result, UserProfileResponse::class.java)
+
+            if (profileResponse.responseStatus.contains(STATUS_OK)) {
                 localBroadcastManager
-                    .sendBroadcast(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
+                    .sendBroadcastSync(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
                         putExtras(Bundle().apply {
                             putParcelable(
                                 ProfileActivity.EXTRA_USER_PROFILE,
-                                it.result.toUserProfileEntity(userEmail)
+                                profileResponse.toUserProfileEntity(userEmail)
                             )
                         })
                     })
-                return@continueWith Result.Success(it.result.toUserProfileEntity(userEmail))
+                return@Continuation Result.Success(profileResponse.toUserProfileEntity(userEmail))
             } else {
-                return@continueWith Result.Error(it.result.message ?: EMPTY_STRING)
+                return@Continuation Result.Error(profileResponse.message ?: EMPTY_STRING)
             }
-        }
+        }, Task.UI_THREAD_EXECUTOR)
     }
 
     private fun createRequest(json: String) = Request.Builder().url(

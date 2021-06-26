@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.myapplication.utils
+package com.github.rtyvz.senla.tr.myapplication.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

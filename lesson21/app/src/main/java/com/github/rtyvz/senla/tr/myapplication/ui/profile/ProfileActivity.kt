@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.databinding.ProfileActivityBinding
-import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
@@ -35,7 +34,8 @@ class ProfileActivity : AppCompatActivity() {
         binding = ProfileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (App.INSTANCE.state != null) {
+        val state = App.INSTANCE.state
+        if (state != null) {
             App.INSTANCE.state?.let {
                 updateUI(it.userProfile)
             }
@@ -45,24 +45,19 @@ class ProfileActivity : AppCompatActivity() {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         initUserProfileReceiver()
-        val state = App.INSTANCE.state
-
-        if (state != null) {
-            updateUI(state.userProfile)
-        } else {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
 
         binding.pullToRefreshLayout.setOnRefreshListener {
-            TaskProvider.getProfileTask().executeUpdateUserProfileTask(
-                App.INSTANCE.state?.token ?: EMPTY_STRING,
-                App.INSTANCE.state?.email ?: EMPTY_STRING
-            )
+            if (state != null) {
+                TaskProvider.getProfileTask().executeUpdateUserProfileTask(
+                    state.token,
+                    state.email
+                )
+            }
         }
 
         binding.logOutButton.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
-            App.INSTANCE.state = State()
+            App.INSTANCE.state = null
             finish()
         }
     }

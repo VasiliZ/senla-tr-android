@@ -1,17 +1,16 @@
 package com.github.rtyvz.senla.tr.myapplication.providers
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.myapplication.App
+import com.github.rtyvz.senla.tr.myapplication.models.Result
 import com.github.rtyvz.senla.tr.myapplication.models.TokenResponse
 import com.github.rtyvz.senla.tr.myapplication.models.UserCredentialsRequest
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
-import com.github.rtyvz.senla.tr.myapplication.utils.Result
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -36,43 +35,42 @@ class GetTokenTask(
         val localBroadcastManager = LocalBroadcastManager.getInstance(App.INSTANCE)
 
         return Task.callInBackground {
+        App.INSTANCE.state?.isTaskRunning = true
             return@callInBackground okHttpClient.newCall(
                 createRequest(
                     gson.toJson(UserCredentialsRequest(userEmail, userPassword))
                 )
             ).execute().body?.string()
-        }.onSuccess {
-            return@onSuccess gson.fromJson(it.result, TokenResponse::class.java)
-        }.onSuccessTask(Continuation<TokenResponse, Task<Result<UserProfileEntity>>> {
-            if (it.result.status.contains(STATUS_OK)) {
-                it.result?.let {
-                    localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_TOKEN).apply {
-                        putExtra(LoginActivity.EXTRA_USER_TOKEN, it.token)
+        }.onSuccessTask(
+            Continuation<String?, Task<Result<UserProfileEntity>>> {
+                val tokenResponse = gson.fromJson(it.result, TokenResponse::class.java)
+                if (tokenResponse.status.contains(STATUS_OK)) {
+                    App.INSTANCE.state?.token = tokenResponse.token
+
+                    return@Continuation TaskProvider.getProfileTask()
+                        .executeUpdateUserProfileTask(tokenResponse.token, userEmail)
+                } else {
+                    localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_TOKEN_RESPONSE_ERROR).apply {
+                        putExtra(LoginActivity.EXTRA_USER_TOKEN_ERROR, tokenResponse.message)
                     })
+                    return@Continuation null
                 }
-                return@Continuation TaskProvider.getProfileTask()
-                    .executeUpdateUserProfileTask(it.result.token, userEmail)
-            } else {
-                localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_TOKEN_RESPONSE_ERROR).apply {
-                    putExtra(LoginActivity.EXTRA_USER_TOKEN_ERROR, it.result.message)
-                })
-                return@Continuation null
-            }
-        }).continueWith {
+            }, Task.BACKGROUND_EXECUTOR
+        ).continueWith(Continuation {
             if (it.isFaulted) {
-                localBroadcastManager.sendBroadcast(Intent(
+                localBroadcastManager.sendBroadcastSync(Intent(
                     LoginActivity.BROADCAST_TASK_IS_FAULTED
                 ).apply {
                     putExtra(LoginActivity.EXTRA_TASK_IS_FAULTED, it.result)
                 })
-                return@continueWith null
+                return@Continuation null
             } else {
-                localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_FETCH_USER_PROFILE).apply {
+                localBroadcastManager.sendBroadcastSync(Intent(LoginActivity.BROADCAST_FETCH_USER_PROFILE).apply {
                     putExtra(LoginActivity.EXTRA_FETCH_USER_PROFILE, it.result)
                 })
-                return@continueWith null
+                return@Continuation null
             }
-        }
+        }, Task.UI_THREAD_EXECUTOR)
     }
 
     private fun createRequest(json: String) = Request.Builder().url(

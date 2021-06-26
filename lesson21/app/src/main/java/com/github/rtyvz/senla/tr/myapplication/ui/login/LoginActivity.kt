@@ -11,11 +11,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
 import com.github.rtyvz.senla.tr.myapplication.R
 import com.github.rtyvz.senla.tr.myapplication.databinding.LoginActivityBinding
+import com.github.rtyvz.senla.tr.myapplication.models.Result
 import com.github.rtyvz.senla.tr.myapplication.models.State
 import com.github.rtyvz.senla.tr.myapplication.models.UserProfileEntity
 import com.github.rtyvz.senla.tr.myapplication.providers.TaskProvider
 import com.github.rtyvz.senla.tr.myapplication.ui.profile.ProfileActivity
-import com.github.rtyvz.senla.tr.myapplication.utils.Result
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: LoginActivityBinding
@@ -23,18 +23,15 @@ class LoginActivity : AppCompatActivity() {
     private var progressDialog: ProgressDialog? = null
     private var localBroadcastManager: LocalBroadcastManager? = null
     private lateinit var userProfileReceiver: BroadcastReceiver
-    private lateinit var userTokenReceiver: BroadcastReceiver
     private lateinit var userTokenErrorReceiver: BroadcastReceiver
     private lateinit var taskIsFaultReceiver: BroadcastReceiver
 
     companion object {
         const val BROADCAST_FETCH_USER_PROFILE = "local:BROADCAST_FETCH_USER_PROFILE"
-        const val BROADCAST_TOKEN = "local:BROADCAST_TOKEN"
         const val BROADCAST_TOKEN_RESPONSE_ERROR = "local:BROADCAST_TOKEN_RESPONSE_ERROR"
         const val BROADCAST_TASK_IS_FAULTED = "local:BROADCAST_TASK_IS_FAULT"
         const val EXTRA_FETCH_USER_PROFILE = "FETCH_USER_PROFILE"
-        const val EXTRA_USER_TOKEN = "USER_TOKEN"
-        const val EXTRA_TASK_IS_FAULTED = "TASK_IS_FAULT"
+        const val EXTRA_TASK_IS_FAULTED = "TASK_IS_FAULTED"
         const val EXTRA_USER_TOKEN_ERROR = "USER_TOKEN_ERROR"
         private const val EMPTY_STRING = ""
     }
@@ -47,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
 
         initProfileReceiver()
-        initTokenReceiver()
         initTokenErrorResponseReceiver()
         initFaultTaskReceiver()
         initProgress()
@@ -71,11 +67,11 @@ class LoginActivity : AppCompatActivity() {
                         progressDialog?.show()
                         errorTextView.text =
                             EMPTY_STRING
-                        App.INSTANCE.state?.isTaskRunning = true
-                        TaskProvider.getTokenTask().initTokenTask(
-                            binding.userEmailEditText.text.toString(),
-                            binding.userPasswordEditText.text.toString()
-                        )
+                        if (App.INSTANCE.state?.isTaskRunning == false)
+                            TaskProvider.getTokenTask().initTokenTask(
+                                binding.userEmailEditText.text.toString(),
+                                binding.userPasswordEditText.text.toString()
+                            )
                     }
                 }
             }
@@ -86,6 +82,7 @@ class LoginActivity : AppCompatActivity() {
         taskIsFaultReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 progressDialog?.dismiss()
+                App.INSTANCE.state?.isTaskRunning = false
                 binding.errorTextView.text = getString(R.string.login_activity_request_error)
             }
         }
@@ -97,14 +94,6 @@ class LoginActivity : AppCompatActivity() {
                 progressDialog?.dismiss()
                 App.INSTANCE.state?.isTaskRunning = false
                 binding.errorTextView.text = intent?.getStringExtra(EXTRA_USER_TOKEN_ERROR)
-            }
-        }
-    }
-
-    private fun initTokenReceiver() {
-        userTokenReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                App.INSTANCE.state?.token = intent?.getStringExtra(EXTRA_USER_TOKEN) ?: EMPTY_STRING
             }
         }
     }
@@ -123,9 +112,8 @@ class LoginActivity : AppCompatActivity() {
         super.onResume()
 
         registerProfileReceiver()
-        registerTokenReceiver()
-        registerErrorTokenResponseReceiver()
         registerRequestErrorReceiver()
+        registerTokenErrorReceiver()
 
         if (App.INSTANCE.state?.isTaskRunning == true) {
             progressDialog?.show()
@@ -140,20 +128,18 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
-    private fun registerErrorTokenResponseReceiver() {
-        localBroadcastManager?.registerReceiver(
-            userTokenErrorReceiver, IntentFilter(BROADCAST_TOKEN_RESPONSE_ERROR)
-        )
-    }
-
     private fun registerProfileReceiver() {
         localBroadcastManager?.registerReceiver(
             userProfileReceiver, IntentFilter(BROADCAST_FETCH_USER_PROFILE)
         )
     }
 
-    private fun registerTokenReceiver() {
-        localBroadcastManager?.registerReceiver(userTokenReceiver, IntentFilter(BROADCAST_TOKEN))
+    private fun registerTokenErrorReceiver() {
+        localBroadcastManager?.registerReceiver(
+            userTokenErrorReceiver, IntentFilter(
+                BROADCAST_TOKEN_RESPONSE_ERROR
+            )
+        )
     }
 
     private fun initProgress() {
@@ -178,7 +164,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        localBroadcastManager?.unregisterReceiver(userTokenReceiver)
         localBroadcastManager?.unregisterReceiver(userProfileReceiver)
         localBroadcastManager?.unregisterReceiver(userTokenErrorReceiver)
         localBroadcastManager?.unregisterReceiver(taskIsFaultReceiver)
