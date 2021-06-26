@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_activity_email_label"
                 app:layout_constraintBottom_toTopOf="@id/firstNameTextView"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,8 +37,8 @@
                 android:textSize="@dimen/middle_text_size"
                 app:layout_constraintBottom_toBottomOf="@id/emailTextView"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@id/firstNameValueTextView"
-                app:layout_constraintTop_toTopOf="@id/emailTextView"
                 tools:text="test@test.com" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -48,19 +49,19 @@
                 android:layout_marginEnd="@dimen/middle_margin"
                 android:text="@string/profile_activity_first_name_label"
                 app:layout_constraintBottom_toTopOf="@id/lastNameTextView"
-                app:layout_constraintEnd_toStartOf="@id/firstNameValueTextView"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/emailTextView"
                 app:layout_constraintTop_toBottomOf="@id/emailTextView" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/firstNameValueTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/middle_margin"
                 android:textSize="@dimen/middle_text_size"
                 app:layout_constraintBottom_toBottomOf="@id/firstNameTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toEndOf="@id/firstNameTextView"
+                app:layout_constraintStart_toEndOf="@id/barrier"
                 app:layout_constraintTop_toTopOf="@id/firstNameTextView"
                 tools:text="first simple name" />
 
@@ -71,17 +72,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_activity_last_name"
                 app:layout_constraintBottom_toTopOf="@id/birthDateTextView"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/firstNameTextView"
                 app:layout_constraintTop_toBottomOf="@id/firstNameTextView" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/lastNameValueTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/middle_margin"
                 android:textSize="@dimen/middle_text_size"
                 app:layout_constraintBottom_toBottomOf="@id/lastNameTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/firstNameValueTextView"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/barrier"
                 app:layout_constraintTop_toTopOf="@id/lastNameTextView"
                 tools:text="last simple name" />
 
@@ -92,30 +95,33 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_activity_birth_date"
                 app:layout_constraintBottom_toTopOf="@id/notesTextView"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/lastNameTextView"
                 app:layout_constraintTop_toBottomOf="@id/lastNameTextView" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/birthDateValueTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/middle_margin"
                 android:textSize="@dimen/middle_text_size"
                 app:layout_constraintBottom_toBottomOf="@id/birthDateTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/firstNameValueTextView"
+                app:layout_constraintStart_toEndOf="@id/barrier"
                 app:layout_constraintTop_toTopOf="@id/birthDateTextView"
                 tools:text="01.01.1000" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/notesTextView"
                 style="@style/Theme.LoginApp.TextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_activity_notes_label"
                 android:textSize="@dimen/middle_text_size"
                 app:layout_constraintBottom_toTopOf="@id/notesValueTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/barrier"
+                app:layout_constraintStart_toStartOf="@id/birthDateTextView"
                 app:layout_constraintTop_toBottomOf="@id/birthDateTextView" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -129,7 +135,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/notesTextView" />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="firstNameTextView,lastNameTextView,birthDateTextView" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
