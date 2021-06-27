@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">DBApp</string>
-    <string name="fetching_post_faulted">Fetching post error</string>
+
+    <!--task error-->
+    <string name="fetching_data_faulted">Fetching data error</string>
+
+    <!--detail post activity-->
+    <string name="detail_post_activity_comments_label">Комментарии</string>
 </resources>

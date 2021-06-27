@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.dbapp.ui
+package com.github.rtyvz.senla.tr.dbapp.ui.post
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvz.senla.tr.dbapp.databinding.PostItemBinding
 import com.github.rtyvz.senla.tr.dbapp.models.PostAndUserEmailEntity
 
-class PostAdapter :
+class PostAdapter(private val clickAction: (Long) -> (Unit)) :
     RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
     private var postDatumEmails: MutableList<PostAndUserEmailEntity> = mutableListOf()
 
@@ -20,7 +20,16 @@ class PostAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        return PostViewHolder(PostItemBinding.inflate(LayoutInflater.from(parent.context)))
+        val view = PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PostViewHolder(view).apply {
+            view.root.setOnClickListener {
+                clickAction(getItem(adapterPosition).postId)
+            }
+        }
+    }
+
+    private fun getItem(position: Int): PostAndUserEmailEntity {
+        return postDatumEmails[position]
     }
 
     override fun getItemCount() = postDatumEmails.size

@@ -6,22 +6,22 @@ import bolts.Continuation
 import bolts.Task
 import com.github.rtyvz.senla.tr.dbapp.App
 import com.github.rtyvz.senla.tr.dbapp.R
-import com.github.rtyvz.senla.tr.dbapp.db.AppDb
 import com.github.rtyvz.senla.tr.dbapp.models.PostAndUserEmailEntity
-import com.github.rtyvz.senla.tr.dbapp.ui.PostActivity
+import com.github.rtyvz.senla.tr.dbapp.provider.DbProvider
+import com.github.rtyvz.senla.tr.dbapp.ui.post.PostActivity
 
 class ProvidePostWithEmail {
-    fun getPostWithEmail(db: AppDb) {
+    fun getPostWithEmail() {
         val localBroadcastManager = LocalBroadcastManager.getInstance(App.INSTANCE)
         Task.callInBackground {
-            db.getPostWithEmails()
+            DbProvider.provideDb().getPostWithEmails()
         }.continueWith(Continuation<List<PostAndUserEmailEntity>, Unit> {
             if (it.isFaulted) {
                 localBroadcastManager
                     .sendBroadcastSync(Intent(PostActivity.BROADCAST_FAULT_FETCH_POST).apply {
                         putExtra(
                             PostActivity.EXTRA_FAULT_FETCH_POST,
-                            App.INSTANCE.getString(R.string.fetching_post_faulted)
+                            App.INSTANCE.getString(R.string.fetching_data_faulted)
                         )
                     })
                 return@Continuation null

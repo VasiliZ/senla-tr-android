@@ -1,11 +1,7 @@
 package com.github.rtyvz.senla.tr.dbapp.db
 
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
-import com.github.rtyvz.senla.tr.dbapp.models.CommentEntity
-import com.github.rtyvz.senla.tr.dbapp.models.PostAndUserEmailEntity
-import com.github.rtyvz.senla.tr.dbapp.models.PostEntity
-import com.github.rtyvz.senla.tr.dbapp.models.UserEntity
+import com.github.rtyvz.senla.tr.dbapp.models.*
 
 class DbHelper {
 
@@ -14,6 +10,9 @@ class DbHelper {
         private const val COLUMN_NAME_TITLE = "title"
         private const val COLUMN_NAME_EMAIL = "email"
         private const val COLUMN_NAME_BODY = "body"
+        private const val COLUMN_NAME_ID = "id"
+        private const val COLUMN_NAME_FULL_USER_NAME = "fullUserName"
+        private const val COLUMN_NAME_TEXT = "text"
     }
 
     fun insertUserData(db: SQLiteDatabase, data: List<UserEntity>) {
@@ -57,30 +56,88 @@ class DbHelper {
         val listWithPostAndEmail = mutableListOf<PostAndUserEmailEntity>()
 
         val cursor = SelectDataHelper().apply {
-            select("post.title, user.email, post.body")
+            select("post.id, post.title, user.email, post.body")
             fromTables("post, user")
-            where("post.UserId = user.id")
+            where()
+            condition("post.UserId = user.id")
         }.select(db)
-        try {
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    do {
-                        listWithPostAndEmail.add(
-                            PostAndUserEmailEntity(
-                                cursor.getString(COLUMN_NAME_TITLE),
-                                cursor.getString(COLUMN_NAME_EMAIL),
-                                cursor.getString(COLUMN_NAME_BODY)
-                            )
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    listWithPostAndEmail.add(
+                        PostAndUserEmailEntity(
+                            cursor.getLong(COLUMN_NAME_ID),
+                            cursor.getString(COLUMN_NAME_TITLE),
+                            cursor.getString(COLUMN_NAME_EMAIL),
+                            cursor.getString(COLUMN_NAME_BODY)
                         )
-                    } while (cursor.fetch())
-                }
+                    )
+                } while (cursor.next())
             }
-        } catch (e: Exception) {
-            Log.d(TAG, e.toString())
-        } finally {
-            cursor?.closeCursor()
-            db.close()
         }
+        cursor?.closeCursor()
+        db.close()
         return listWithPostAndEmail
+    }
+
+    fun getDetailPost(database: SQLiteDatabase, postId: Long): DetailPost? {
+        var detailPost: DetailPost? = null
+        val cursor = SelectDataHelper().apply {
+            select("post.id, post.title, user.email, (user.firstName || ' ' || user.lastName) as $COLUMN_NAME_FULL_USER_NAME, post.body")
+            fromTables("post, user")
+            where()
+            condition("post.userId = user.id")
+            and()
+            condition("post.id = $postId")
+        }.select(database)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    detailPost = DetailPost(
+                        cursor.getLong(COLUMN_NAME_ID),
+                        cursor.getString(COLUMN_NAME_TITLE),
+                        cursor.getString(COLUMN_NAME_EMAIL),
+                        cursor.getString(COLUMN_NAME_FULL_USER_NAME),
+                        cursor.getString(COLUMN_NAME_BODY)
+                    )
+                } while (cursor.next())
+            }
+        }
+        cursor?.closeCursor()
+        database.close()
+        return detailPost
+    }
+
+    fun getCommentsWithEmail(database: SQLiteDatabase, postId: Long): List<CommentWithEmailEntity> {
+        val listCommentWithEmail = mutableListOf<CommentWithEmailEntity>()
+
+        val cursor = SelectDataHelper().apply {
+            select("user.email, comment.text ")
+            fromTables("user, comment, post")
+            where()
+            condition("post.id = comment.postId")
+            and()
+            condition("user.id = comment.userId")
+            and()
+            condition("post.id = $postId")
+        }.select(database)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    listCommentWithEmail.add(
+                        CommentWithEmailEntity(
+                            cursor.getString(COLUMN_NAME_EMAIL),
+                            cursor.getString(COLUMN_NAME_TEXT)
+                        )
+                    )
+                } while (cursor.next())
+            }
+        }
+        cursor?.closeCursor()
+        database.close()
+        return listCommentWithEmail
     }
 }

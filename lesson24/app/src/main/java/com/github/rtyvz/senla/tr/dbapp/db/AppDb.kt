@@ -3,10 +3,7 @@ package com.github.rtyvz.senla.tr.dbapp.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.rtyvz.senla.tr.dbapp.models.CommentEntity
-import com.github.rtyvz.senla.tr.dbapp.models.PostAndUserEmailEntity
-import com.github.rtyvz.senla.tr.dbapp.models.PostEntity
-import com.github.rtyvz.senla.tr.dbapp.models.UserEntity
+import com.github.rtyvz.senla.tr.dbapp.models.*
 import com.github.rtyvz.senla.tr.dbapp.provider.DbProvider
 
 class AppDb(context: Context) :
@@ -88,5 +85,13 @@ class AppDb(context: Context) :
 
     fun getPostWithEmails(): List<PostAndUserEmailEntity> {
         return DbHelper().getPostWithEmails(DbProvider.provideDb().writableDatabase)
+    }
+
+    fun getDetailPost(postId: Long): DetailPost? {
+        return DbHelper().getDetailPost(DbProvider.provideDb().writableDatabase, postId)
+    }
+
+    fun getPostComments(postId: Long): List<CommentWithEmailEntity> {
+        return DbHelper().getCommentsWithEmail(DbProvider.provideDb().writableDatabase, postId)
     }
 }

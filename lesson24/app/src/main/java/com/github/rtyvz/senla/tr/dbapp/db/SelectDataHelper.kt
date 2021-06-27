@@ -9,6 +9,7 @@ class SelectDataHelper {
         private const val SELECT_OPERATOR = "SELECT "
         private const val FROM_OPERATOR = " FROM "
         private const val WHERE_OPERATOR = " WHERE "
+        private const val AND_OPERATOR = " AND "
     }
 
     fun select(fields: String) {
@@ -21,8 +22,15 @@ class SelectDataHelper {
         listWithPartOfQuery.add(tables)
     }
 
-    fun where(condition: String) {
+    fun where() {
         listWithPartOfQuery.add(WHERE_OPERATOR)
+    }
+
+    fun and() {
+        listWithPartOfQuery.add(AND_OPERATOR)
+    }
+
+    fun condition(condition: String) {
         listWithPartOfQuery.add(condition)
     }
 

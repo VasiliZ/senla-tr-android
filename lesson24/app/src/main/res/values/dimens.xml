@@ -3,4 +3,7 @@
     <!--margins-->
     <dimen name="small_margin">8dp</dimen>
     <dimen name="middle_margin">16dp</dimen>
+
+    <!--text size-->
+    <dimen name="middle_text_size">20sp</dimen>
 </resources>

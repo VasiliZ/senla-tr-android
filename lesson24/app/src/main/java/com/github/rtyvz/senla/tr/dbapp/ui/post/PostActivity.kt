@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.dbapp.ui
+package com.github.rtyvz.senla.tr.dbapp.ui.post
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,11 +10,16 @@ import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.dbapp.databinding.PostListActivityBinding
 import com.github.rtyvz.senla.tr.dbapp.provider.TaskProvider
+import com.github.rtyvz.senla.tr.dbapp.ui.detailPost.DetailPostActivity
 
 class PostActivity : AppCompatActivity() {
     private lateinit var binding: PostListActivityBinding
     private val postAdapter by lazy {
-        PostAdapter()
+        PostAdapter {
+            startActivity(Intent(this, DetailPostActivity::class.java).apply {
+                putExtra(DetailPostActivity.EXTRA_POST_ID, it)
+            })
+        }
     }
     private lateinit var errorFetchPostReceiver: BroadcastReceiver
     private lateinit var postDataReceiver: BroadcastReceiver
@@ -60,7 +65,6 @@ class PostActivity : AppCompatActivity() {
                     errorEditText.text = intent?.getStringExtra(EXTRA_FAULT_FETCH_POST)
                 }
             }
-
         }
     }
 

@@ -4,9 +4,10 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class PostAndUserEmailEntity(
+data class DetailPost(
     val postId: Long,
-    val titlePost: String,
-    val userEmail: String,
+    val postTitle: String,
+    val email: String,
+    val authorFullName: String,
     val postBody: String
 ) : Parcelable

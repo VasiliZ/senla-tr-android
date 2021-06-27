@@ -4,7 +4,7 @@ import android.database.Cursor
 
 class DbCursorImpl(private val cursor: Cursor) : DbCursor {
 
-    override fun getLong(fieldName: String): Long? {
+    override fun getLong(fieldName: String): Long {
         val index = cursor.getColumnIndex(fieldName)
         return cursor.getLong(index)
     }
@@ -14,7 +14,7 @@ class DbCursorImpl(private val cursor: Cursor) : DbCursor {
         return cursor.getString(index)
     }
 
-    override fun fetch(): Boolean {
+    override fun next(): Boolean {
         return cursor.moveToNext()
     }
 
