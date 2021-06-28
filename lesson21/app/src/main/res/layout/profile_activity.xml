@@ -32,7 +32,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_activity_email_label"
                     app:layout_constraintBottom_toTopOf="@id/firstNameTextView"
-                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,7 +51,6 @@
                     style="@style/Theme.LoginApp.TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/middle_margin"
                     android:text="@string/profile_activity_first_name_label"
                     app:layout_constraintBottom_toTopOf="@id/lastNameTextView"
                     app:layout_constraintStart_toStartOf="@id/emailTextView"
