@@ -5,10 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
@@ -118,25 +116,28 @@ class LoginActivity : AppCompatActivity() {
         doPrivateMethod.invoke(testerInstance)
 
         tester.constructors.forEach {
-            Log.e(DEBUG_TAG, it.toString())
+            Log.e(DEBUG_TAG, "name constructor ${it.name}, modifiers: ${it.modifiers}")
         }
 
         tester.declaredMethods.forEach {
+            val methodInfo = "method name ${it.name},  method return type: ${it.returnType}"
             if (it.isAnnotationPresent(TesterMethod::class.java)) {
                 val annotation = it.getAnnotation(TesterMethod::class.java)
-                Log.e(DEBUG_TAG, "${annotation?.description} ${annotation?.isInner}")
+                Log.e(DEBUG_TAG, "$methodInfo, desc: ${annotation?.description}, isInner = ${annotation?.isInner}")
             } else {
-                Log.e(DEBUG_TAG, it.toString())
+                Log.e(DEBUG_TAG, methodInfo)
             }
         }
 
         tester.declaredFields.forEach {
             it.isAccessible = true
+            it.declaredAnnotations
+            val attrInfo = "attr name: ${it.name}, attr type: ${it.genericType}"
             if (it.isAnnotationPresent(TesterAttribute::class.java)) {
                 val annotation = it.getAnnotation(TesterAttribute::class.java)
-                Log.e(DEBUG_TAG, "${annotation?.info}")
+                Log.e(DEBUG_TAG, "$attrInfo, addition information: ${annotation?.info}")
             } else {
-                Log.e(DEBUG_TAG, it.toString())
+                Log.e(DEBUG_TAG, attrInfo)
             }
         }
     }

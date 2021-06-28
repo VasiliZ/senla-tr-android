@@ -3,9 +3,10 @@ package com.github.rtyvz.senla.tr.myapplication.tester
 import android.util.Log
 
 class Tester(
+    @field:TesterAttribute("Some attribute")
     val param: String
 ) {
-    @TesterAttribute("lol kek")
+
     protected val protParam: Int = 42
 
     @TesterMethod(description = "Some public method")
