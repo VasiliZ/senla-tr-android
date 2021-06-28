@@ -33,7 +33,7 @@ class UpdateProfileTask(
         }.onSuccess {
             return@onSuccess it.result
         }.continueWith(Continuation {
-            if (it.result?.responseStatus?.contains(STATUS_OK) == true) {
+            if (it.result?.responseStatus == STATUS_OK) {
                 localBroadcastManager
                     .sendBroadcast(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
                         putExtras(Bundle().apply {

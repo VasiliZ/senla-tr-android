@@ -11,11 +11,11 @@ class DbHelper {
         private const val COLUMN_NAME_EMAIL = "email"
         private const val COLUMN_NAME_BODY = "body"
         private const val COLUMN_NAME_ID = "id"
-        private const val COLUMN_NAME_FULL_USER_NAME = "fullUserName"
+        private const val COLUMN_NAME_FULL_USER_NAME = "userFullName"
         private const val COLUMN_NAME_TEXT = "text"
     }
 
-    fun insertUserData(db: SQLiteDatabase, data: List<UserEntity>) {
+    fun insertUserData(db: SQLiteDatabase?, data: List<UserEntity>) {
         data.forEach {
             InsertValueHelper().apply {
                 table("user")
@@ -24,10 +24,9 @@ class DbHelper {
                 insert(db, listOf(it.name, it.lastName, it.email))
             }
         }
-        db.close()
     }
 
-    fun insertPostData(db: SQLiteDatabase, postList: List<PostEntity>) {
+    fun insertPostData(db: SQLiteDatabase?, postList: List<PostEntity>) {
         postList.forEach {
             InsertValueHelper().apply {
                 table("post")
@@ -36,10 +35,10 @@ class DbHelper {
                 insert(db, listOf(it.userId, it.title, it.body, it.rate))
             }
         }
-        db.close()
+
     }
 
-    fun insertCommentData(db: SQLiteDatabase, commentList: List<CommentEntity>) {
+    fun insertCommentData(db: SQLiteDatabase?, commentList: List<CommentEntity>) {
         commentList.forEach {
             InsertValueHelper().apply {
                 table("comment")
@@ -48,7 +47,6 @@ class DbHelper {
                 insert(db, listOf(it.postId, it.userId, it.text))
             }
         }
-        db.close()
     }
 
 
@@ -84,7 +82,7 @@ class DbHelper {
     fun getDetailPost(database: SQLiteDatabase, postId: Long): DetailPost? {
         var detailPost: DetailPost? = null
         val cursor = SelectDataHelper().apply {
-            select("post.id, post.title, user.email, (user.firstName || ' ' || user.lastName) as $COLUMN_NAME_FULL_USER_NAME, post.body")
+            select("post.id, post.title, user.email, user.$COLUMN_NAME_FULL_USER_NAME, post.body")
             fromTables("post, user")
             where()
             condition("post.userId = user.id")

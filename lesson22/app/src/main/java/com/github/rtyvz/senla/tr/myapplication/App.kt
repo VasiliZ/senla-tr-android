@@ -17,7 +17,7 @@ class App : Application() {
         lateinit var okHttpClient: OkHttpClient
         lateinit var api: UserApi
         private const val BASE_URL =
-            "https://pub.zame-dev.org/senla-training-addition/lesson-21.php/"
+            "https://pub.zame-dev.org/senla-training-addition/"
     }
 
     override fun onCreate() {

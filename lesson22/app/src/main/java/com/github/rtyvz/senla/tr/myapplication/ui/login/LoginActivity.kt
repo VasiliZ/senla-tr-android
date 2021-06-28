@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
@@ -30,8 +32,11 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emptyTokenResponseReceiver: BroadcastReceiver
     private lateinit var userTokenErrorReceiver: BroadcastReceiver
     private lateinit var taskIsFaultReceiver: BroadcastReceiver
+    private lateinit var unknownStatusResponseReceiver: BroadcastReceiver
 
     companion object {
+        const val EXTRA_UNKNOWN_STATUS_ERROR = "UNKNOWN_STATUS_ERROR"
+        const val BROADCAST_UNKNOWN_STATUS_ERROR = "local:BROADCAST_UNKNOWN_STATUS_ERROR"
         const val BROADCAST_FETCH_USER_PROFILE = "local:BROADCAST_FETCH_USER_PROFILE"
         const val BROADCAST_EMPTY_TOKEN_RESPONSE = "local:EMPTY_TOKEN_RESPONSE"
         const val BROADCAST_TOKEN_RESPONSE_ERROR = "local:BROADCAST_TOKEN_RESPONSE_ERROR"
@@ -74,19 +79,19 @@ class LoginActivity : AppCompatActivity() {
                 when {
                     userEmailEditText.text.isNullOrBlank() || userPasswordEditText.text.isNullOrBlank() ->
                         errorTextView.text =
-                                getString(R.string.login_activity_fields_is_empty_error)
+                            getString(R.string.login_activity_fields_is_empty_error)
                     !userEmailEditText.text.toString().matches(regexEmail) -> {
                         errorTextView.text =
-                                getString(R.string.login_activity_it_isnt_email_error)
+                            getString(R.string.login_activity_it_isnt_email_error)
                     }
                     else -> {
                         progressDialog?.show()
                         errorTextView.text =
-                                EMPTY_STRING
+                            EMPTY_STRING
                         if (App.INSTANCE.state?.isTaskRunning == false) {
                             TaskProvider.getTokenTask().initTokenTask(
-                                    binding.userEmailEditText.text.toString(),
-                                    binding.userPasswordEditText.text.toString()
+                                binding.userEmailEditText.text.toString(),
+                                binding.userPasswordEditText.text.toString()
                             )
                         }
                     }
@@ -119,17 +124,20 @@ class LoginActivity : AppCompatActivity() {
         tester.declaredMethods.forEach {
             if (it.isAnnotationPresent(TesterMethod::class.java)) {
                 val annotation = it.getAnnotation(TesterMethod::class.java)
-                Log.e(DEBUG_TAG, "${annotation.description} ${annotation.isInner}")
+                Log.e(DEBUG_TAG, "${annotation?.description} ${annotation?.isInner}")
+            } else {
+                Log.e(DEBUG_TAG, it.toString())
             }
-            Log.e(DEBUG_TAG, it.toString())
         }
 
         tester.declaredFields.forEach {
+            it.isAccessible = true
             if (it.isAnnotationPresent(TesterAttribute::class.java)) {
                 val annotation = it.getAnnotation(TesterAttribute::class.java)
-                Log.e(DEBUG_TAG, annotation.info)
+                Log.e(DEBUG_TAG, "${annotation?.info}")
+            } else {
+                Log.e(DEBUG_TAG, it.toString())
             }
-            Log.e(DEBUG_TAG, it.toString())
         }
     }
 
@@ -189,26 +197,29 @@ class LoginActivity : AppCompatActivity() {
 
     private fun registerRequestErrorReceiver() {
         localBroadcastManager?.registerReceiver(
-                taskIsFaultReceiver, IntentFilter(
+            taskIsFaultReceiver, IntentFilter(
                 BROADCAST_TASK_IS_FAULTED
-        )
+            )
         )
     }
 
     private fun registerErrorTokenResponseReceiver() {
         localBroadcastManager?.registerReceiver(
-                userTokenErrorReceiver, IntentFilter(BROADCAST_TOKEN_RESPONSE_ERROR)
+            userTokenErrorReceiver, IntentFilter(BROADCAST_TOKEN_RESPONSE_ERROR)
         )
     }
 
     private fun registerProfileReceiver() {
         localBroadcastManager?.registerReceiver(
-                userProfileReceiver, IntentFilter(BROADCAST_FETCH_USER_PROFILE)
+            userProfileReceiver, IntentFilter(BROADCAST_FETCH_USER_PROFILE)
         )
     }
 
     private fun registerTokenReceiver() {
-        localBroadcastManager?.registerReceiver(emptyTokenResponseReceiver, IntentFilter(BROADCAST_EMPTY_TOKEN_RESPONSE))
+        localBroadcastManager?.registerReceiver(
+            emptyTokenResponseReceiver,
+            IntentFilter(BROADCAST_EMPTY_TOKEN_RESPONSE)
+        )
     }
 
     private fun initProgress() {

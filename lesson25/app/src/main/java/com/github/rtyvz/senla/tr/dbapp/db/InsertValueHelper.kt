@@ -1,7 +1,6 @@
 package com.github.rtyvz.senla.tr.dbapp.db
 
 import android.database.sqlite.SQLiteDatabase
-import com.github.rtyvz.senla.tr.dbapp.provider.DbProvider
 
 class InsertValueHelper {
     private val listWithPartsOfQuery = mutableListOf<String>()
@@ -13,7 +12,6 @@ class InsertValueHelper {
         private const val VALUES = "VALUES"
         private const val SELECT_OPERATOR = " SELECT "
         private const val FROM_OPERATOR = " FROM "
-        private const val SPACE = " "
     }
 
     fun table(tableName: String) {
@@ -55,8 +53,8 @@ class InsertValueHelper {
         db?.execSQL(insertSql)
     }
 
-    fun insert(db: SQLiteDatabase, listArgs: List<Any>) {
-        val statement = db.compileStatement(
+    fun insert(db: SQLiteDatabase?, listArgs: List<Any>) {
+        val statement = db?.compileStatement(
             listWithPartsOfQuery.joinToString(
                 separator = "",
                 prefix = "",
@@ -65,13 +63,13 @@ class InsertValueHelper {
         )
         listArgs.forEachIndexed { index, value ->
             when (value) {
-                is String -> statement.bindString(index + 1, value.toString())
-                is Int -> statement.bindLong(index + 1, value.toLong())
-                is Long -> statement.bindLong(index + 1, value.toLong())
-                is Double -> statement.bindDouble(index + 1, value.toDouble())
-                else -> statement.bindNull(index + 1)
+                is String -> statement?.bindString(index + 1, value.toString())
+                is Int -> statement?.bindLong(index + 1, value.toLong())
+                is Long -> statement?.bindLong(index + 1, value.toLong())
+                is Double -> statement?.bindDouble(index + 1, value.toDouble())
+                else -> statement?.bindNull(index + 1)
             }
         }
-        statement.executeInsert()
+        statement?.executeInsert()
     }
 }
