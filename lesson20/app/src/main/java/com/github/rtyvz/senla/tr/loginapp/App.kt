@@ -18,16 +18,5 @@ class App : Application() {
         INSTANCE = this
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         httpClient = OkHttpClient.Builder().build()
-        val x = listOf(
-            listOf(1, 2, 2, 3),
-            listOf(1, 2, 2, 3)
-        )
-        for (i in 0..x.size) {
-            for (j in 0..i) {
-                if (i == j) {
-
-                }
-            }
-        }
     }
 }
