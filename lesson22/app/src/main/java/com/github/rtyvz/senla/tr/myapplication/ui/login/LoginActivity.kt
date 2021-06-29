@@ -33,12 +33,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var unknownStatusResponseReceiver: BroadcastReceiver
 
     companion object {
-        const val EXTRA_UNKNOWN_STATUS_ERROR = "UNKNOWN_STATUS_ERROR"
         const val BROADCAST_UNKNOWN_STATUS_ERROR = "local:BROADCAST_UNKNOWN_STATUS_ERROR"
         const val BROADCAST_FETCH_USER_PROFILE = "local:BROADCAST_FETCH_USER_PROFILE"
         const val BROADCAST_EMPTY_TOKEN_RESPONSE = "local:EMPTY_TOKEN_RESPONSE"
         const val BROADCAST_TOKEN_RESPONSE_ERROR = "local:BROADCAST_TOKEN_RESPONSE_ERROR"
         const val BROADCAST_TASK_IS_FAULTED = "local:BROADCAST_TASK_IS_FAULT"
+        const val EXTRA_UNKNOWN_STATUS_ERROR = "UNKNOWN_STATUS_ERROR"
         const val EXTRA_FETCH_USER_PROFILE = "FETCH_USER_PROFILE"
         const val EXTRA_USER_TOKEN = "USER_TOKEN"
         const val EXTRA_TASK_IS_FAULTED = "TASK_IS_FAULT"
@@ -65,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
         emptyTokenResponseReceiver()
         initTokenErrorResponseReceiver()
         initFaultTaskReceiver()
+        initUnknownStatusResponse()
         initProgress()
 
         val state = App.INSTANCE.state
@@ -123,8 +124,10 @@ class LoginActivity : AppCompatActivity() {
             val methodAttr = "method name: ${it.name} return type: ${it.returnType}"
             if (it.isAnnotationPresent(TesterMethod::class.java)) {
                 val annotation = it.getAnnotation(TesterMethod::class.java)
-                Log.e(DEBUG_TAG, "$methodAttr annotation desc: ${annotation?.description} " +
-                        "isInner = ${annotation?.isInner}")
+                Log.e(
+                    DEBUG_TAG, "$methodAttr annotation desc: ${annotation?.description} " +
+                            "isInner = ${annotation?.isInner}"
+                )
             } else {
                 Log.e(DEBUG_TAG, methodAttr)
             }
@@ -138,6 +141,16 @@ class LoginActivity : AppCompatActivity() {
                 Log.e(DEBUG_TAG, "$fieldAttr annotationInfo: ${annotation?.info}")
             } else {
                 Log.e(DEBUG_TAG, fieldAttr)
+            }
+        }
+    }
+
+    private fun initUnknownStatusResponse() {
+        unknownStatusResponseReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                progressDialog?.dismiss()
+                App.INSTANCE.state?.isTaskRunning = false
+                binding.errorTextView.text = intent?.getStringExtra(EXTRA_UNKNOWN_STATUS_ERROR)
             }
         }
     }
@@ -190,10 +203,17 @@ class LoginActivity : AppCompatActivity() {
         registerTokenReceiver()
         registerErrorTokenResponseReceiver()
         registerRequestErrorReceiver()
+        registerUnknownStatusResponse()
 
         if (App.INSTANCE.state?.isTaskRunning == true) {
             progressDialog?.show()
         }
+    }
+
+    private fun registerUnknownStatusResponse() {
+        localBroadcastManager?.registerReceiver(
+            unknownStatusResponseReceiver, IntentFilter(BROADCAST_UNKNOWN_STATUS_ERROR)
+        )
     }
 
     private fun registerRequestErrorReceiver() {
@@ -247,6 +267,7 @@ class LoginActivity : AppCompatActivity() {
         localBroadcastManager?.unregisterReceiver(userProfileReceiver)
         localBroadcastManager?.unregisterReceiver(userTokenErrorReceiver)
         localBroadcastManager?.unregisterReceiver(taskIsFaultReceiver)
+        localBroadcastManager?.unregisterReceiver(unknownStatusResponseReceiver)
         progressDialog?.dismiss()
 
         super.onPause()

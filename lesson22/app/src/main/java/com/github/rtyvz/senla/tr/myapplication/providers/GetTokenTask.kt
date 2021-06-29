@@ -11,10 +11,6 @@ import com.github.rtyvz.senla.tr.myapplication.ui.login.LoginActivity
 
 class GetTokenTask(private val api: UserApi) {
 
-    companion object {
-        private const val STATUS_OK = "ok"
-    }
-
     fun initTokenTask(userEmail: String, userPassword: String): Task<String> {
         val localBroadcastManager = LocalBroadcastManager.getInstance(App.INSTANCE)
         App.INSTANCE.state?.isTaskRunning = true
