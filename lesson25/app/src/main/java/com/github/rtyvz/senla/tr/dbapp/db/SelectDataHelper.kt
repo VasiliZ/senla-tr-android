@@ -10,6 +10,9 @@ class SelectDataHelper {
         private const val FROM_OPERATOR = " FROM "
         private const val WHERE_OPERATOR = " WHERE "
         private const val AND_OPERATOR = " AND "
+        private const val ORDER_BY_OPERATOR = " ORDER BY "
+        private const val GROUP_BY_OPERATOR = " GROUP BY "
+        private const val DESC_OPERATOR = " DESC "
     }
 
     fun select(fields: String) {
@@ -32,6 +35,20 @@ class SelectDataHelper {
 
     fun condition(condition: String) {
         listWithPartOfQuery.add(condition)
+    }
+
+    fun groupBy(columnName: String){
+        listWithPartOfQuery.add(GROUP_BY_OPERATOR)
+        listWithPartOfQuery.add(columnName)
+    }
+
+    fun orderBy(columnName:String){
+        listWithPartOfQuery.add(ORDER_BY_OPERATOR)
+        listWithPartOfQuery.add(columnName)
+    }
+
+    fun desc(){
+        listWithPartOfQuery.add(DESC_OPERATOR)
     }
 
     fun select(db: SQLiteDatabase): DbCursor? {

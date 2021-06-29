@@ -6,7 +6,6 @@ import com.github.rtyvz.senla.tr.dbapp.models.*
 class DbHelper {
 
     companion object {
-        private const val TAG = "TAG"
         private const val COLUMN_NAME_TITLE = "title"
         private const val COLUMN_NAME_EMAIL = "email"
         private const val COLUMN_NAME_BODY = "body"
@@ -14,6 +13,7 @@ class DbHelper {
         private const val COLUMN_NAME_FULL_USER_NAME = "userFullName"
         private const val COLUMN_NAME_TEXT = "text"
         private const val COLUMN_NAME_RATE = "rate"
+        private const val COLUMN_NAME_POST_ID = "postId"
     }
 
     fun insertUserData(db: SQLiteDatabase?, data: List<UserEntity>) {
@@ -129,7 +129,7 @@ class DbHelper {
                     listCommentWithEmail.add(
                         CommentWithEmailEntity(
                             cursor.getLong(COLUMN_NAME_ID),
-                            cursor.getLong("postId"),
+                            cursor.getLong(COLUMN_NAME_POST_ID),
                             cursor.getString(COLUMN_NAME_EMAIL),
                             cursor.getString(COLUMN_NAME_TEXT),
                             cursor.getLong(COLUMN_NAME_RATE)
@@ -151,5 +151,31 @@ class DbHelper {
             where()
             condition("comment.id = $commentId")
         }.insert(db)
+    }
+
+    fun getStatistics(db: SQLiteDatabase): List<StatisticsEntity> {
+        val listWithStatisticsData = mutableListOf<StatisticsEntity>()
+        val cursor = SelectDataHelper().apply {
+            select("avg(comment.rate) as avgRate, count(comment.id) as commentCount")
+            fromTables("comment")
+            groupBy("comment.postId")
+            orderBy("commentCount")
+            desc()
+        }.select(db)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    listWithStatisticsData.add(
+                        StatisticsEntity(
+                            cursor.getDouble("avgRate"),
+                            cursor.getLong("commentCount")
+                        )
+                    )
+                } while (cursor.next())
+            }
+        }
+        cursor?.closeCursor()
+        return listWithStatisticsData
     }
 }

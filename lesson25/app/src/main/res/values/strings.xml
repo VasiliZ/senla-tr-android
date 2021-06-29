@@ -6,4 +6,12 @@
 
     <!--detail post activity-->
     <string name="detail_post_activity_comments_label">Комментарии</string>
+    <string name="post_activity_statistics_label">Статистика</string>
+
+    <!--statistics activity-->
+    <string name="statistics_is_empty">Данных нет</string>
+
+    <!--statistics item-->
+    <string name="statistics_item_comment_count">Количество коментариев: %1$s</string>
+    <string name="statistics_item_avg_rate_label">Средний рейтинг : %1$s</string>
 </resources>

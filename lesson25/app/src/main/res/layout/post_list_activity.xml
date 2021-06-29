@@ -26,10 +26,20 @@
         android:layout_gravity="top"
         android:layout_margin="@dimen/middle_margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/statisticsButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:itemCount="4"
         tools:listitem="@layout/post_item" />
+
+    <Button
+        android:id="@+id/statisticsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/post_activity_statistics_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/postListRecycler" />
 </androidx.constraintlayout.widget.ConstraintLayout>

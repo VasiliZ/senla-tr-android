@@ -1,5 +1,5 @@
 SELECT id, title, body from post
-SELECT post.id as postId, post.title, post.body, user.id as userId, user.email FROM post, user WHERE post.id == user.id
+SELECT post.id as postId, post.title, post.body, user.id as userId, user.email FROM post, user WHERE post.userId == user.id
 SELECT user.id, (user.firstName ||" "|| user.lastName) as fullName from user
 SELECT count(*) from user
 SELECT count(*) FROM post WHERE post.rate>3

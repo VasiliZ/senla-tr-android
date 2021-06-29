@@ -34,7 +34,7 @@ class UpdateProfileTask(
             return@onSuccess it.result
         }.continueWith(Continuation {
             when (it.result?.responseStatus) {
-                ResponseStatus.OK.status -> {
+                ResponseStatus.OK -> {
                     localBroadcastManager
                         .sendBroadcast(Intent(ProfileActivity.BROADCAST_USER_PROFILE).apply {
                             putExtras(Bundle().apply {
@@ -44,15 +44,15 @@ class UpdateProfileTask(
                                 )
                             })
                         })
+                    return@Continuation Result.Success(it.result?.toUserProfileEntity(userEmail))
                 }
-                ResponseStatus.ERROR.status -> {
+                ResponseStatus.ERROR -> {
                     return@Continuation Result.Error(it.result?.message ?: EMPTY_STRING)
                 }
                 else -> {
                     return@Continuation Result.Error(it.result?.message ?: EMPTY_STRING)
                 }
             }
-            return@Continuation Result.Error(it.result?.message ?: EMPTY_STRING)
         }, Task.UI_THREAD_EXECUTOR)
     }
 }

@@ -23,13 +23,13 @@ class GetTokenTask(private val api: UserApi) {
             val tokenResponse = it.result
             if (tokenResponse != null) {
                 when (tokenResponse.status) {
-                    ResponseStatus.OK.status -> {
+                    ResponseStatus.OK -> {
                         App.INSTANCE.state?.token = tokenResponse.token
 
                         return@Continuation TaskProvider.getProfileTask()
                             .executeUpdateUserProfileTask(it.result?.token, userEmail)
                     }
-                    ResponseStatus.ERROR.status -> {
+                    ResponseStatus.ERROR -> {
                         localBroadcastManager.sendBroadcast(Intent(LoginActivity.BROADCAST_TOKEN_RESPONSE_ERROR).apply {
                             putExtra(LoginActivity.EXTRA_USER_TOKEN_ERROR, tokenResponse.message)
                         })
