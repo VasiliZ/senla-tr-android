@@ -1,5 +1,6 @@
 package com.github.rtyvz.senla.tr.dbapp.provider
 
+import com.github.rtyvz.senla.tr.dbapp.task.ProvideChangeRateCommentTask
 import com.github.rtyvz.senla.tr.dbapp.task.ProvideDetailPostTask
 import com.github.rtyvz.senla.tr.dbapp.task.ProvidePostCommentsTask
 import com.github.rtyvz.senla.tr.dbapp.task.ProvidePostWithEmail
@@ -10,4 +11,6 @@ object TaskProvider {
         ProvideDetailPostTask().getDetailPostData(postId)
 
     fun provideComments(postId: Long) = ProvidePostCommentsTask().getPostComments(postId)
+    fun changeCommentRate(incOrDecr: String, commentId: Long, postId: Long) =
+        ProvideChangeRateCommentTask().changeCommentRate(incOrDecr, commentId, postId)
 }

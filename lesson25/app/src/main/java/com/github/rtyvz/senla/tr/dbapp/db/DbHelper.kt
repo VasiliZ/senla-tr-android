@@ -13,6 +13,7 @@ class DbHelper {
         private const val COLUMN_NAME_ID = "id"
         private const val COLUMN_NAME_FULL_USER_NAME = "userFullName"
         private const val COLUMN_NAME_TEXT = "text"
+        private const val COLUMN_NAME_RATE = "rate"
     }
 
     fun insertUserData(db: SQLiteDatabase?, data: List<UserEntity>) {
@@ -112,7 +113,7 @@ class DbHelper {
         val listCommentWithEmail = mutableListOf<CommentWithEmailEntity>()
 
         val cursor = SelectDataHelper().apply {
-            select("user.email, comment.text ")
+            select("comment.id, comment.postId, user.email, comment.text, comment.rate ")
             fromTables("user, comment, post")
             where()
             condition("post.id = comment.postId")
@@ -127,8 +128,11 @@ class DbHelper {
                 do {
                     listCommentWithEmail.add(
                         CommentWithEmailEntity(
+                            cursor.getLong(COLUMN_NAME_ID),
+                            cursor.getLong("postId"),
                             cursor.getString(COLUMN_NAME_EMAIL),
-                            cursor.getString(COLUMN_NAME_TEXT)
+                            cursor.getString(COLUMN_NAME_TEXT),
+                            cursor.getLong(COLUMN_NAME_RATE)
                         )
                     )
                 } while (cursor.next())
@@ -137,5 +141,15 @@ class DbHelper {
         cursor?.closeCursor()
         database.close()
         return listCommentWithEmail
+    }
+
+    fun changeCommentRate(value: String, commentId: Long, db: SQLiteDatabase?) {
+        UpdateValueHelper().apply {
+            update("comment")
+            set()
+            values("rate = rate $value")
+            where()
+            condition("comment.id = $commentId")
+        }.insert(db)
     }
 }

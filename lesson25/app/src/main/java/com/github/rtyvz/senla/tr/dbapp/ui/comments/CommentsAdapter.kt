@@ -6,28 +6,51 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvz.senla.tr.dbapp.databinding.CommentItemBinding
 import com.github.rtyvz.senla.tr.dbapp.models.CommentWithEmailEntity
 
-class CommentsAdapter : RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
+class CommentsAdapter(private val changeCommentRate: (String, Long, Long) -> Unit) :
+    RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
     private val listWithComments = mutableListOf<CommentWithEmailEntity>()
 
-    class CommentsViewHolder(private val binding: CommentItemBinding) :
+    class CommentsViewHolder(
+        private val binding: CommentItemBinding
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: CommentWithEmailEntity) {
             binding.apply {
                 emailTextView.text = data.email
                 commentTextView.text = data.comment
+                rateCommentTextView.text = data.rate.toString()
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentsViewHolder {
-        return CommentsViewHolder(
-            CommentItemBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
+        val view = CommentItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
         )
+        return CommentsViewHolder(
+            view
+        ).apply {
+            view.incrRateButton.setOnClickListener {
+                changeCommentRate(
+                    "+1",
+                    getItem(adapterPosition).idComment,
+                    getItem(adapterPosition).idPost
+                )
+            }
+            view.decrRateButton.setOnClickListener {
+                changeCommentRate(
+                    "-1",
+                    getItem(adapterPosition).idComment,
+                    getItem(adapterPosition).idPost
+                )
+            }
+        }
     }
+
+    private fun getItem(position: Int) = listWithComments[position]
+
 
     override fun getItemCount() = listWithComments.size
 
