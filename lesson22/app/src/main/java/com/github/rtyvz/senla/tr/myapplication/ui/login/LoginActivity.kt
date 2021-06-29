@@ -5,10 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.myapplication.App
@@ -122,21 +120,24 @@ class LoginActivity : AppCompatActivity() {
         }
 
         tester.declaredMethods.forEach {
+            val methodAttr = "method name: ${it.name} return type: ${it.returnType}"
             if (it.isAnnotationPresent(TesterMethod::class.java)) {
                 val annotation = it.getAnnotation(TesterMethod::class.java)
-                Log.e(DEBUG_TAG, "${annotation?.description} ${annotation?.isInner}")
+                Log.e(DEBUG_TAG, "$methodAttr annotation desc: ${annotation?.description} " +
+                        "isInner = ${annotation?.isInner}")
             } else {
-                Log.e(DEBUG_TAG, it.toString())
+                Log.e(DEBUG_TAG, methodAttr)
             }
         }
 
         tester.declaredFields.forEach {
             it.isAccessible = true
+            val fieldAttr = "field name: ${it.name} field type: ${it.type}"
             if (it.isAnnotationPresent(TesterAttribute::class.java)) {
                 val annotation = it.getAnnotation(TesterAttribute::class.java)
-                Log.e(DEBUG_TAG, "${annotation?.info}")
+                Log.e(DEBUG_TAG, "$fieldAttr annotationInfo: ${annotation?.info}")
             } else {
-                Log.e(DEBUG_TAG, it.toString())
+                Log.e(DEBUG_TAG, fieldAttr)
             }
         }
     }
