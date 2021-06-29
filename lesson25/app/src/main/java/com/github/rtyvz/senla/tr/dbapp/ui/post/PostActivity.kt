@@ -11,6 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.github.rtyvz.senla.tr.dbapp.databinding.PostListActivityBinding
 import com.github.rtyvz.senla.tr.dbapp.provider.TaskProvider
 import com.github.rtyvz.senla.tr.dbapp.ui.detailPost.DetailPostActivity
+import com.github.rtyvz.senla.tr.dbapp.ui.statistics.StatisticsActivity
 
 class PostActivity : AppCompatActivity() {
     private lateinit var binding: PostListActivityBinding
@@ -38,10 +39,15 @@ class PostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
+
         TaskProvider.providePostWithEmail()
         initRecyclerView()
         initFaultFetchingPostReceiver()
         initPostDataReceiver()
+
+        binding.statisticsButton.setOnClickListener {
+            startActivity(Intent(this, StatisticsActivity::class.java))
+        }
     }
 
     private fun initPostDataReceiver() {

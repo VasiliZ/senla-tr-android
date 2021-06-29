@@ -1,13 +1,13 @@
 SELECT id, title, body from post
-SELECT post.id as postId, post.title, post.body, user.id as userId, user.email FROM post, user WHERE post.id == user.id
+SELECT post.id as postId, post.title, post.body, user.id as userId, user.email FROM post, user WHERE post.userId == user.id
 SELECT user.id, (user.firstName ||" "|| user.lastName) as fullName from user
 SELECT count(*) from user
 SELECT count(*) FROM post WHERE post.rate>3
 SELECT max(rate) as maxRate FROM post 
-SELECT avg(rate) as avgRate from post where post.rate >2;
+SELECT avg(rate) as avgRate from post where post.rate >= 2;
 SELECT comment.id, comment.text, post.body as postTitle, user.email as authorEmail, (user.firstName || " " || user.lastName) as commenterFullName FROM
-post, comment, user where comment.postId == post.id and comment.userId == user.id 
-UPDATE user SET email = "Haked" WHERE user.email like '%e%'
-UPDATE post SET rate= rate+1 WHERE post.title like '%you%' and post.title not like '%for%'
+post, comment, user where comment.postId == post.id and comment.userId == user.id AND post.rate > 2
+UPDATE user SET email = "Haked" WHERE user.name like '%e%'
+UPDATE post SET rate = rate+1 WHERE post.title like '%you%' and post.body not like '%for%'
 INSERT INTO comment (postId, userId, text) VALUES (3,2, 'Nihao )')
 DELETE from user WHERE email not like '%e%'

@@ -14,6 +14,11 @@ class DbCursorImpl(private val cursor: Cursor) : DbCursor {
         return cursor.getString(index)
     }
 
+    override fun getDouble(fieldName: String): Double {
+        val index = cursor.getColumnIndex(fieldName)
+        return cursor.getDouble(index)
+    }
+
     override fun next(): Boolean {
         return cursor.moveToNext()
     }

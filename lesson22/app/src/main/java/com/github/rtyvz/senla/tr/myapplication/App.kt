@@ -32,7 +32,6 @@ class App : Application() {
     private fun provideApi() = Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(BASE_URL)
-
         .addConverterFactory(
             GsonConverterFactory
                 .create()

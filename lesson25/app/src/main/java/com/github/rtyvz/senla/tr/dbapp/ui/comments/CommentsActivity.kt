@@ -18,7 +18,9 @@ class CommentsActivity : AppCompatActivity() {
     private lateinit var successFetchingDataReceiver: BroadcastReceiver
     private lateinit var localBroadcastManager: LocalBroadcastManager
     private val commentsAdapter by lazy {
-        CommentsAdapter()
+        CommentsAdapter { incrOrDecr, commentId, postId ->
+            TaskProvider.changeCommentRate(incrOrDecr, commentId, postId)
+        }
     }
 
     companion object {

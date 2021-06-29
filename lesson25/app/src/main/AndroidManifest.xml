@@ -19,6 +19,7 @@
         </activity>
         <activity android:name=".ui.detailPost.DetailPostActivity" />
         <activity android:name=".ui.comments.CommentsActivity" />
+        <activity android:name=".ui.statistics.StatisticsActivity" />
     </application>
 
 </manifest>
