@@ -55,6 +55,7 @@
         android:insetBottom="0dp"
         android:text="@string/login_activity_login_label"
         android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@id/userPasswordEditText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
