@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.rtyvz.senla.tr.dbapp.App
 import com.github.rtyvz.senla.tr.dbapp.models.*
-import com.github.rtyvz.senla.tr.dbapp.provider.DbProvider
 
 class AppDb(context: Context) :
     SQLiteOpenHelper(context, App.DB_NAME, null, DB_VERSION) {
@@ -66,15 +65,15 @@ class AppDb(context: Context) :
     inline fun <reified T> populateTable(listData: List<T>) {
         when (T::class) {
             UserEntity::class -> DbHelper().insertUserData(
-                DbProvider.provideDb().writableDatabase,
+                this.writableDatabase,
                 listData as List<UserEntity>
             )
             PostEntity::class -> DbHelper().insertPostData(
-                DbProvider.provideDb().writableDatabase,
+                this.writableDatabase,
                 listData as List<PostEntity>
             )
             CommentEntity::class -> DbHelper().insertCommentData(
-                DbProvider.provideDb().writableDatabase,
+                this.writableDatabase,
                 listData as List<CommentEntity>
             )
             else -> {
@@ -84,14 +83,14 @@ class AppDb(context: Context) :
     }
 
     fun getPostWithEmails(): List<PostAndUserEmailEntity> {
-        return DbHelper().getPostWithEmails(DbProvider.provideDb().writableDatabase)
+        return DbHelper().getPostWithEmails(this.writableDatabase)
     }
 
     fun getDetailPost(postId: Long): DetailPost? {
-        return DbHelper().getDetailPost(DbProvider.provideDb().writableDatabase, postId)
+        return DbHelper().getDetailPost(this.writableDatabase, postId)
     }
 
     fun getPostComments(postId: Long): List<CommentWithEmailEntity> {
-        return DbHelper().getCommentsWithEmail(DbProvider.provideDb().writableDatabase, postId)
+        return DbHelper().getCommentsWithEmail(this.writableDatabase, postId)
     }
 }
