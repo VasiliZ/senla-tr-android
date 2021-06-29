@@ -3,14 +3,14 @@ package com.github.rtyvz.senla.tr.dbapp.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.github.rtyvz.senla.tr.dbapp.App
 import com.github.rtyvz.senla.tr.dbapp.models.*
 import com.github.rtyvz.senla.tr.dbapp.provider.DbProvider
 
 class AppDb(context: Context) :
-    SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+    SQLiteOpenHelper(context, App.DB_NAME, null, DB_VERSION) {
 
     companion object {
-        private const val DB_NAME = "app.bd"
         private const val DB_VERSION = 1
         private const val TABLE_NAME_POST = "post"
         private const val TABLE_NAME_COMMENT = "comment"
