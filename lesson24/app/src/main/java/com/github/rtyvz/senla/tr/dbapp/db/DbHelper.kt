@@ -78,6 +78,7 @@ class DbHelper {
         }
         cursor?.closeCursor()
         db.close()
+
         return listWithPostAndEmail
     }
 
@@ -138,6 +139,7 @@ class DbHelper {
         }
         cursor?.closeCursor()
         database.close()
+
         return listCommentWithEmail
     }
 }

@@ -17,12 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/small_margin"
+            style="@style/My.TextView.Style"
             android:layout_marginBottom="@dimen/small_margin"
             tools:text="name" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/authorEmailTextView"
             android:layout_width="match_parent"
+            style="@style/My.TextView.Style"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/small_margin"
             android:layout_marginBottom="@dimen/small_margin"
@@ -31,6 +33,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/postBodyTextView"
             android:layout_width="match_parent"
+            style="@style/My.TextView.Style"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/small_margin"
             android:layout_marginBottom="@dimen/small_margin"

@@ -10,6 +10,8 @@ class InsertValueHelper {
         private const val OPEN_BRACKET = "("
         private const val CLOSE_BRACKET = ")"
         private const val VALUES = "VALUES"
+        private const val FIRST_INDEX_OF_STATEMENT = 1
+        private const val EMPTY_STRING = ""
     }
 
     fun table(tableName: String) {
@@ -31,18 +33,24 @@ class InsertValueHelper {
     fun insert(db: SQLiteDatabase, listArgs: List<Any>) {
         val statement = db.compileStatement(
             listWithPartsOfQuery.joinToString(
-                separator = "",
-                prefix = "",
-                postfix = ""
+                separator = EMPTY_STRING,
+                prefix = EMPTY_STRING,
+                postfix = EMPTY_STRING
             )
         )
         listArgs.forEachIndexed { index, value ->
             when (value) {
-                is String -> statement.bindString(index + 1, value.toString())
-                is Int -> statement.bindLong(index + 1, value.toLong())
-                is Long -> statement.bindLong(index + 1, value.toLong())
-                is Double -> statement.bindDouble(index + 1, value.toDouble())
-                else -> statement.bindNull(index + 1)
+                is String -> statement.bindString(
+                    index + FIRST_INDEX_OF_STATEMENT,
+                    value.toString()
+                )
+                is Int -> statement.bindLong(index + FIRST_INDEX_OF_STATEMENT, value.toLong())
+                is Long -> statement.bindLong(index + FIRST_INDEX_OF_STATEMENT, value.toLong())
+                is Double -> statement.bindDouble(
+                    index + FIRST_INDEX_OF_STATEMENT,
+                    value.toDouble()
+                )
+                else -> statement.bindNull(index + FIRST_INDEX_OF_STATEMENT)
             }
         }
         statement.executeInsert()

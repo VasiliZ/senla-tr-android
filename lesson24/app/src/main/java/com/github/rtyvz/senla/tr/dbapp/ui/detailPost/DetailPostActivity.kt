@@ -36,6 +36,7 @@ class DetailPostActivity : AppCompatActivity() {
 
         TaskProvider.provideDetailPost(intent.getLongExtra(EXTRA_POST_ID, POST_ID_DEFAULT_VALUE))
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
+
         initGettingDataFaultReceiver()
         initDetailPostReceiver()
 

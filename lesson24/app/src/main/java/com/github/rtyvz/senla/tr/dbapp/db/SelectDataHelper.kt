@@ -10,6 +10,7 @@ class SelectDataHelper {
         private const val FROM_OPERATOR = " FROM "
         private const val WHERE_OPERATOR = " WHERE "
         private const val AND_OPERATOR = " AND "
+        private const val EMPTY_STRING = ""
     }
 
     fun select(fields: String) {
@@ -38,9 +39,9 @@ class SelectDataHelper {
         return DbCursorImpl(
             db.rawQuery(
                 listWithPartOfQuery.joinToString(
-                    separator = "",
-                    prefix = "",
-                    postfix = ""
+                    separator = EMPTY_STRING,
+                    prefix = EMPTY_STRING,
+                    postfix = EMPTY_STRING
                 ), null
             )
         )
