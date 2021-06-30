@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.dbapp.db
+package com.github.rtyvz.senla.tr.dbapp.db.helper
 
 import android.database.sqlite.SQLiteDatabase
 

@@ -39,8 +39,8 @@ class PostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
-
         TaskProvider.providePostWithEmail()
+
         initRecyclerView()
         initFaultFetchingPostReceiver()
         initPostDataReceiver()

@@ -1,6 +1,8 @@
-package com.github.rtyvz.senla.tr.dbapp.db
+package com.github.rtyvz.senla.tr.dbapp.db.helper
 
 import android.database.sqlite.SQLiteDatabase
+import com.github.rtyvz.senla.tr.dbapp.db.DbCursor
+import com.github.rtyvz.senla.tr.dbapp.db.DbCursorImpl
 
 class SelectDataHelper {
     private val listWithPartOfQuery = mutableListOf<String>()
@@ -13,6 +15,8 @@ class SelectDataHelper {
         private const val ORDER_BY_OPERATOR = " ORDER BY "
         private const val GROUP_BY_OPERATOR = " GROUP BY "
         private const val DESC_OPERATOR = " DESC "
+        private const val ASC_OPERATOR = " ASC "
+        private const val EMPTY_STRING = ""
     }
 
     fun select(fields: String) {
@@ -51,13 +55,17 @@ class SelectDataHelper {
         listWithPartOfQuery.add(DESC_OPERATOR)
     }
 
+    fun asc(){
+        listWithPartOfQuery.add(ASC_OPERATOR)
+    }
+
     fun select(db: SQLiteDatabase): DbCursor? {
         return DbCursorImpl(
             db.rawQuery(
                 listWithPartOfQuery.joinToString(
-                    separator = "",
-                    prefix = "",
-                    postfix = ""
+                    separator = EMPTY_STRING,
+                    prefix = EMPTY_STRING,
+                    postfix = EMPTY_STRING
                 ), null
             )
         )

@@ -35,22 +35,21 @@ class CommentsAdapter(private val changeCommentRate: (String, Long, Long) -> Uni
             view.incrRateButton.setOnClickListener {
                 changeCommentRate(
                     "+1",
-                    getItem(adapterPosition).idComment,
-                    getItem(adapterPosition).idPost
+                    getItem(adapterPosition).commentId,
+                    getItem(adapterPosition).postId
                 )
             }
             view.decrRateButton.setOnClickListener {
                 changeCommentRate(
                     "-1",
-                    getItem(adapterPosition).idComment,
-                    getItem(adapterPosition).idPost
+                    getItem(adapterPosition).commentId,
+                    getItem(adapterPosition).postId
                 )
             }
         }
     }
 
     private fun getItem(position: Int) = listWithComments[position]
-
 
     override fun getItemCount() = listWithComments.size
 

@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.dbapp.db
+package com.github.rtyvz.senla.tr.dbapp.db.helper
 
 import android.database.sqlite.SQLiteDatabase
 
@@ -9,6 +9,7 @@ class UpdateValueHelper {
         private const val UPDATE_OPERATOR = " UPDATE "
         private const val SET_OPERATOR = " SET "
         private const val WHERE_OPERATOR = " WHERE "
+        private const val EMPTY_STRING = ""
     }
 
     fun update(table: String) {
@@ -33,6 +34,12 @@ class UpdateValueHelper {
     }
 
     fun insert(db: SQLiteDatabase?) {
-        db?.execSQL(listWithPartsOfQuery.joinToString(separator = "", postfix = "", prefix = ""))
+        db?.execSQL(
+            listWithPartsOfQuery.joinToString(
+                separator = EMPTY_STRING,
+                postfix = EMPTY_STRING,
+                prefix = EMPTY_STRING
+            )
+        )
     }
 }

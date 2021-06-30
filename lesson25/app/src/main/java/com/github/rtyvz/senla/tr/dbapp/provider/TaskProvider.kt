@@ -7,10 +7,12 @@ import com.github.rtyvz.senla.tr.dbapp.task.ProvidePostWithEmail
 
 object TaskProvider {
     fun providePostWithEmail() = ProvidePostWithEmail().getPostWithEmail()
+
     fun provideDetailPost(postId: Long) =
         ProvideDetailPostTask().getDetailPostData(postId)
 
     fun provideComments(postId: Long) = ProvidePostCommentsTask().getPostComments(postId)
-    fun changeCommentRate(incOrDecr: String, commentId: Long, postId: Long) =
-        ProvideChangeRateCommentTask().changeCommentRate(incOrDecr, commentId, postId)
+
+    fun changeCommentRate(incOrDec: String, commentId: Long, postId: Long) =
+        ProvideChangeRateCommentTask().changeCommentRate(incOrDec, commentId, postId)
 }

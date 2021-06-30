@@ -31,6 +31,7 @@ class StatisticsAdapter : RecyclerView.Adapter<StatisticsAdapter.StatisticsViewH
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatisticsViewHolder {
         val view = StatisticsItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
+
         return StatisticsViewHolder(view)
     }
 

@@ -12,6 +12,7 @@ class PostAdapter(private val clickAction: (Long) -> (Unit)) :
 
     class PostViewHolder(private val binding: PostItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(postDataEmail: PostAndUserEmailEntity) {
             binding.postTitleTextView.text = postDataEmail.titlePost
             binding.authorEmailTextView.text = postDataEmail.userEmail
@@ -20,7 +21,9 @@ class PostAdapter(private val clickAction: (Long) -> (Unit)) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val view = PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val view = PostItemBinding.inflate(LayoutInflater
+            .from(parent.context), parent, false)
+
         return PostViewHolder(view).apply {
             view.root.setOnClickListener {
                 clickAction(getItem(adapterPosition).postId)

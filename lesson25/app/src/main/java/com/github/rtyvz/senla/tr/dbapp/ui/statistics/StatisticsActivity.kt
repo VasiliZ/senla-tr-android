@@ -33,6 +33,7 @@ class StatisticsActivity : AppCompatActivity(),
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<StatisticsEntity>> {
         loader = StatisticsLoader(this)
         loader.forceLoad()
+
         return loader
     }
 

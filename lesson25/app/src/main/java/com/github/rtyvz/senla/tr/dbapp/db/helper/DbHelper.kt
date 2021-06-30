@@ -1,4 +1,4 @@
-package com.github.rtyvz.senla.tr.dbapp.db
+package com.github.rtyvz.senla.tr.dbapp.db.helper
 
 import android.database.sqlite.SQLiteDatabase
 import com.github.rtyvz.senla.tr.dbapp.models.*
@@ -54,12 +54,15 @@ class DbHelper {
     fun getPostWithEmails(db: SQLiteDatabase): List<PostAndUserEmailEntity> {
         val listWithPostAndEmail = mutableListOf<PostAndUserEmailEntity>()
 
-        val cursor = SelectDataHelper().apply {
-            select("post.id, post.title, user.email, post.body")
-            fromTables("post, user")
-            where()
-            condition("post.UserId = user.id")
-        }.select(db)
+        val cursor = SelectDataHelper()
+            .apply {
+                select("post.id, post.title, user.email, post.body")
+                fromTables("post, user")
+                where()
+                condition("post.UserId = user.id")
+                orderBy("post.title")
+                asc()
+            }.select(db)
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -77,19 +80,21 @@ class DbHelper {
         }
         cursor?.closeCursor()
         db.close()
+
         return listWithPostAndEmail
     }
 
     fun getDetailPost(database: SQLiteDatabase, postId: Long): DetailPost? {
         var detailPost: DetailPost? = null
-        val cursor = SelectDataHelper().apply {
-            select("post.id, post.title, user.email, user.$COLUMN_NAME_FULL_USER_NAME, post.body")
-            fromTables("post, user")
-            where()
-            condition("post.userId = user.id")
-            and()
-            condition("post.id = $postId")
-        }.select(database)
+        val cursor = SelectDataHelper()
+            .apply {
+                select("post.id, post.title, user.email, user.$COLUMN_NAME_FULL_USER_NAME, post.body")
+                fromTables("post, user")
+                where()
+                condition("post.userId = user.id")
+                and()
+                condition("post.id = $postId")
+            }.select(database)
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -112,16 +117,19 @@ class DbHelper {
     fun getCommentsWithEmail(database: SQLiteDatabase, postId: Long): List<CommentWithEmailEntity> {
         val listCommentWithEmail = mutableListOf<CommentWithEmailEntity>()
 
-        val cursor = SelectDataHelper().apply {
-            select("comment.id, comment.postId, user.email, comment.text, comment.rate ")
-            fromTables("user, comment, post")
-            where()
-            condition("post.id = comment.postId")
-            and()
-            condition("user.id = comment.userId")
-            and()
-            condition("post.id = $postId")
-        }.select(database)
+        val cursor = SelectDataHelper()
+            .apply {
+                select("comment.id, comment.postId, user.email, comment.text, comment.rate ")
+                fromTables("user, comment, post")
+                where()
+                condition("post.id = comment.postId")
+                and()
+                condition("user.id = comment.userId")
+                and()
+                condition("post.id = $postId")
+                orderBy("comment.id")
+                asc()
+            }.select(database)
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -140,6 +148,7 @@ class DbHelper {
         }
         cursor?.closeCursor()
         database.close()
+
         return listCommentWithEmail
     }
 
@@ -155,13 +164,14 @@ class DbHelper {
 
     fun getStatistics(db: SQLiteDatabase): List<StatisticsEntity> {
         val listWithStatisticsData = mutableListOf<StatisticsEntity>()
-        val cursor = SelectDataHelper().apply {
-            select("avg(comment.rate) as avgRate, count(comment.id) as commentCount")
-            fromTables("comment")
-            groupBy("comment.postId")
-            orderBy("commentCount")
-            desc()
-        }.select(db)
+        val cursor = SelectDataHelper()
+            .apply {
+                select("avg(comment.rate) as avgRate, count(comment.id) as commentCount")
+                fromTables("comment")
+                groupBy("comment.postId")
+                orderBy("commentCount")
+                desc()
+            }.select(db)
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -176,6 +186,7 @@ class DbHelper {
             }
         }
         cursor?.closeCursor()
+
         return listWithStatisticsData
     }
 }
